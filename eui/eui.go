@@ -47,10 +47,10 @@ func PrepareResources(loader *resource.Loader) *Resources {
 		// selectedHover := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonHover).Data, 12, 0)
 		// selectedPressed := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonPressed).Data, 12, 0)
 		buttonPadding := widget.Insets{
-			Left:   12,
-			Right:  12,
-			Top:    8,
-			Bottom: 8,
+			Left:   24,
+			Right:  24,
+			Top:    4,
+			Bottom: 4,
 		}
 		buttonColors := &widget.ButtonTextColor{
 			Idle:     styles.ButtonTextColor,
@@ -83,18 +83,18 @@ func PrepareResources(loader *resource.Loader) *Resources {
 		// }
 	}
 
-	// {
-	// 	idle := loader.LoadImage(assets.ImageUIPanelIdle).Data
-	// 	result.panel = &panelResource{
-	// 		Image: nineSliceImage(idle, 10, 10),
-	// 		Padding: widget.Insets{
-	// 			Left:   16,
-	// 			Right:  16,
-	// 			Top:    10,
-	// 			Bottom: 10,
-	// 		},
-	// 	}
-	// }
+	{
+		idle := loader.LoadImage(assets.ImageUIPanelIdle).Data
+		result.panel = &panelResource{
+			Image: nineSliceImage(idle, 10, 10),
+			Padding: widget.Insets{
+				Left:   16,
+				Right:  16,
+				Top:    10,
+				Bottom: 10,
+			},
+		}
+	}
 
 	return result
 }
@@ -113,6 +113,7 @@ type ButtonConfig struct {
 	LayoutData   any
 	MinWidth     int
 	Font         font.Face
+	AlignLeft    bool
 }
 
 func NewButtonWithConfig(res *Resources, config ButtonConfig) *widget.Button {
@@ -135,6 +136,9 @@ func NewButtonWithConfig(res *Resources, config ButtonConfig) *widget.Button {
 	options = append(options,
 		widget.ButtonOpts.Text(config.Text, ff, colors),
 		widget.ButtonOpts.TextPadding(res.button.Padding))
+	if config.AlignLeft {
+		options = append(options, widget.ButtonOpts.TextPosition(widget.TextPositionStart, widget.TextPositionCenter))
+	}
 	if config.LayoutData != nil {
 		options = append(options, widget.ButtonOpts.WidgetOpts(widget.WidgetOpts.LayoutData(config.LayoutData)))
 	}
