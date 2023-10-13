@@ -2,21 +2,29 @@ package gamedata
 
 type World struct {
 	Player *Player
+
+	Planets []*Planet
 }
 
 type Player struct {
 	Planet *Planet
 
+	VesselDesign *VesselDesign
+
 	Experience int
 }
 
 type Planet struct {
+	Info *PlanetInfo
+}
+
+type PlanetInfo struct {
 	Name     string
 	RealName string
 	GasGiant bool
 }
 
-var Planets = []*Planet{
+var Planets = []*PlanetInfo{
 	{
 		Name:     "Planet VIII",
 		RealName: "Neptune",

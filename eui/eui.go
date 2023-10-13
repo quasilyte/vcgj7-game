@@ -15,6 +15,7 @@ import (
 )
 
 type Resources struct {
+	loader         *resource.Loader
 	button         *buttonResource
 	buttonSelected *buttonResource
 	panel          *panelResource
@@ -34,7 +35,9 @@ type panelResource struct {
 }
 
 func PrepareResources(loader *resource.Loader) *Resources {
-	result := &Resources{}
+	result := &Resources{
+		loader: loader,
+	}
 
 	normalFont := assets.BitmapFont2
 
@@ -104,6 +107,19 @@ func nineSliceImage(i *ebiten.Image, centerWidth, centerHeight int) *image.NineS
 	return image.NewNineSlice(i,
 		[3]int{(w - centerWidth) / 2, centerWidth, w - (w-centerWidth)/2 - centerWidth},
 		[3]int{(h - centerHeight) / 2, centerHeight, h - (h-centerHeight)/2 - centerHeight})
+}
+
+func NewGraphic(res *Resources, imageID resource.ImageID) *widget.Graphic {
+	img := res.loader.LoadImage(imageID)
+	return widget.NewGraphic(
+		widget.GraphicOpts.Image(img.Data),
+		widget.GraphicOpts.WidgetOpts(
+			widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
+				HorizontalPosition: widget.AnchorLayoutPositionCenter,
+				VerticalPosition:   widget.AnchorLayoutPositionCenter,
+			}),
+		),
+	)
 }
 
 type ButtonConfig struct {

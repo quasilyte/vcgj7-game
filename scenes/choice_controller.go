@@ -49,11 +49,14 @@ func (c *ChoiceController) initUI() {
 	textPanel := eui.NewPanelWithPadding(c.state.UIResources, 100, 100, widget.NewInsetsSimple(8))
 	upperGrid.AddChild(textPanel)
 
-	picPanel := eui.NewPanelWithPadding(c.state.UIResources, 180, 180, widget.NewInsetsSimple(8))
+	picPanel := eui.NewPanelWithPadding(c.state.UIResources, 196, 196, widget.NewInsetsSimple(8))
 	upperGrid.AddChild(picPanel)
 
-	mapPanel := eui.NewPanelWithPadding(c.state.UIResources, 180, 180, widget.NewInsetsSimple(8))
+	mapPanel := eui.NewPanelWithPadding(c.state.UIResources, 196, 196, widget.NewInsetsSimple(8))
 	upperGrid.AddChild(mapPanel)
+
+	mapBg := eui.NewGraphic(c.state.UIResources, assets.ImageSystemMap)
+	mapPanel.AddChild(mapBg)
 
 	lowerGrid := widget.NewContainer(
 		widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.RowLayoutData{
@@ -87,7 +90,7 @@ func (c *ChoiceController) initUI() {
 		optionsList.AddChild(b)
 	}
 
-	statusPanel := eui.NewPanelWithPadding(c.state.UIResources, 180*2+8, 100, widget.NewInsetsSimple(8))
+	statusPanel := eui.NewPanelWithPadding(c.state.UIResources, 196*2+8, 100, widget.NewInsetsSimple(8))
 	lowerGrid.AddChild(statusPanel)
 
 	initUI(c.scene, root)
