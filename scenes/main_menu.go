@@ -28,7 +28,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 		})),
 		widget.ContainerOpts.Layout(widget.NewAnchorLayout()))
 
-	rowContainer := eui.NewRowLayoutContainerWithMinWidth(400, 16, nil)
+	rowContainer := eui.NewRowLayoutContainerWithMinWidth(320, 8, nil)
 	root.AddChild(rowContainer)
 
 	bigFont := assets.BitmapFont3
