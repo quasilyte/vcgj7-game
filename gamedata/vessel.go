@@ -17,4 +17,6 @@ type VesselDesign struct {
 	Acceleration float64
 
 	RotationSpeed gmath.Rad
+
+	MainWeapon *WeaponDesign
 }

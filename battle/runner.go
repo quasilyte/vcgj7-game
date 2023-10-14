@@ -38,6 +38,7 @@ func (r *Runner) Init(scene *ge.Scene) {
 		MaxSpeed:      250,
 		Acceleration:  100,
 		RotationSpeed: 3,
+		MainWeapon:    gamedata.FindWeaponDesign("Pulse Laser"),
 	}
 	v.body.Pos = gmath.Vec{X: 1920 / 4, Y: 1080 / 4}
 	scene.AddObject(v)
@@ -48,6 +49,19 @@ func (r *Runner) Init(scene *ge.Scene) {
 	hud := scene.NewSprite(assets.ImageBattleHUD)
 	hud.Centered = false
 	scene.AddGraphicsAbove(hud, 1)
+
+	{
+		v.state.hp = v.state.design.MaxHP * 0.6
+		pos := gmath.Vec{X: 178, Y: 50}
+		hpBar := newValueBar(pos, &v.state.hp, v.state.design.MaxHP, true)
+		scene.AddObject(hpBar)
+	}
+	{
+		v.state.energy = v.state.design.MaxEnergy * 0.0
+		pos := gmath.Vec{X: 178 + 494, Y: 50}
+		hpBar := newValueBar(pos, &v.state.energy, v.state.design.MaxEnergy, false)
+		scene.AddObject(hpBar)
+	}
 }
 
 func (r *Runner) Update(delta float64) {

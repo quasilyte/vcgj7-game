@@ -15,10 +15,18 @@ type vesselState struct {
 	engineVelocity gmath.Vec
 	extraVelocity  gmath.Vec
 
-	hp     float64
-	energy float64
+	hp                   float64
+	energy               float64
+	energyRegenThreshold float64
 
 	design *gamedata.VesselDesign
+}
+
+func (state *vesselState) Init() {
+	state.hp = state.design.MaxHP
+	state.energy = state.design.MaxEnergy
+
+	state.energyRegenThreshold = state.design.MaxEnergy * 0.5
 }
 
 func (state *vesselState) EnergyPercentage() float64 {

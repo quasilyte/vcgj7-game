@@ -42,9 +42,7 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 
 	v.scene = scene
 
-	// This may become world state dependent later.
-	state.hp = v.state.design.MaxHP
-	state.energy = v.state.design.MaxEnergy
+	state.Init()
 
 	v.sprite = scene.NewSprite(v.state.design.Image)
 	v.sprite.Pos.Base = &v.body.Pos
@@ -110,7 +108,9 @@ func (v *vesselNode) Update(delta float64) {
 	// 	}
 	// }
 
-	v.state.energy = gmath.ClampMax(v.state.energy+v.state.design.EnergyRegen*delta, v.state.design.MaxEnergy)
+	if v.state.energy < v.state.energyRegenThreshold {
+		v.state.energy = gmath.ClampMax(v.state.energy+v.state.design.EnergyRegen*delta, v.state.energyRegenThreshold)
+	}
 
 	pilotOrders := v.pilotOrders
 	// autoOrders := v.systems.Tick(delta)

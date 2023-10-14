@@ -18,7 +18,12 @@ func registerImageResources(ctx *ge.Context) {
 		ImageSystemMap:   {Path: "image/map.png"},
 		ImageMapLocation: {Path: "image/map_location.png"},
 
-		ImageBattleHUD: {Path: "image/battle_hud.png"},
+		ImageBattleHUD:       {Path: "image/battle_hud.png"},
+		ImageBattleBarHP:     {Path: "image/hp_bar.png"},
+		ImageBattleBarEnergy: {Path: "image/energy_bar.png"},
+
+		ImageProjectileIonCannon:  {Path: "image/projectile/ion_cannon.png"},
+		ImageProjectilePulseLaser: {Path: "image/projectile/pulse_laser.png"},
 
 		ImageVesselRaider:   {Path: "image/vessel/raider.png", FrameWidth: 48},
 		ImageVesselMarauder: {Path: "image/vessel/marauder.png", FrameWidth: 48},
@@ -43,6 +48,11 @@ const (
 	ImageMapLocation
 
 	ImageBattleHUD
+	ImageBattleBarHP
+	ImageBattleBarEnergy
+
+	ImageProjectileIonCannon
+	ImageProjectilePulseLaser
 
 	ImageVesselRaider
 	ImageVesselMarauder
