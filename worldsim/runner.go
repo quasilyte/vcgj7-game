@@ -18,11 +18,12 @@ type Runner struct {
 	jumpOptions []jumpOption
 	textLines   []string
 
+	encounterOptions []gamedata.Faction
+
 	eventInfo eventInfo
 
-	EventChoiceSelected gsignal.Event[gamedata.Mode]
-	EventStartBattle    gsignal.Event[BattleInfo]
-	EventGameOver       gsignal.Event[bool]
+	EventStartBattle gsignal.Event[BattleInfo]
+	EventGameOver    gsignal.Event[bool]
 }
 
 type BattleInfo struct {
@@ -49,10 +50,11 @@ type GeneratedChoices struct {
 
 func NewRunner(w *gamedata.World) *Runner {
 	return &Runner{
-		world:       w,
-		choices:     make([]Choice, 0, 8),
-		jumpOptions: make([]jumpOption, 0, 8),
-		textLines:   make([]string, 0, 20),
+		world:            w,
+		choices:          make([]Choice, 0, 8),
+		jumpOptions:      make([]jumpOption, 0, 8),
+		textLines:        make([]string, 0, 20),
+		encounterOptions: make([]gamedata.Faction, 0, 8),
 	}
 }
 
@@ -104,14 +106,15 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			h := 3
 			if planet.Info.GasGiant {
 				s = "Dock the station"
-				h = 1
+				h = 2
 			}
 			r.choices = append(r.choices, Choice{
 				Time: h,
 				Text: s,
-				OnSelected: func() {
+				Mode: gamedata.ModeOrbiting,
+				OnResolved: func() gamedata.Mode {
 					player.Planet.AreasVisited = gamedata.PlanetVisitStatus{}
-					r.commitChoiceExtra(gamedata.ModeOrbiting, gamedata.ModeDocked)
+					return gamedata.ModeDocked
 				},
 			})
 		}
@@ -133,10 +136,10 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				r.choices = append(r.choices, Choice{
 					Time: repairTime,
 					Text: "Repair vessel",
-					OnSelected: func() {
+					OnResolved: func() gamedata.Mode {
 						player.Credits -= fullPrice
 						player.VesselHP = 1.0
-						r.commitChoice(gamedata.ModeDocked)
+						return gamedata.ModeDocked
 					},
 				})
 			}
@@ -144,13 +147,13 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
-		if player.Credits > 0 && player.Fuel < player.MaxFuel {
+		if player.Credits >= 5 && player.Fuel < player.MaxFuel {
 			r.choices = append(r.choices, Choice{
 				Time: 2,
 				Text: "Buy fuel",
-				OnSelected: func() {
+				OnResolved: func() gamedata.Mode {
 					r.eventInfo = eventInfo{kind: eventBuyFuel}
-					r.commitChoice(gamedata.ModeDocked)
+					return gamedata.ModeDocked
 				},
 			})
 		}
@@ -161,9 +164,9 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			r.choices = append(r.choices, Choice{
 				Time: 1,
 				Text: "Visit upgrade lab",
-				OnSelected: func() {
+				OnResolved: func() gamedata.Mode {
 					r.eventInfo = eventInfo{kind: eventUpgradeLab}
-					r.commitChoice(gamedata.ModeDocked)
+					return gamedata.ModeDocked
 				},
 			})
 		}
@@ -174,10 +177,10 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			r.choices = append(r.choices, Choice{
 				Time: 2,
 				Text: "Sell minerals",
-				OnSelected: func() {
+				OnResolved: func() gamedata.Mode {
 					planet.AreasVisited.VisitedMineralsMarket = true
 					r.eventInfo = eventInfo{kind: eventSellMinerals}
-					r.commitChoice(gamedata.ModeDocked)
+					return gamedata.ModeDocked
 				},
 			})
 		}
@@ -214,10 +217,11 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			r.choices = append(r.choices, Choice{
 				Time: j.time,
 				Text: fmt.Sprintf("Jump to %s [%d fuel]", j.planet.Info.Name, j.fuelCost),
-				OnSelected: func() {
+				Mode: gamedata.ModeJump,
+				OnResolved: func() gamedata.Mode {
 					player.Planet = j.planet
 					player.Fuel -= j.fuelCost
-					r.commitChoiceExtra(gamedata.ModeJump, gamedata.ModeJustEntered)
+					return gamedata.ModeJustEntered
 				},
 			})
 		}
@@ -227,8 +231,8 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		r.choices = append(r.choices, Choice{
 			Time: 4,
 			Text: "Take off",
-			OnSelected: func() {
-				r.commitChoice(gamedata.ModeOrbiting)
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeOrbiting
 			},
 		})
 	}
@@ -237,12 +241,14 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	// 	r.choices = append(r.choices, Choice{
 	// 		Time: 1,
 	// 		Text: "Combat test",
-	// 		OnSelected: func() {
+	// 		Mode: gamedata.ModeCombat,
+	// 		OnResolved: func() gamedata.Mode {
 	// 			r.eventInfo = eventInfo{
 	// 				kind: eventBattle,
 	// 				enemy: &gamedata.VesselDesign{
+	// 					Faction:         0,
 	// 					Image:           assets.ImageVesselMarauder,
-	// 					MaxHP:           150,
+	// 					MaxHP:           1,
 	// 					MaxEnergy:       120,
 	// 					EnergyRegen:     3.0,
 	// 					MaxSpeed:        180,
@@ -252,7 +258,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	// 					SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
 	// 				},
 	// 			}
-	// 			r.commitChoice(gamedata.ModeCombat)
+	// 			return gamedata.ModeOrbiting
 	// 		},
 	// 	})
 	// }
@@ -264,9 +270,10 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				r.choices = append(r.choices, Choice{
 					Time: 7,
 					Text: "Hunt asteroids for minerals",
-					OnSelected: func() {
+					Mode: gamedata.ModeScavenging,
+					OnResolved: func() gamedata.Mode {
 						r.eventInfo = eventInfo{kind: eventMineralsHunt}
-						r.commitChoice(gamedata.ModeScavenging)
+						return gamedata.ModeOrbiting
 					},
 				})
 			}
@@ -281,9 +288,10 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				r.choices = append(r.choices, Choice{
 					Time: 8,
 					Text: "Scavenge for fuel",
-					OnSelected: func() {
+					Mode: gamedata.ModeScavenging,
+					OnResolved: func() gamedata.Mode {
 						r.eventInfo = eventInfo{kind: eventFuelScavenge}
-						r.commitChoice(gamedata.ModeScavenging)
+						return gamedata.ModeOrbiting
 					},
 				})
 			}
@@ -294,9 +302,10 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		r.choices = append(r.choices, Choice{
 			Time: 2,
 			Text: "Scout the area",
-			OnSelected: func() {
+			Mode: gamedata.ModeScavenging,
+			OnResolved: func() gamedata.Mode {
 				r.eventInfo = eventInfo{kind: eventScanArea}
-				r.commitChoice(gamedata.ModeScavenging)
+				return gamedata.ModeOrbiting
 			},
 		})
 	}
@@ -305,14 +314,4 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		Text:    strings.Join(r.textLines, "\n"),
 		Choices: r.choices,
 	}
-}
-
-func (r *Runner) commitChoice(m gamedata.Mode) {
-	r.world.Player.Mode = m
-	r.EventChoiceSelected.Emit(m)
-}
-
-func (r *Runner) commitChoiceExtra(m, postMode gamedata.Mode) {
-	r.world.Player.Mode = m
-	r.EventChoiceSelected.Emit(postMode)
 }

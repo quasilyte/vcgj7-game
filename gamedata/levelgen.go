@@ -18,7 +18,7 @@ func NewWorld(rand *gmath.Rand) *World {
 		JumpSpeed:   10,
 		FuelUsage:   1.0,
 
-		Credits: 150,
+		Credits: 75,
 		Fuel:    75,
 		MaxFuel: 100,
 
@@ -26,6 +26,7 @@ func NewWorld(rand *gmath.Rand) *World {
 		MaxCargo: 40,
 
 		VesselDesign: &VesselDesign{
+			Faction:         FactionA,
 			Image:           assets.ImageVesselRaider,
 			MaxHP:           100,
 			MaxEnergy:       100,
@@ -49,6 +50,8 @@ func NewWorld(rand *gmath.Rand) *World {
 	planets[0].Faction = FactionA
 	planets[2].Faction = FactionB
 	planets[7].Faction = FactionC
+
+	planets[1].VesselsByFaction[FactionB] = 2
 
 	for _, p := range planets {
 		if p.Faction == FactionNone {

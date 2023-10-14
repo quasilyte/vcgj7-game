@@ -8,6 +8,8 @@ import (
 type VesselDesign struct {
 	Image resource.ImageID
 
+	Faction Faction
+
 	MaxHP     float64
 	MaxEnergy float64
 

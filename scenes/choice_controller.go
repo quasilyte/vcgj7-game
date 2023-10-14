@@ -56,7 +56,6 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 
 	c.runner = worldsim.NewRunner(c.state.World)
 	c.runner.Init(scene)
-	c.runner.EventChoiceSelected.Connect(nil, c.onChoiceSelected)
 	c.runner.EventStartBattle.Connect(nil, c.onBattleStart)
 	c.runner.EventGameOver.Connect(nil, c.onGameOver)
 
@@ -91,20 +90,28 @@ func (c *ChoiceController) selectChoice(i int) {
 		return
 	}
 	c.selectedChoice = c.choiceButtons[i].choice
-	c.choiceButtons[i].choice.OnSelected()
+
+	if c.selectedChoice.Mode != gamedata.ModeUnknown {
+		c.state.World.Player.Mode = c.selectedChoice.Mode
+	}
+
+	if c.selectedChoice.Time > 0 {
+		if !c.runner.AdvanceTime(c.selectedChoice.Time) {
+			c.state.World.Player.Mode = gamedata.ModeOrbiting
+			c.replaceChoices()
+			c.updateUI()
+			return
+		}
+	}
+
+	postMode := c.choiceButtons[i].choice.OnResolved()
+	c.state.World.Player.Mode = postMode
+	c.replaceChoices()
+	c.updateUI()
 }
 
 func (c *ChoiceController) onBattleStart(info worldsim.BattleInfo) {
 	c.scene.Context().ChangeScene(NewBattleController(c.state, info.ChallengeLevel, info.Enemy))
-}
-
-func (c *ChoiceController) onChoiceSelected(postMode gamedata.Mode) {
-	if c.selectedChoice.Time > 0 {
-		c.runner.AdvanceTime(c.selectedChoice.Time)
-	}
-	c.state.World.Player.Mode = postMode
-	c.replaceChoices()
-	c.updateUI()
 }
 
 func (c *ChoiceController) initUI() {

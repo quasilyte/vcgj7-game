@@ -15,6 +15,7 @@ const (
 	eventUnknown eventKind = iota
 
 	eventBattle
+	eventBattleInterrupt
 
 	eventFuelScavenge
 	eventMineralsHunt
@@ -34,8 +35,9 @@ func (r *Runner) afterBattleChoices() string {
 	if !reward.Victory {
 		r.choices = append(r.choices, Choice{
 			Text: "The great ranger's life has come to an end",
-			OnSelected: func() {
+			OnResolved: func() gamedata.Mode {
 				r.EventGameOver.Emit(false)
+				return 0
 			},
 		})
 		return "Your vessel was destroyed in battle."
@@ -43,12 +45,12 @@ func (r *Runner) afterBattleChoices() string {
 
 	r.choices = append(r.choices, Choice{
 		Text: "Done",
-		OnSelected: func() {
+		OnResolved: func() gamedata.Mode {
 			player.Experience += reward.Experience
 			player.Credits += reward.Credits
 			player.LoadCargo(reward.Cargo)
 			player.Fuel = gmath.ClampMax(player.Fuel+reward.Fuel, player.MaxFuel)
-			r.commitChoice(gamedata.ModeOrbiting)
+			return gamedata.ModeOrbiting
 		},
 	})
 
@@ -96,8 +98,8 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		}
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
-			OnSelected: func() {
-				r.commitChoice(gamedata.ModeOrbiting)
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeOrbiting
 			},
 		})
 		return strings.Join(lines, "\n")
@@ -123,7 +125,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		if player.Credits >= price {
 			r.choices = append(r.choices, Choice{
 				Text: "Buy this upgrade",
-				OnSelected: func() {
+				OnResolved: func() gamedata.Mode {
 					r.world.UpgradeRerollDelay = 0
 					r.world.NextUpgradeDelay = r.scene.Rand().FloatRange(30, 45)
 					player.Credits -= price
@@ -137,16 +139,16 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 					case gamedata.UpgradeJumpSpeed:
 						player.JumpSpeed += float64(r.scene.Rand().IntRange(15, 30))
 					}
-					r.commitChoice(gamedata.ModeDocked)
+					return gamedata.ModeDocked
 				},
 			})
 		}
 
 		r.choices = append(r.choices, Choice{
 			Text: "Leave lab",
-			OnSelected: func() {
+			OnResolved: func() gamedata.Mode {
 				r.world.NextUpgradeDelay = r.scene.Rand().FloatRange(2, 5)
-				r.commitChoice(gamedata.ModeDocked)
+				return gamedata.ModeDocked
 			},
 		})
 		lines := []string{
@@ -158,26 +160,31 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		}
 		return strings.Join(lines, "\n")
 
-	case eventBattle:
+	case eventBattle, eventBattleInterrupt:
 		r.choices = append(r.choices, Choice{
 			Text: "Fight!",
-			OnSelected: func() {
-				r.world.Player.Mode = gamedata.ModeAfterCombat
+			Mode: gamedata.ModeCombat,
+			OnResolved: func() gamedata.Mode {
+				planet.VesselsByFaction[event.enemy.Faction]--
 				r.EventStartBattle.Emit(BattleInfo{
 					Enemy:          event.enemy,
 					ChallengeLevel: 1,
 				})
+				return gamedata.ModeAfterCombat
 			},
 		})
+		if event.kind == eventBattleInterrupt {
+			return fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed))
+		}
 		return "This is a battle test."
 
 	case eventFuelScavenge:
 		fuelScavenged := r.scene.Rand().IntRange(3, 12)
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
-			OnSelected: func() {
+			OnResolved: func() gamedata.Mode {
 				player.Fuel = gmath.ClampMax(player.Fuel+fuelScavenged, player.MaxFuel)
-				r.commitChoice(gamedata.ModeOrbiting)
+				return gamedata.ModeOrbiting
 			},
 		})
 		if r.scene.Rand().Bool() {
@@ -203,7 +210,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		damaged := r.scene.Rand().Chance(0.4)
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
-			OnSelected: func() {
+			OnResolved: func() gamedata.Mode {
 				if r.scene.Rand().Chance(0.85) {
 					planet.MineralsDelay = r.scene.Rand().FloatRange(5, 50)
 					if r.scene.Rand().Chance(0.3) {
@@ -215,7 +222,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				}
 				player.Fuel = gmath.ClampMax(player.Fuel+fuelGained, player.MaxFuel)
 				player.LoadCargo(mineralsFound)
-				r.commitChoice(gamedata.ModeOrbiting)
+				return gamedata.ModeOrbiting
 			},
 		})
 		lines := make([]string, 0, 3)
@@ -239,18 +246,18 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		s := "The minerals are in demand here."
 		switch {
 		case planet.MineralDeposit < 50:
-			mineralsDemand = 1.3
+			mineralsDemand = 1.4
 			s = fmt.Sprintf("The minerals are in %s demand here.", colorizeText("high", colorYellow))
 		case planet.MineralDeposit > 100:
-			mineralsDemand = 0.8
+			mineralsDemand = 1.1
 			s = "The minerals have normal price here."
-		case planet.MineralDeposit > 250:
-			mineralsDemand = 0.5
+		case planet.MineralDeposit > 200:
+			mineralsDemand = 0.9
 			s = "The minerals have are not in demand here."
-		case planet.MineralDeposit > 500:
-			mineralsDemand = 0.3
+		case planet.MineralDeposit > 300:
+			mineralsDemand = 0.4
 			s = "The minerals have low price here."
-		case planet.MineralDeposit > 900:
+		case planet.MineralDeposit > 500:
 			mineralsDemand = 0.1
 			s = "The minerals have very low price here."
 		}
@@ -258,17 +265,17 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		totalCost := int(math.Ceil(float64(player.Cargo) * price * mineralsDemand))
 		r.choices = append(r.choices, Choice{
 			Text: "Accept deal",
-			OnSelected: func() {
+			OnResolved: func() gamedata.Mode {
 				planet.MineralDeposit += player.Cargo
 				player.Cargo = 0
 				player.Credits += totalCost
-				r.commitChoice(gamedata.ModeDocked)
+				return gamedata.ModeDocked
 			},
 		})
 		r.choices = append(r.choices, Choice{
 			Text: "Decline deal",
-			OnSelected: func() {
-				r.commitChoice(gamedata.ModeDocked)
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeDocked
 			},
 		})
 		return fmt.Sprintf("%s\n\nSell %d minerals for %d credits?", s, player.Cargo, totalCost)
@@ -289,10 +296,10 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		spent := bought * fuelPrice
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
-			OnSelected: func() {
+			OnResolved: func() gamedata.Mode {
 				player.Credits -= spent
 				player.Fuel += bought
-				r.commitChoice(gamedata.ModeDocked)
+				return gamedata.ModeDocked
 			},
 		})
 		return fmt.Sprintf("Bought %d fuel units for %d credits.", bought, spent)
