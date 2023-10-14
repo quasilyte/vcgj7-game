@@ -40,7 +40,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "PLAY", func() {
-		c.state.World = gamedata.NewWorld()
+		c.state.World = gamedata.NewWorld(scene.Rand())
 		scene.Context().ChangeScene(NewChoiceController(c.state))
 		// scene.Context().ChangeScene(NewBattleController(c.state))
 	}))

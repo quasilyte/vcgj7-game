@@ -1,6 +1,10 @@
 package gamedata
 
-func NewWorld() *World {
+import (
+	"github.com/quasilyte/gmath"
+)
+
+func NewWorld(rand *gmath.Rand) *World {
 	w := &World{}
 
 	planets := make([]*Planet, len(Planets))
@@ -14,6 +18,13 @@ func NewWorld() *World {
 	planets[0].Faction = FactionA
 	planets[2].Faction = FactionB
 	planets[7].Faction = FactionC
+
+	for _, p := range planets {
+		if p.Faction == FactionNone {
+			continue
+		}
+		p.MineralDeposit = rand.IntRange(5, 200)
+	}
 
 	w.Planets = planets
 

@@ -34,10 +34,26 @@ type Player struct {
 	MaxCargo   int
 }
 
+func (p *Player) FreeCargoSpace() int {
+	return p.MaxCargo - p.Cargo
+}
+
+func (p *Player) LoadCargo(amount int) int {
+	freeSpace := p.FreeCargoSpace()
+	if amount > freeSpace {
+		amount = freeSpace
+	}
+	p.Cargo += amount
+	return amount
+}
+
 type Planet struct {
 	Faction Faction
 
 	Info *PlanetInfo
+
+	MineralsDelay  float64
+	MineralDeposit int
 }
 
 type PlanetInfo struct {

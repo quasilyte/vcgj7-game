@@ -51,53 +51,6 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.scene = scene
 }
 
-func (r *Runner) generateEventChoices(event eventInfo) string {
-	player := r.world.Player
-
-	switch event.kind {
-	case eventFuelScavenge:
-		fuelScavenged := r.scene.Rand().IntRange(3, 12)
-		r.choices = append(r.choices, Choice{
-			Text: "Done",
-			OnSelected: func() {
-				player.Fuel = gmath.ClampMax(player.Fuel+fuelScavenged, player.MaxFuel)
-				r.commitChoice(gamedata.ModeOrbiting)
-			},
-		})
-		if r.scene.Rand().Bool() {
-			return fmt.Sprintf("%d fuel units acquired.", fuelScavenged)
-		}
-		return fmt.Sprintf("Scavenged %d fuel units.", fuelScavenged)
-
-	case eventBuyFuel:
-		fuelPrice := 3
-		if r.scene.Rand().Chance(0.3) {
-			fuelPrice = 2
-		}
-		maxSpent := 90
-		if maxSpent > player.Credits {
-			maxSpent = player.Credits
-		}
-		bought := maxSpent / fuelPrice
-		if player.Fuel+bought > player.MaxFuel {
-			bought = player.MaxFuel - player.Fuel
-		}
-		spent := bought * fuelPrice
-		r.choices = append(r.choices, Choice{
-			Text: "Done",
-			OnSelected: func() {
-				player.Credits -= spent
-				player.Fuel += bought
-				r.commitChoice(gamedata.ModeDocked)
-			},
-		})
-		return fmt.Sprintf("Bought %d fuel units for %d credits.", bought, spent)
-
-	default:
-		panic(fmt.Sprintf("unexpected event kind: %d", event.kind))
-	}
-}
-
 func (r *Runner) GenerateChoices() GeneratedChoices {
 	r.textLines = r.textLines[:0]
 	r.choices = r.choices[:0]
@@ -139,14 +92,30 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
-	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+	if player.Mode == gamedata.ModeDocked {
 		canJump = false
+	}
+
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
 		if player.Credits > 0 && player.Fuel < player.MaxFuel {
 			r.choices = append(r.choices, Choice{
 				Time: 2,
 				Text: "Buy fuel",
 				OnSelected: func() {
 					r.eventInfo = eventInfo{kind: eventBuyFuel}
+					r.commitChoice(gamedata.ModeDocked)
+				},
+			})
+		}
+	}
+
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+		if player.Cargo > 0 && r.scene.Rand().Chance(0.9) {
+			r.choices = append(r.choices, Choice{
+				Time: 2,
+				Text: "Sell minerals",
+				OnSelected: func() {
+					r.eventInfo = eventInfo{kind: eventSellMinerals}
 					r.commitChoice(gamedata.ModeDocked)
 				},
 			})
@@ -203,6 +172,19 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		})
 	}
 
+	if len(r.choices) < MaxChoices && player.Cargo < player.MaxCargo {
+		if planet.MineralsDelay == 0 && r.scene.Rand().Chance(0.7) {
+			r.choices = append(r.choices, Choice{
+				Time: 7,
+				Text: "Hunt asteroids for minerals",
+				OnSelected: func() {
+					r.eventInfo = eventInfo{kind: eventMineralsHunt}
+					r.commitChoice(gamedata.ModeScavenging)
+				},
+			})
+		}
+	}
+
 	if len(r.choices) < MaxChoices {
 		switch r.world.Player.Mode {
 		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
@@ -242,18 +224,4 @@ func (r *Runner) commitChoice(m gamedata.Mode) {
 func (r *Runner) commitChoiceExtra(m, postMode gamedata.Mode) {
 	r.world.Player.Mode = m
 	r.EventChoiceSelected.Emit(postMode)
-}
-
-func (r *Runner) AdvanceTime(hours int) {
-	for i := 0; i < hours; i++ {
-		r.world.GameTime++
-		// One in-game hour is simulated during 1 second in delta time term.
-		for j := 0; j < 5; j++ {
-			r.updateWorld(0.2)
-		}
-	}
-}
-
-func (r *Runner) updateWorld(delta float64) {
-
 }

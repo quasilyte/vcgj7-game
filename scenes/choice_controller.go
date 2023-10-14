@@ -123,6 +123,7 @@ func (c *ChoiceController) initUI() {
 	textPanelText := widget.NewText(
 		widget.TextOpts.Text("", assets.BitmapFont1, styles.ButtonTextColor),
 		widget.TextOpts.ProcessBBCode(true),
+		widget.TextOpts.MaxWidth(450),
 	)
 	c.textPanelText = textPanelText
 	textPanel.AddChild(textPanelText)
