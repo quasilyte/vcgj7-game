@@ -57,9 +57,15 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 	c.runner = worldsim.NewRunner(c.state.World)
 	c.runner.Init(scene)
 	c.runner.EventChoiceSelected.Connect(nil, c.onChoiceSelected)
+	c.runner.EventStartBattle.Connect(nil, c.onBattleStart)
+	c.runner.EventGameOver.Connect(nil, c.onGameOver)
 
 	c.replaceChoices()
 	c.updateUI()
+}
+
+func (c *ChoiceController) onGameOver(victory bool) {
+	c.scene.Context().ChangeScene(NewMainMenuController(c.state))
 }
 
 func (c *ChoiceController) replaceChoices() {
@@ -86,6 +92,10 @@ func (c *ChoiceController) selectChoice(i int) {
 	}
 	c.selectedChoice = c.choiceButtons[i].choice
 	c.choiceButtons[i].choice.OnSelected()
+}
+
+func (c *ChoiceController) onBattleStart(info worldsim.BattleInfo) {
+	c.scene.Context().ChangeScene(NewBattleController(c.state, info.ChallengeLevel, info.Enemy))
 }
 
 func (c *ChoiceController) onChoiceSelected(postMode gamedata.Mode) {

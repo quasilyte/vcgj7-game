@@ -2,6 +2,7 @@ package gamedata
 
 import (
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/vcgj7-game/assets"
 )
 
 func NewWorld(rand *gmath.Rand) *World {
@@ -45,6 +46,18 @@ func NewWorld(rand *gmath.Rand) *World {
 
 		Cargo:    0,
 		MaxCargo: 40,
+
+		VesselDesign: &VesselDesign{
+			Image:           assets.ImageVesselRaider,
+			MaxHP:           100,
+			MaxEnergy:       100,
+			EnergyRegen:     2.5,
+			MaxSpeed:        200,
+			Acceleration:    140,
+			RotationSpeed:   4,
+			MainWeapon:      FindWeaponDesign("Ion Cannon"),
+			SecondaryWeapon: FindWeaponDesign("Missile Launcher"),
+		},
 	}
 
 	return w

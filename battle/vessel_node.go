@@ -4,6 +4,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/physics"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
@@ -28,6 +29,8 @@ type vesselNode struct {
 	pilotOrders vesselPilotOrders
 
 	wrap posWrapper
+
+	EventDestroyed gsignal.Event[gsignal.Void]
 }
 
 type vesselPilotOrders struct {
@@ -83,6 +86,7 @@ func (v *vesselNode) Destroy() {
 	// e := effects.NewExplosion(v.body.Pos)
 	// v.scene.AddObject(e)
 
+	v.EventDestroyed.Emit(gsignal.Void{})
 	v.Dispose()
 }
 

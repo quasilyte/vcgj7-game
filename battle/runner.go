@@ -6,6 +6,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
@@ -15,12 +16,34 @@ type Runner struct {
 
 	pilots []pilot
 
+	player *gamedata.Player
+
 	input *input.Handler
+
+	playerVessel *vesselNode
+	enemyVessel  *vesselNode
+
+	enemyDesign *gamedata.VesselDesign
+
+	EventBattleOver gsignal.Event[Results]
 }
 
-func NewRunner(h *input.Handler) *Runner {
+type Results struct {
+	Victory bool
+	HP      float64
+}
+
+type RunnerConfig struct {
+	Input  *input.Handler
+	Player *gamedata.Player
+	Enemy  *gamedata.VesselDesign
+}
+
+func NewRunner(config RunnerConfig) *Runner {
 	return &Runner{
-		input: h,
+		input:       config.Input,
+		enemyDesign: config.Enemy,
+		player:      config.Player,
 	}
 }
 
@@ -37,47 +60,32 @@ func (r *Runner) Init(scene *ge.Scene) {
 	scene.AddGraphicsBelow(bg, 1)
 
 	v := newVesselNode(vesselNodeConfig{
-		HP: 1,
-		Design: &gamedata.VesselDesign{
-			Image:           assets.ImageVesselRaider,
-			MaxHP:           100,
-			MaxEnergy:       100,
-			EnergyRegen:     2.5,
-			MaxSpeed:        200,
-			Acceleration:    140,
-			RotationSpeed:   4,
-			MainWeapon:      gamedata.FindWeaponDesign("Ion Cannon"),
-			SecondaryWeapon: gamedata.FindWeaponDesign("Missile Launcher"),
-		},
+		HP:     r.player.VesselHP,
+		Design: r.player.VesselDesign,
 	})
-	v.body.Pos = (gmath.Vec{X: 1920 / 4, Y: 1080 / 4}).Sub(gmath.Vec{X: 200})
+	v.body.Pos = (gmath.Vec{X: 1920 / 4, Y: 1080 / 4}).Sub(gmath.Vec{X: 240})
 	v.body.LayerMask = collisionPlayer1
+	v.body.Rotation = 0.2
 	v.state.CollisionLayer = v.body.LayerMask
+	v.EventDestroyed.Connect(nil, r.onDefeat)
 	scene.AddObject(v)
+	r.playerVessel = v
 
 	p := newHumanPilot(r.input, v)
 	r.pilots = append(r.pilots, p)
 
 	{
 		v2 := newVesselNode(vesselNodeConfig{
-			HP: 1,
-			Design: &gamedata.VesselDesign{
-				Image:           assets.ImageVesselMarauder,
-				MaxHP:           150,
-				MaxEnergy:       120,
-				EnergyRegen:     3.0,
-				MaxSpeed:        180,
-				Acceleration:    90,
-				RotationSpeed:   2.5,
-				MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
-				SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
-			},
+			HP:     1,
+			Design: r.enemyDesign,
 		})
 		v2.body.LayerMask = collisionPlayer2
-		v2.body.Pos = (gmath.Vec{X: 1920 / 4, Y: 1080 / 4}).Add(gmath.Vec{X: 200})
-		v2.body.Rotation = -math.Pi
+		v2.body.Pos = (gmath.Vec{X: 1920 / 4, Y: 1080 / 4}).Add(gmath.Vec{X: 240})
+		v2.body.Rotation = -math.Pi + 0.2
 		v2.state.CollisionLayer = v2.body.LayerMask
+		v2.EventDestroyed.Connect(nil, r.onVictory)
 		scene.AddObject(v2)
+		r.enemyVessel = v2
 
 		v2.state.enemy = v
 		v.state.enemy = v2
@@ -100,6 +108,21 @@ func (r *Runner) Init(scene *ge.Scene) {
 		hpBar := newValueBar(pos, &v.state.energy, v.state.design.MaxEnergy, false)
 		scene.AddObject(hpBar)
 	}
+}
+
+func (r *Runner) onDefeat(gsignal.Void) {
+	r.enemyVessel.body.LayerMask = 0
+	r.EventBattleOver.Emit(Results{
+		Victory: false,
+	})
+}
+
+func (r *Runner) onVictory(gsignal.Void) {
+	r.playerVessel.body.LayerMask = 0
+	r.EventBattleOver.Emit(Results{
+		Victory: true,
+		HP:      r.playerVessel.state.HealthPercentage(),
+	})
 }
 
 func (r *Runner) Update(delta float64) {

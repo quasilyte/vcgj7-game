@@ -4,6 +4,15 @@ import (
 	"github.com/quasilyte/gmath"
 )
 
+type BattleRewards struct {
+	Victory bool
+
+	Experience int
+	Cargo      int
+	Credits    int
+	Fuel       int
+}
+
 type World struct {
 	Player *Player
 
@@ -16,6 +25,8 @@ type Player struct {
 	Planet *Planet
 
 	Faction Faction
+
+	BattleRewards BattleRewards
 
 	Mode Mode
 

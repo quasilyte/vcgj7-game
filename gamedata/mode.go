@@ -7,6 +7,8 @@ const (
 	ModeUnknown Mode = iota
 	ModeJump
 	ModeOrbiting
+	ModeCombat
+	ModeAfterCombat
 	ModeScavenging
 	ModeJustEntered
 	ModeDocked

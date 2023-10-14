@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
+	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
@@ -21,10 +22,19 @@ type Runner struct {
 	eventInfo eventInfo
 
 	EventChoiceSelected gsignal.Event[gamedata.Mode]
+	EventStartBattle    gsignal.Event[BattleInfo]
+	EventGameOver       gsignal.Event[bool]
+}
+
+type BattleInfo struct {
+	ChallengeLevel int
+	Enemy          *gamedata.VesselDesign
 }
 
 type eventInfo struct {
 	kind eventKind
+
+	enemy *gamedata.VesselDesign
 }
 
 type jumpOption struct {
@@ -56,6 +66,18 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	r.choices = r.choices[:0]
 	r.jumpOptions = r.jumpOptions[:0]
 
+	player := r.world.Player
+	planet := r.world.Player.Planet
+
+	if player.Mode == gamedata.ModeAfterCombat {
+		player.Mode = gamedata.ModeOrbiting
+		s := r.afterBattleChoices()
+		return GeneratedChoices{
+			Choices: r.choices,
+			Text:    s,
+		}
+	}
+
 	event := r.eventInfo
 	r.eventInfo = eventInfo{}
 	if event.kind != eventUnknown {
@@ -65,9 +87,6 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			Text:    s,
 		}
 	}
-
-	player := r.world.Player
-	planet := r.world.Player.Planet
 
 	r.textLines = append(r.textLines, genModeText(r.scene, r.world))
 
@@ -192,6 +211,31 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			Text: "Take off",
 			OnSelected: func() {
 				r.commitChoice(gamedata.ModeOrbiting)
+			},
+		})
+	}
+
+	if len(r.choices) < MaxChoices && player.Mode != gamedata.ModeDocked {
+		r.choices = append(r.choices, Choice{
+			Time: 1,
+			Text: "Combat test",
+			OnSelected: func() {
+				r.eventInfo = eventInfo{
+					kind: eventBattle,
+					enemy: &gamedata.VesselDesign{
+						Image: assets.ImageVesselMarauder,
+						// MaxHP:           150,
+						MaxHP:           10,
+						MaxEnergy:       120,
+						EnergyRegen:     3.0,
+						MaxSpeed:        180,
+						Acceleration:    90,
+						RotationSpeed:   2.5,
+						MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
+						SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
+					},
+				}
+				r.commitChoice(gamedata.ModeCombat)
 			},
 		})
 	}

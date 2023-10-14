@@ -14,6 +14,8 @@ type eventKind int
 const (
 	eventUnknown eventKind = iota
 
+	eventBattle
+
 	eventFuelScavenge
 	eventMineralsHunt
 
@@ -21,11 +23,69 @@ const (
 	eventSellMinerals
 )
 
+func (r *Runner) afterBattleChoices() string {
+	player := r.world.Player
+
+	reward := player.BattleRewards
+	player.BattleRewards = gamedata.BattleRewards{}
+
+	if !reward.Victory {
+		r.choices = append(r.choices, Choice{
+			Text: "The great ranger's life has come to an end",
+			OnSelected: func() {
+				r.EventGameOver.Emit(false)
+			},
+		})
+		return "Your vessel was destroyed in battle."
+	}
+
+	r.choices = append(r.choices, Choice{
+		Text: "Done",
+		OnSelected: func() {
+			player.Experience += reward.Experience
+			player.Credits = reward.Credits
+			player.LoadCargo(reward.Cargo)
+			player.Fuel = gmath.ClampMax(player.Fuel+reward.Fuel, player.MaxFuel)
+			r.commitChoice(gamedata.ModeOrbiting)
+		},
+	})
+
+	lines := make([]string, 0, 5)
+
+	lines = append(lines, "You are victorious!")
+	lines = append(lines, "")
+	lines = append(lines, fmt.Sprintf("Earned %d combat experience.", reward.Experience))
+	if reward.Credits != 0 {
+		lines = append(lines, fmt.Sprintf("Found %d credits equivalent.", reward.Credits))
+	}
+	if reward.Cargo != 0 {
+		lines = append(lines, fmt.Sprintf("Scavenged %d resource units.", reward.Cargo))
+	}
+	if reward.Fuel != 0 {
+		lines = append(lines, fmt.Sprintf("Recovered %d fuel units.", reward.Fuel))
+	}
+
+	return strings.Join(lines, "\n")
+}
+
 func (r *Runner) generateEventChoices(event eventInfo) string {
 	player := r.world.Player
 	planet := player.Planet
 
 	switch event.kind {
+	case eventBattle:
+		r.choices = append(r.choices, Choice{
+			Text: "Fight!",
+			OnSelected: func() {
+				r.world.Player.Mode = gamedata.ModeAfterCombat
+				r.EventStartBattle.Emit(BattleInfo{
+					Enemy:          event.enemy,
+					ChallengeLevel: 1,
+				})
+			},
+		})
+		return "This is a battle test."
+
 	case eventFuelScavenge:
 		fuelScavenged := r.scene.Rand().IntRange(3, 12)
 		r.choices = append(r.choices, Choice{

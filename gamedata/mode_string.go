@@ -11,13 +11,16 @@ func _() {
 	_ = x[ModeUnknown-0]
 	_ = x[ModeJump-1]
 	_ = x[ModeOrbiting-2]
-	_ = x[ModeScavenging-3]
-	_ = x[ModeJustEntered-4]
+	_ = x[ModeCombat-3]
+	_ = x[ModeAfterCombat-4]
+	_ = x[ModeScavenging-5]
+	_ = x[ModeJustEntered-6]
+	_ = x[ModeDocked-7]
 }
 
-const _Mode_name = "UnknownJumpOrbitingScavengingJustEntered"
+const _Mode_name = "UnknownJumpOrbitingCombatAfterCombatScavengingJustEnteredDocked"
 
-var _Mode_index = [...]uint8{0, 7, 11, 19, 29, 40}
+var _Mode_index = [...]uint8{0, 7, 11, 19, 25, 36, 46, 57, 63}
 
 func (i Mode) String() string {
 	if i < 0 || i >= Mode(len(_Mode_index)-1) {
