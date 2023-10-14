@@ -14,7 +14,8 @@ func NewWorld() *World {
 	w.Planets = planets
 
 	w.Player = &Player{
-		Planet: planets[0],
+		Planet:   planets[0],
+		VesselHP: 1.0,
 	}
 
 	return w

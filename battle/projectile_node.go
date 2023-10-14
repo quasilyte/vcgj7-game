@@ -86,6 +86,9 @@ func (p *projectileNode) Destroy(impact bool) {
 		e := newEffectNode(p.body.Pos, normalEffectLayer, p.weapon.Explosion)
 		p.scene.AddObject(e)
 		e.anim.SetSecondsPerFrame(0.035)
+		if p.weapon.ExplosionSound != 0 {
+			playSound(p.scene, p.weapon.ExplosionSound)
+		}
 	}
 
 	p.Dispose()

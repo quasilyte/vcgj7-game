@@ -26,7 +26,7 @@ type vesselState struct {
 
 func (state *vesselState) Init() {
 	state.hp = state.design.MaxHP
-	state.energy = state.design.MaxEnergy
+	state.energy = state.design.MaxEnergy * 0.5
 
 	state.energyRegenThreshold = state.design.MaxEnergy * 0.5
 

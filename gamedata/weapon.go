@@ -20,7 +20,8 @@ type WeaponDesign struct {
 	ProjectileSize  float64
 	ProjectileImage resource.ImageID
 
-	Explosion resource.ImageID
+	Explosion      resource.ImageID
+	ExplosionSound resource.AudioID
 
 	EnergyCost       float64
 	EnergyConversion float64
@@ -61,5 +62,6 @@ var Weapons = []*WeaponDesign{
 		ProjectileImage:  assets.ImageProjectileIonCannon,
 		ProjectileSize:   8,
 		Explosion:        assets.ImageIonCannonImpact,
+		ExplosionSound:   assets.AudioIonCannonImpact,
 	},
 }

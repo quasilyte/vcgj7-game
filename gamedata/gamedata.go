@@ -12,6 +12,7 @@ type Player struct {
 	Planet *Planet
 
 	VesselDesign *VesselDesign
+	VesselHP     float64 // percentage
 
 	Experience int
 	Fuel       int

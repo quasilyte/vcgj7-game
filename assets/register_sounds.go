@@ -7,7 +7,9 @@ import (
 
 func registerSoundResources(ctx *ge.Context) {
 	soundResources := map[resource.AudioID]resource.AudioInfo{
-		AudioIonCannon1:  {Path: "audio/ion_cannon1.wav"},
+		AudioIonCannon1:      {Path: "audio/ion_cannon1.wav"},
+		AudioIonCannonImpact: {Path: "audio/ion_cannon_impact.wav"},
+
 		AudioPulseLaser1: {Path: "audio/pulse_laser1.wav"},
 		AudioPulseLaser2: {Path: "audio/pulse_laser2.wav"},
 		AudioPulseLaser3: {Path: "audio/pulse_laser3.wav"},
@@ -32,6 +34,7 @@ const (
 	AudioNone resource.AudioID = iota
 
 	AudioIonCannon1
+	AudioIonCannonImpact
 
 	AudioPulseLaser1
 	AudioPulseLaser2

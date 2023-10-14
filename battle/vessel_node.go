@@ -7,11 +7,18 @@ import (
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
+type vesselNodeConfig struct {
+	HP     float64
+	Design *gamedata.VesselDesign
+}
+
 type vesselNode struct {
 	state vesselState
 
 	scene  *ge.Scene
 	sprite *ge.Sprite
+
+	config vesselNodeConfig
 
 	body physics.Body
 
@@ -28,8 +35,11 @@ type vesselPilotOrders struct {
 	activateSpecial bool
 }
 
-func newVesselNode() *vesselNode {
-	v := &vesselNode{}
+func newVesselNode(config vesselNodeConfig) *vesselNode {
+	v := &vesselNode{
+		config: config,
+	}
+	v.state.design = config.Design
 	v.state.Pos = &v.body.Pos
 	v.state.Rotation = &v.body.Rotation
 	return v
@@ -45,6 +55,7 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 	v.scene = scene
 
 	state.Init()
+	v.state.hp = v.state.design.MaxHP * v.config.HP
 
 	v.sprite = scene.NewSprite(v.state.design.Image)
 	v.sprite.Pos.Base = &v.body.Pos
