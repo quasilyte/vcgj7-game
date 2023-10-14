@@ -25,6 +25,7 @@ type WeaponDesign struct {
 
 	EnergyCost       float64
 	EnergyConversion float64
+	Blockable        bool
 }
 
 func FindWeaponDesign(name string) *WeaponDesign {
@@ -44,10 +45,11 @@ var Weapons = []*WeaponDesign{
 		Reload:           0.35,
 		EnergyCost:       6,
 		EnergyConversion: 2.0,
-		Range:            250,
+		Range:            350,
 		ProjectileSpeed:  280,
 		ProjectileImage:  assets.ImageProjectilePulseLaser,
 		ProjectileSize:   6,
+		Blockable:        true,
 	},
 
 	{
@@ -57,11 +59,12 @@ var Weapons = []*WeaponDesign{
 		Reload:           0.55,
 		EnergyCost:       5,
 		EnergyConversion: 0.5,
-		Range:            300,
+		Range:            450,
 		ProjectileSpeed:  320,
 		ProjectileImage:  assets.ImageProjectileIonCannon,
 		ProjectileSize:   8,
 		Explosion:        assets.ImageIonCannonImpact,
 		ExplosionSound:   assets.AudioIonCannonImpact,
+		Blockable:        true,
 	},
 }

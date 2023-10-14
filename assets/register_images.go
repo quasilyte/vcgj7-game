@@ -21,6 +21,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageBattleHUD:       {Path: "image/battle_hud.png"},
 		ImageBattleBarHP:     {Path: "image/hp_bar.png"},
 		ImageBattleBarEnergy: {Path: "image/energy_bar.png"},
+		ImageBattleBg:        {Path: "image/combat_bg.png"},
 
 		ImageEnergyShield: {Path: "image/energy_shield.png"},
 
@@ -54,6 +55,7 @@ const (
 	ImageBattleHUD
 	ImageBattleBarHP
 	ImageBattleBarEnergy
+	ImageBattleBg
 
 	ImageEnergyShield
 

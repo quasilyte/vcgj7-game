@@ -31,6 +31,11 @@ func (r *Runner) IsDisposed() bool {
 func (r *Runner) Init(scene *ge.Scene) {
 	r.scene = scene
 
+	bg := scene.NewSprite(assets.ImageBattleBg)
+	bg.Pos.Offset.X = 210
+	bg.Centered = false
+	scene.AddGraphicsBelow(bg, 1)
+
 	v := newVesselNode(vesselNodeConfig{
 		HP: 1,
 		Design: &gamedata.VesselDesign{

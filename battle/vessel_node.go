@@ -135,10 +135,12 @@ func (v *vesselNode) Update(delta float64) {
 		switch obj := collision.Body.Object.(type) {
 		case *projectileNode:
 			consumed := false
-			projectileAngle := v.body.Pos.AngleToPoint(obj.body.Pos).Normalized()
-			projectileAngleDelta := v.state.shieldRotation.Normalized().AngleDelta(projectileAngle)
-			if projectileAngleDelta.Abs() < 1 {
-				consumed = true
+			if obj.weapon.Blockable {
+				projectileAngle := v.body.Pos.AngleToPoint(obj.body.Pos).Normalized()
+				projectileAngleDelta := v.state.shieldRotation.Normalized().AngleDelta(projectileAngle)
+				if projectileAngleDelta.Abs() < 1 {
+					consumed = true
+				}
 			}
 			obj.Destroy(!consumed)
 			if consumed {
