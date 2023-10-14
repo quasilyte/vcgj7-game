@@ -19,16 +19,18 @@ type projectileNode struct {
 	hp       float64
 	velocity gmath.Vec
 
-	body physics.Body
+	target *gmath.Vec
+	body   physics.Body
 
 	sprite *scalableSprite
 	scene  *ge.Scene
 }
 
-func newProjectileNode(collisionLayer uint16, weapon *gamedata.WeaponDesign, pos gmath.Vec, rotation gmath.Rad) *projectileNode {
+func newProjectileNode(collisionLayer uint16, weapon *gamedata.WeaponDesign, pos gmath.Vec, rotation gmath.Rad, target *gmath.Vec) *projectileNode {
 	p := &projectileNode{
 		collisionLayer: collisionLayer,
 		weapon:         weapon,
+		target:         target,
 	}
 	p.body.Pos = pos
 	p.body.Rotation = rotation
@@ -61,19 +63,22 @@ func (p *projectileNode) Update(delta float64) {
 		return
 	}
 
-	// accel := p.seek()
-	// p.velocity = p.velocity.Add(accel.Mulf(delta)).ClampLen(p.design.projectileSpeed)
-	// p.body.Rotation = p.velocity.Angle()
-	// p.body.Pos = p.body.Pos.Add(p.velocity.Mulf(delta))
-	p.body.Pos = p.body.Pos.Add(p.velocity.Mulf(delta))
+	if p.weapon.Homing == 0 {
+		p.body.Pos = p.body.Pos.Add(p.velocity.Mulf(delta))
+	} else {
+		accel := p.seek()
+		p.velocity = p.velocity.Add(accel.Mulf(delta)).ClampLen(p.weapon.ProjectileSpeed)
+		p.body.Rotation = p.velocity.Angle()
+		p.body.Pos = p.body.Pos.Add(p.velocity.Mulf(delta))
+	}
 
 	p.wrap.Tick(delta, &p.body.Pos)
 }
 
-// func (p *rocketProjectile) seek() gmath.Vec {
-// 	dst := p.target.Sub(p.body.Pos).Normalized().Mulf(p.design.projectileSpeed)
-// 	return dst.Sub(p.velocity).Normalized().Mulf(p.design.homingSteer)
-// }
+func (p *projectileNode) seek() gmath.Vec {
+	dst := p.target.Sub(p.body.Pos).Normalized().Mulf(p.weapon.ProjectileSpeed)
+	return dst.Sub(p.velocity).Normalized().Mulf(p.weapon.Homing)
+}
 
 func (p *projectileNode) Dispose() {
 	p.sprite.Dispose()

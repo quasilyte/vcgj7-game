@@ -103,7 +103,11 @@ func (p *dummyComputerPilot) attack(delta float64) {
 	maxAngleDelta *= p.scene.Rand().FloatRange(0.8, 1.4)
 	if p.targetAngleDelta.Abs() <= maxAngleDelta {
 		// TODO: don't fire if facing the shield.
-		p.vessel.ActivateWeaponOrder()
+		if p.vessel.state.CanFireSecondary() && p.scene.Rand().Chance(0.4) {
+			p.vessel.ActivateSpecialOrder()
+		} else {
+			p.vessel.ActivateWeaponOrder()
+		}
 	}
 }
 

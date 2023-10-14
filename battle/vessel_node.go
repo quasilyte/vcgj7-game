@@ -75,6 +75,7 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 
 func (v *vesselNode) Dispose() {
 	v.sprite.Dispose()
+	v.shield.Dispose()
 	v.body.Dispose()
 }
 
@@ -166,9 +167,13 @@ func (v *vesselNode) Update(delta float64) {
 	if pilotOrders.activateWeapon {
 		if v.state.CanFire() {
 			v.state.Fire()
-			p := newProjectileNode(enemyCollisionMask(v.state.CollisionLayer), v.state.design.MainWeapon, v.body.Pos, v.body.Rotation)
-			v.scene.AddObject(p)
-			playSound(v.scene, v.state.weapon.design.FireSound)
+			v.createProjectiles(v.state.design.MainWeapon)
+		}
+	}
+	if pilotOrders.activateSpecial {
+		if v.state.CanFireSecondary() {
+			v.state.FireSecondary()
+			v.createProjectiles(v.state.design.SecondaryWeapon)
 		}
 	}
 
@@ -192,6 +197,26 @@ func (v *vesselNode) Update(delta float64) {
 	v.applyMovement(delta, pilotOrders)
 
 	v.wrap.Tick(delta, &v.body.Pos)
+}
+
+func (v *vesselNode) createProjectiles(weapon *gamedata.WeaponDesign) {
+	playSound(v.scene, weapon.FireSound)
+
+	targetPos := &v.state.enemy.body.Pos
+	for i := 0; i < weapon.BurstSize; i++ {
+		firePos := v.body.Pos
+		offset := weapon.FireOffsets[i]
+		if !offset.IsZero() {
+			// Translate the offset.
+			translatedOffset := offset.Rotated(v.body.Rotation)
+			firePos = firePos.Add(translatedOffset)
+		}
+		projectileRotation := v.body.Rotation
+		projectileRotation += weapon.ProjectileRotationDeltas[i]
+		p := newProjectileNode(enemyCollisionMask(v.state.CollisionLayer), weapon, firePos, projectileRotation, targetPos)
+		v.scene.AddObject(p)
+	}
+
 }
 
 func (v *vesselNode) applyMovement(delta float64, orders vesselPilotOrders) {

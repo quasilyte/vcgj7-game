@@ -25,6 +25,9 @@ func (p *humanPilot) Update(delta float64) {
 	if p.input.ActionIsPressed(controls.ActionFire) {
 		p.vessel.ActivateWeaponOrder()
 	}
+	if p.input.ActionIsPressed(controls.ActionFireSpecial) {
+		p.vessel.ActivateSpecialOrder()
+	}
 	if p.input.ActionIsPressed(controls.ActionForward) {
 		p.vessel.ForwardOrder()
 	}

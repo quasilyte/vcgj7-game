@@ -21,7 +21,8 @@ type vesselState struct {
 	energy               float64
 	energyRegenThreshold float64
 
-	weapon *weapon
+	weapon          *weapon
+	secondaryWeapon *weapon
 
 	design *gamedata.VesselDesign
 }
@@ -37,11 +38,20 @@ func (state *vesselState) Init() {
 			design: state.design.MainWeapon,
 		}
 	}
+	if state.design.SecondaryWeapon != nil {
+		state.secondaryWeapon = &weapon{
+			design: state.design.SecondaryWeapon,
+			reload: 2,
+		}
+	}
 }
 
 func (state *vesselState) Tick(delta float64) {
 	if state.weapon != nil {
 		state.weapon.Tick(delta)
+	}
+	if state.secondaryWeapon != nil {
+		state.secondaryWeapon.Tick(delta)
 	}
 
 	if state.energy < state.energyRegenThreshold {
@@ -49,6 +59,16 @@ func (state *vesselState) Tick(delta float64) {
 	}
 
 	state.shieldRotation = state.shieldRotation.RotatedTowards(*state.Rotation, gmath.Rad(2*delta))
+}
+
+func (state *vesselState) CanFireSecondary() bool {
+	if state.secondaryWeapon == nil {
+		return false
+	}
+	if state.secondaryWeapon.reload > 0 {
+		return false
+	}
+	return true
 }
 
 func (state *vesselState) CanFire() bool {
@@ -62,6 +82,10 @@ func (state *vesselState) CanFire() bool {
 		return false
 	}
 	return true
+}
+
+func (state *vesselState) FireSecondary() {
+	state.secondaryWeapon.reload = state.secondaryWeapon.design.Reload
 }
 
 func (state *vesselState) Fire() {

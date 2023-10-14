@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	resource "github.com/quasilyte/ebitengine-resource"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/assets"
 )
 
@@ -15,10 +16,16 @@ type WeaponDesign struct {
 	Damage float64
 	Reload float64
 
+	Homing float64
+
 	Range           float64
 	ProjectileSpeed float64
 	ProjectileSize  float64
 	ProjectileImage resource.ImageID
+
+	BurstSize                int
+	FireOffsets              []gmath.Vec
+	ProjectileRotationDeltas []gmath.Rad
 
 	Explosion      resource.ImageID
 	ExplosionSound resource.AudioID
@@ -42,22 +49,26 @@ var Weapons = []*WeaponDesign{
 		Name:             "Pulse Laser",
 		FireSound:        assets.AudioPulseLaser1,
 		Damage:           8,
-		Reload:           0.35,
-		EnergyCost:       6,
+		Reload:           0.25,
+		EnergyCost:       5,
 		EnergyConversion: 2.0,
 		Range:            350,
 		ProjectileSpeed:  280,
 		ProjectileImage:  assets.ImageProjectilePulseLaser,
 		ProjectileSize:   6,
 		Blockable:        true,
+		BurstSize:        1,
+
+		FireOffsets:              []gmath.Vec{{}},
+		ProjectileRotationDeltas: []gmath.Rad{0},
 	},
 
 	{
 		Name:             "Ion Cannon",
 		FireSound:        assets.AudioIonCannon1,
 		Damage:           10,
-		Reload:           0.55,
-		EnergyCost:       5,
+		Reload:           0.4,
+		EnergyCost:       4,
 		EnergyConversion: 0.5,
 		Range:            450,
 		ProjectileSpeed:  320,
@@ -66,5 +77,58 @@ var Weapons = []*WeaponDesign{
 		Explosion:        assets.ImageIonCannonImpact,
 		ExplosionSound:   assets.AudioIonCannonImpact,
 		Blockable:        true,
+		BurstSize:        1,
+
+		FireOffsets:              []gmath.Vec{{}},
+		ProjectileRotationDeltas: []gmath.Rad{0},
+	},
+
+	{
+		Name:            "Missile Launcher",
+		FireSound:       assets.AudioMissile1,
+		Damage:          20,
+		Reload:          3.5,
+		Range:           700,
+		ProjectileSpeed: 250,
+		ProjectileImage: assets.ImageProjectileMissile,
+		ProjectileSize:  10,
+		Explosion:       assets.ImageMissileImpact,
+		ExplosionSound:  assets.AudioExplosion1,
+		BurstSize:       3,
+
+		FireOffsets: []gmath.Vec{
+			{Y: -8},
+			{},
+			{Y: +8},
+		},
+		ProjectileRotationDeltas: []gmath.Rad{
+			-0.25,
+			0,
+			+0.25,
+		},
+	},
+
+	{
+		Name:            "Homing Missile Launcher",
+		FireSound:       assets.AudioMissile1,
+		Damage:          15,
+		Reload:          3.5,
+		Range:           600,
+		ProjectileSpeed: 230,
+		ProjectileImage: assets.ImageProjectileHomingMissile,
+		ProjectileSize:  10,
+		Explosion:       assets.ImageMissileImpact,
+		ExplosionSound:  assets.AudioExplosion1,
+		BurstSize:       2,
+		Homing:          90,
+
+		FireOffsets: []gmath.Vec{
+			{Y: -8},
+			{Y: +8},
+		},
+		ProjectileRotationDeltas: []gmath.Rad{
+			-0.3,
+			+0.3,
+		},
 	},
 }

@@ -228,7 +228,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			} else {
 				r.choices = append(r.choices, Choice{
 					Time: 5,
-					Text: "Wait.",
+					Text: "Wait",
 					OnSelected: func() {
 						r.commitChoice(gamedata.ModeOrbiting)
 					},

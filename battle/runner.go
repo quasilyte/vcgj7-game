@@ -39,14 +39,15 @@ func (r *Runner) Init(scene *ge.Scene) {
 	v := newVesselNode(vesselNodeConfig{
 		HP: 1,
 		Design: &gamedata.VesselDesign{
-			Image:         assets.ImageVesselRaider,
-			MaxHP:         100,
-			MaxEnergy:     100,
-			EnergyRegen:   3.0,
-			MaxSpeed:      200,
-			Acceleration:  140,
-			RotationSpeed: 4,
-			MainWeapon:    gamedata.FindWeaponDesign("Ion Cannon"),
+			Image:           assets.ImageVesselRaider,
+			MaxHP:           100,
+			MaxEnergy:       100,
+			EnergyRegen:     2.5,
+			MaxSpeed:        200,
+			Acceleration:    140,
+			RotationSpeed:   4,
+			MainWeapon:      gamedata.FindWeaponDesign("Ion Cannon"),
+			SecondaryWeapon: gamedata.FindWeaponDesign("Missile Launcher"),
 		},
 	})
 	v.body.Pos = (gmath.Vec{X: 1920 / 4, Y: 1080 / 4}).Sub(gmath.Vec{X: 200})
@@ -61,14 +62,15 @@ func (r *Runner) Init(scene *ge.Scene) {
 		v2 := newVesselNode(vesselNodeConfig{
 			HP: 1,
 			Design: &gamedata.VesselDesign{
-				Image:         assets.ImageVesselMarauder,
-				MaxHP:         150,
-				MaxEnergy:     120,
-				EnergyRegen:   3.5,
-				MaxSpeed:      180,
-				Acceleration:  90,
-				RotationSpeed: 2.5,
-				MainWeapon:    gamedata.FindWeaponDesign("Pulse Laser"),
+				Image:           assets.ImageVesselMarauder,
+				MaxHP:           150,
+				MaxEnergy:       120,
+				EnergyRegen:     3.0,
+				MaxSpeed:        180,
+				Acceleration:    90,
+				RotationSpeed:   2.5,
+				MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
+				SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
 			},
 		})
 		v2.body.LayerMask = collisionPlayer2

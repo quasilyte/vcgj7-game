@@ -18,5 +18,6 @@ type VesselDesign struct {
 
 	RotationSpeed gmath.Rad
 
-	MainWeapon *WeaponDesign
+	MainWeapon      *WeaponDesign
+	SecondaryWeapon *WeaponDesign
 }

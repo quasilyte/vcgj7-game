@@ -29,16 +29,17 @@ func main() {
 	}
 
 	keymap := input.Keymap{
-		controls.ActionForward: {input.KeyUp, input.KeyW, input.KeyGamepadUp},
-		controls.ActionLeft:    {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
-		controls.ActionRight:   {input.KeyRight, input.KeyD, input.KeyGamepadRight},
-		controls.ActionFire:    {input.KeyMouseLeft},
-		controls.ActionChoice1: {input.Key1},
-		controls.ActionChoice2: {input.Key2},
-		controls.ActionChoice3: {input.Key3},
-		controls.ActionChoice4: {input.Key4},
-		controls.ActionChoice5: {input.Key5},
-		controls.ActionChoice6: {input.Key6},
+		controls.ActionForward:     {input.KeyUp, input.KeyW, input.KeyGamepadUp},
+		controls.ActionLeft:        {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
+		controls.ActionRight:       {input.KeyRight, input.KeyD, input.KeyGamepadRight},
+		controls.ActionFire:        {input.KeyMouseLeft},
+		controls.ActionFireSpecial: {input.KeyMouseRight},
+		controls.ActionChoice1:     {input.Key1},
+		controls.ActionChoice2:     {input.Key2},
+		controls.ActionChoice3:     {input.Key3},
+		controls.ActionChoice4:     {input.Key4},
+		controls.ActionChoice5:     {input.Key5},
+		controls.ActionChoice6:     {input.Key6},
 	}
 	state.Input = ctx.Input.NewHandler(0, keymap)
 

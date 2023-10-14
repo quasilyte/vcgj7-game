@@ -11,7 +11,7 @@ const (
 	ActionRight
 	ActionForward
 	ActionFire
-	ActionSpecial
+	ActionFireSpecial
 
 	ActionChoice1
 	ActionChoice2
