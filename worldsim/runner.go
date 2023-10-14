@@ -186,47 +186,6 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
-	hasFuel := false
-	if canJump {
-		// Find all possible routes first.
-		for _, p := range r.world.Planets {
-			if p == player.Planet {
-				continue
-			}
-			dist := player.Planet.Info.MapOffset.DistanceTo(p.Info.MapOffset)
-			fuelNeeded := gmath.ClampMin(int(dist*player.FuelUsage), 1)
-			if player.Fuel < fuelNeeded {
-				continue
-			}
-			hasFuel = true
-			if dist > player.MaxJumpDist {
-				continue
-			}
-			hours := int(math.Ceil(dist / player.JumpSpeed))
-			r.jumpOptions = append(r.jumpOptions, jumpOption{
-				planet:   p,
-				fuelCost: fuelNeeded,
-				time:     hours,
-			})
-		}
-		gmath.Shuffle(r.scene.Rand(), r.jumpOptions)
-		// Add as many travel options as possible.
-		for len(r.jumpOptions) > 0 && len(r.choices) < MaxChoices {
-			j := r.jumpOptions[len(r.jumpOptions)-1]
-			r.jumpOptions = r.jumpOptions[:len(r.jumpOptions)-1]
-			r.choices = append(r.choices, Choice{
-				Time: j.time,
-				Text: fmt.Sprintf("Jump to %s [%d fuel]", j.planet.Info.Name, j.fuelCost),
-				Mode: gamedata.ModeJump,
-				OnResolved: func() gamedata.Mode {
-					player.Planet = j.planet
-					player.Fuel -= j.fuelCost
-					return gamedata.ModeJustEntered
-				},
-			})
-		}
-	}
-
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
 		r.choices = append(r.choices, Choice{
 			Time: 4,
@@ -283,7 +242,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	if len(r.choices) < MaxChoices {
 		switch r.world.Player.Mode {
 		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
-			canScavenge := !hasFuel || (player.Fuel < 100 && r.scene.Rand().Chance(0.4))
+			canScavenge := player.Fuel < 100 && r.scene.Rand().Chance(0.4)
 			if canScavenge {
 				r.choices = append(r.choices, Choice{
 					Time: 8,
@@ -308,6 +267,45 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				return gamedata.ModeOrbiting
 			},
 		})
+	}
+
+	if canJump {
+		// Find all possible routes first.
+		for _, p := range r.world.Planets {
+			if p == player.Planet {
+				continue
+			}
+			dist := player.Planet.Info.MapOffset.DistanceTo(p.Info.MapOffset)
+			fuelNeeded := gmath.ClampMin(int(dist*player.FuelUsage), 1)
+			if player.Fuel < fuelNeeded {
+				continue
+			}
+			if dist > player.MaxJumpDist {
+				continue
+			}
+			hours := int(math.Ceil(dist / player.JumpSpeed))
+			r.jumpOptions = append(r.jumpOptions, jumpOption{
+				planet:   p,
+				fuelCost: fuelNeeded,
+				time:     hours,
+			})
+		}
+		gmath.Shuffle(r.scene.Rand(), r.jumpOptions)
+		// Add as many travel options as possible.
+		for len(r.jumpOptions) > 0 && len(r.choices) < MaxChoices {
+			j := r.jumpOptions[len(r.jumpOptions)-1]
+			r.jumpOptions = r.jumpOptions[:len(r.jumpOptions)-1]
+			r.choices = append(r.choices, Choice{
+				Time: j.time,
+				Text: fmt.Sprintf("Jump to %s [%d fuel]", j.planet.Info.Name, j.fuelCost),
+				Mode: gamedata.ModeJump,
+				OnResolved: func() gamedata.Mode {
+					player.Planet = j.planet
+					player.Fuel -= j.fuelCost
+					return gamedata.ModeJustEntered
+				},
+			})
+		}
 	}
 
 	return GeneratedChoices{
