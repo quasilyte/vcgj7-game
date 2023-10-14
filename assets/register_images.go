@@ -18,6 +18,8 @@ func registerImageResources(ctx *ge.Context) {
 		ImageSystemMap:   {Path: "image/map.png"},
 		ImageMapLocation: {Path: "image/map_location.png"},
 
+		ImageMenuBg: {Path: "image/menu_bg.png"},
+
 		ImageBattleHUD:       {Path: "image/battle_hud.png"},
 		ImageBattleBarHP:     {Path: "image/hp_bar.png"},
 		ImageBattleBarEnergy: {Path: "image/energy_bar.png"},
@@ -55,6 +57,8 @@ const (
 	ImageUIButtonHover
 	ImageUIButtonPressed
 	ImageUIPanelIdle
+
+	ImageMenuBg
 
 	ImageSystemMap
 	ImageMapLocation
