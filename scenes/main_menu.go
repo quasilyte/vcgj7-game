@@ -35,7 +35,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	bigFont := assets.BitmapFont3
 	tinyFont := assets.BitmapFont1
 
-	rowContainer.AddChild(eui.NewCenteredLabel("Planet Eaters", bigFont))
+	rowContainer.AddChild(eui.NewCenteredLabel("Pixelspace Rangers", bigFont))
 
 	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 
