@@ -1,6 +1,8 @@
 package worldsim
 
-import "github.com/quasilyte/gmath"
+import (
+	"github.com/quasilyte/gmath"
+)
 
 func (r *Runner) AdvanceTime(hours int) {
 	for i := 0; i < hours; i++ {

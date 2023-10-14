@@ -54,6 +54,12 @@ type Planet struct {
 
 	MineralsDelay  float64
 	MineralDeposit int
+
+	AreasVisited PlanetVisitStatus
+}
+
+type PlanetVisitStatus struct {
+	VisitedMineralsMarket bool
 }
 
 type PlanetInfo struct {

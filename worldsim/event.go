@@ -3,6 +3,7 @@ package worldsim
 import (
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/gamedata"
@@ -49,20 +50,29 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		if freeCargo < loaded {
 			loaded = freeCargo
 		}
+		damaged := r.scene.Rand().Chance(0.4)
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
 			OnSelected: func() {
 				if r.scene.Rand().Chance(0.7) {
 					planet.MineralsDelay = r.scene.Rand().FloatRange(3, 14)
 				}
+				player.VesselHP -= r.scene.Rand().FloatRange(0.1, 0.2)
 				player.LoadCargo(mineralsFound)
 				r.commitChoice(gamedata.ModeOrbiting)
 			},
 		})
+		lines := make([]string, 0, 3)
 		if loaded < mineralsFound {
-			return fmt.Sprintf("Found %d minerals, but could only collect %d.", mineralsFound, loaded)
+			lines = append(lines, fmt.Sprintf("Found %d minerals, but could only collect %d.", mineralsFound, loaded))
+		} else {
+			lines = append(lines, fmt.Sprintf("Collected %d minerals.", loaded))
 		}
-		return fmt.Sprintf("Collected %d minerals.", loaded)
+		if damaged {
+			lines = append(lines, "")
+			lines = append(lines, "The vessel hull was damaged during the act.")
+		}
+		return strings.Join(lines, "\n")
 
 	case eventSellMinerals:
 		mineralsDemand := 1.0

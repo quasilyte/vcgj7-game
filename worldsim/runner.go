@@ -86,6 +86,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				Time: h,
 				Text: s,
 				OnSelected: func() {
+					player.Planet.AreasVisited = gamedata.PlanetVisitStatus{}
 					r.commitChoiceExtra(gamedata.ModeOrbiting, gamedata.ModeDocked)
 				},
 			})
@@ -109,12 +110,13 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
-	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked && !planet.AreasVisited.VisitedMineralsMarket {
 		if player.Cargo > 0 && r.scene.Rand().Chance(0.9) {
 			r.choices = append(r.choices, Choice{
 				Time: 2,
 				Text: "Sell minerals",
 				OnSelected: func() {
+					planet.AreasVisited.VisitedMineralsMarket = true
 					r.eventInfo = eventInfo{kind: eventSellMinerals}
 					r.commitChoice(gamedata.ModeDocked)
 				},
@@ -172,16 +174,19 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		})
 	}
 
-	if len(r.choices) < MaxChoices && player.Cargo < player.MaxCargo {
-		if planet.MineralsDelay == 0 && r.scene.Rand().Chance(0.7) {
-			r.choices = append(r.choices, Choice{
-				Time: 7,
-				Text: "Hunt asteroids for minerals",
-				OnSelected: func() {
-					r.eventInfo = eventInfo{kind: eventMineralsHunt}
-					r.commitChoice(gamedata.ModeScavenging)
-				},
-			})
+	if len(r.choices) < MaxChoices && player.Cargo < player.MaxCargo && player.VesselHP > 0.3 {
+		switch r.world.Player.Mode {
+		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
+			if planet.MineralsDelay == 0 && r.scene.Rand().Chance(0.7) {
+				r.choices = append(r.choices, Choice{
+					Time: 7,
+					Text: "Hunt asteroids for minerals",
+					OnSelected: func() {
+						r.eventInfo = eventInfo{kind: eventMineralsHunt}
+						r.commitChoice(gamedata.ModeScavenging)
+					},
+				})
+			}
 		}
 	}
 
