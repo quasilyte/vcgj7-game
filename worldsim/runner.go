@@ -91,6 +91,12 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 
 	canJump := true
 
+	isIdleMode := false
+	switch player.Mode {
+	case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
+		isIdleMode = true
+	}
+
 	if len(r.choices) < MaxChoices && planet.Faction == player.Faction {
 		switch player.Mode {
 		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
@@ -282,6 +288,17 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				})
 			}
 		}
+	}
+
+	if len(r.choices) < MaxChoices && isIdleMode {
+		r.choices = append(r.choices, Choice{
+			Time: 2,
+			Text: "Scout the area",
+			OnSelected: func() {
+				r.eventInfo = eventInfo{kind: eventScanArea}
+				r.commitChoice(gamedata.ModeScavenging)
+			},
+		})
 	}
 
 	return GeneratedChoices{

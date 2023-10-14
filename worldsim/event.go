@@ -18,6 +18,7 @@ const (
 
 	eventFuelScavenge
 	eventMineralsHunt
+	eventScanArea
 
 	eventBuyFuel
 	eventUpgradeLab
@@ -74,6 +75,33 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 	planet := player.Planet
 
 	switch event.kind {
+	case eventScanArea:
+		lines := make([]string, 0, 6)
+		lines = append(lines, "Scanning area...")
+		foundAnyone := false
+		for i, num := range planet.VesselsByFaction {
+			if num == 0 {
+				continue
+			}
+			if !foundAnyone {
+				lines = append(lines, "")
+			}
+			foundAnyone = true
+			f := gamedata.Faction(i)
+			lines = append(lines, fmt.Sprintf("%s vessels: %d", f.Name(), num))
+		}
+		if !foundAnyone {
+			lines = append(lines, "")
+			lines = append(lines, "No vessels detected.")
+		}
+		r.choices = append(r.choices, Choice{
+			Text: "Done",
+			OnSelected: func() {
+				r.commitChoice(gamedata.ModeOrbiting)
+			},
+		})
+		return strings.Join(lines, "\n")
+
 	case eventUpgradeLab:
 		var s string
 		price := 0

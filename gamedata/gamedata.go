@@ -86,6 +86,8 @@ type Planet struct {
 	MineralsDelay  float64
 	MineralDeposit int
 
+	VesselsByFaction [NumFactions]int
+
 	AreasVisited PlanetVisitStatus
 }
 

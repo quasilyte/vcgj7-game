@@ -8,30 +8,8 @@ import (
 func NewWorld(rand *gmath.Rand) *World {
 	w := &World{}
 
-	planets := make([]*Planet, len(Planets))
-	for i := range planets {
-		p := &Planet{
-			Info: Planets[i],
-		}
-		planets[i] = p
-	}
-
-	planets[0].Faction = FactionA
-	planets[2].Faction = FactionB
-	planets[7].Faction = FactionC
-
-	for _, p := range planets {
-		if p.Faction == FactionNone {
-			continue
-		}
-		p.MineralDeposit = rand.IntRange(5, 200)
-	}
-
-	w.Planets = planets
-
 	w.Player = &Player{
 		Faction:  FactionA,
-		Planet:   planets[0],
 		VesselHP: 1.0,
 
 		Mode: ModeOrbiting,
@@ -59,6 +37,33 @@ func NewWorld(rand *gmath.Rand) *World {
 			SecondaryWeapon: FindWeaponDesign("Missile Launcher"),
 		},
 	}
+
+	planets := make([]*Planet, len(Planets))
+	for i := range planets {
+		p := &Planet{
+			Info: Planets[i],
+		}
+		planets[i] = p
+	}
+
+	planets[0].Faction = FactionA
+	planets[2].Faction = FactionB
+	planets[7].Faction = FactionC
+
+	for _, p := range planets {
+		if p.Faction == FactionNone {
+			continue
+		}
+		p.MineralDeposit = rand.IntRange(5, 200)
+		numVessels := rand.IntRange(10, 20)
+		if p.Faction != w.Player.Faction {
+			numVessels += 10
+		}
+		p.VesselsByFaction[p.Faction] = numVessels
+	}
+
+	w.Player.Planet = planets[0]
+	w.Planets = planets
 
 	return w
 }
