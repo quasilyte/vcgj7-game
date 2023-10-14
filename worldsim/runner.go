@@ -236,9 +236,8 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				r.eventInfo = eventInfo{
 					kind: eventBattle,
 					enemy: &gamedata.VesselDesign{
-						Image: assets.ImageVesselMarauder,
-						// MaxHP:           150,
-						MaxHP:           10,
+						Image:           assets.ImageVesselMarauder,
+						MaxHP:           150,
 						MaxEnergy:       120,
 						EnergyRegen:     3.0,
 						MaxSpeed:        180,

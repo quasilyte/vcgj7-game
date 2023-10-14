@@ -84,6 +84,29 @@ var Weapons = []*WeaponDesign{
 	},
 
 	{
+		Name:             "Assault Laser",
+		FireSound:        assets.AudioAssaultLaser1,
+		Damage:           8,
+		Reload:           0.2,
+		EnergyCost:       4,
+		EnergyConversion: 2.5,
+		Range:            260,
+		ProjectileSpeed:  400,
+		ProjectileImage:  assets.ImageProjectileAssaultLaser,
+		ProjectileSize:   6,
+		Explosion:        assets.ImageAssaultLaserImpact,
+		// ExplosionSound:   assets.AudioIonCannonImpact,
+		Blockable: true,
+		BurstSize: 2,
+
+		FireOffsets: []gmath.Vec{
+			{Y: -6},
+			{Y: +6},
+		},
+		ProjectileRotationDeltas: []gmath.Rad{0, 0},
+	},
+
+	{
 		Name:            "Missile Launcher",
 		FireSound:       assets.AudioMissile1,
 		Damage:          20,

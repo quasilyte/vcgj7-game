@@ -44,7 +44,7 @@ func (r *Runner) afterBattleChoices() string {
 		Text: "Done",
 		OnSelected: func() {
 			player.Experience += reward.Experience
-			player.Credits = reward.Credits
+			player.Credits += reward.Credits
 			player.LoadCargo(reward.Cargo)
 			player.Fuel = gmath.ClampMax(player.Fuel+reward.Fuel, player.MaxFuel)
 			r.commitChoice(gamedata.ModeOrbiting)
