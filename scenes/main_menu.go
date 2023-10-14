@@ -41,8 +41,8 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "PLAY", func() {
 		c.state.World = gamedata.NewWorld()
-		// scene.Context().ChangeScene(NewChoiceController(c.state))
-		scene.Context().ChangeScene(NewBattleController(c.state))
+		scene.Context().ChangeScene(NewChoiceController(c.state))
+		// scene.Context().ChangeScene(NewBattleController(c.state))
 	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "CREDITS", func() {

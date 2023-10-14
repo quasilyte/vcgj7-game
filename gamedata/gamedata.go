@@ -1,24 +1,40 @@
 package gamedata
 
-import "github.com/quasilyte/gmath"
+import (
+	"github.com/quasilyte/gmath"
+)
 
 type World struct {
 	Player *Player
 
 	Planets []*Planet
+
+	GameTime int // In hours
 }
 
 type Player struct {
 	Planet *Planet
 
+	Faction Faction
+
+	Mode Mode
+
 	VesselDesign *VesselDesign
 	VesselHP     float64 // percentage
 
+	JumpSpeed   float64
+	MaxJumpDist float64
+	FuelUsage   float64
+
 	Experience int
+	Credits    int
 	Fuel       int
+	MaxFuel    int
 }
 
 type Planet struct {
+	Faction Faction
+
 	Info *PlanetInfo
 }
 
