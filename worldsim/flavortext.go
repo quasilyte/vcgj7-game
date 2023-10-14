@@ -8,6 +8,31 @@ import (
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
+type textColor int
+
+const (
+	colorDefault textColor = iota
+	colorGreen
+	colorPurple
+	colorRed
+	colorYellow
+)
+
+func colorizeText(s string, clr textColor) string {
+	switch clr {
+	case colorGreen:
+		return "[color=7AE168]" + s + "[/color]"
+	case colorPurple:
+		return "[color=B392FF]" + s + "[/color]"
+	case colorRed:
+		return "[color=FF6363]" + s + "[/color]"
+	case colorYellow:
+		return "[color=FFF163]" + s + "[/color]"
+	default:
+		return s
+	}
+}
+
 func genModeText(scene *ge.Scene, world *gamedata.World) string {
 	switch world.Player.Mode {
 	case gamedata.ModeOrbiting:

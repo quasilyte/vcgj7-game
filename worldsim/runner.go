@@ -101,7 +101,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		if canScavenge {
 			r.choices = append(r.choices, Choice{
 				Time: 8,
-				Text: "Scavenge for fuel.",
+				Text: "Scavenge for fuel",
 				OnSelected: func() {
 					fuelFound := r.scene.Rand().IntRange(3, 15)
 					player.Fuel = gmath.ClampMax(player.Fuel+fuelFound, player.MaxFuel)
