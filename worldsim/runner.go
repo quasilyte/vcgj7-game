@@ -20,7 +20,7 @@ type Runner struct {
 
 	eventInfo eventInfo
 
-	EventChoiceSelected gsignal.Event[gsignal.Void]
+	EventChoiceSelected gsignal.Event[gamedata.Mode]
 }
 
 type eventInfo struct {
@@ -128,7 +128,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				OnSelected: func() {
 					player.Planet = j.planet
 					player.Fuel -= j.fuelCost
-					r.commitChoice(gamedata.ModeJustEntered)
+					r.commitChoiceExtra(gamedata.ModeJump, gamedata.ModeJustEntered)
 				},
 			})
 		}
@@ -166,7 +166,12 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 
 func (r *Runner) commitChoice(m gamedata.Mode) {
 	r.world.Player.Mode = m
-	r.EventChoiceSelected.Emit(gsignal.Void{})
+	r.EventChoiceSelected.Emit(m)
+}
+
+func (r *Runner) commitChoiceExtra(m, postMode gamedata.Mode) {
+	r.world.Player.Mode = m
+	r.EventChoiceSelected.Emit(postMode)
 }
 
 func (r *Runner) AdvanceTime(hours int) {

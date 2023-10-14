@@ -8,10 +8,10 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/gmath"
-	"github.com/quasilyte/gsignal"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/controls"
 	"github.com/quasilyte/vcgj7-game/eui"
+	"github.com/quasilyte/vcgj7-game/gamedata"
 	"github.com/quasilyte/vcgj7-game/session"
 	"github.com/quasilyte/vcgj7-game/styles"
 	"github.com/quasilyte/vcgj7-game/worldsim"
@@ -88,10 +88,11 @@ func (c *ChoiceController) selectChoice(i int) {
 	c.choiceButtons[i].choice.OnSelected()
 }
 
-func (c *ChoiceController) onChoiceSelected(gsignal.Void) {
+func (c *ChoiceController) onChoiceSelected(postMode gamedata.Mode) {
 	if c.selectedChoice.Time > 0 {
 		c.runner.AdvanceTime(c.selectedChoice.Time)
 	}
+	c.state.World.Player.Mode = postMode
 	c.replaceChoices()
 	c.updateUI()
 }
