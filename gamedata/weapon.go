@@ -17,6 +17,10 @@ type WeaponDesign struct {
 
 	Range           float64
 	ProjectileSpeed float64
+	ProjectileSize  float64
+	ProjectileImage resource.ImageID
+
+	Explosion resource.ImageID
 
 	EnergyCost       float64
 	EnergyConversion float64
@@ -39,8 +43,10 @@ var Weapons = []*WeaponDesign{
 		Reload:           0.4,
 		EnergyCost:       6,
 		EnergyConversion: 2.0,
-		Range:            180,
-		ProjectileSpeed:  200,
+		Range:            250,
+		ProjectileSpeed:  280,
+		ProjectileImage:  assets.ImageProjectilePulseLaser,
+		ProjectileSize:   6,
 	},
 
 	{
@@ -50,7 +56,10 @@ var Weapons = []*WeaponDesign{
 		Reload:           0.9,
 		EnergyCost:       5,
 		EnergyConversion: 0.5,
-		Range:            250,
-		ProjectileSpeed:  260,
+		Range:            300,
+		ProjectileSpeed:  320,
+		ProjectileImage:  assets.ImageProjectileIonCannon,
+		ProjectileSize:   8,
+		Explosion:        assets.ImageIonCannonImpact,
 	},
 }

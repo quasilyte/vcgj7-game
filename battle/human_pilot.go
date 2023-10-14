@@ -22,6 +22,9 @@ func newHumanPilot(h *input.Handler, v *vesselNode) *humanPilot {
 }
 
 func (p *humanPilot) Update(delta float64) {
+	if p.input.ActionIsPressed(controls.ActionFire) {
+		p.vessel.ActivateWeaponOrder()
+	}
 	if p.input.ActionIsPressed(controls.ActionForward) {
 		p.vessel.ForwardOrder()
 	}

@@ -4,6 +4,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/physics"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
 type vesselNode struct {
@@ -23,6 +24,7 @@ type vesselPilotOrders struct {
 	rotateLeft      bool
 	rotateRight     bool
 	forward         bool
+	activateWeapon  bool
 	activateSpecial bool
 }
 
@@ -82,45 +84,52 @@ func (v *vesselNode) ActivateSpecialOrder() {
 	v.pilotOrders.activateSpecial = true
 }
 
-func (v *vesselNode) OnDamage(value float64) {
+func (v *vesselNode) ActivateWeaponOrder() {
+	v.pilotOrders.activateWeapon = true
+}
+
+func (v *vesselNode) OnDamage(weapon *gamedata.WeaponDesign) {
 	// scorePos := ge.Pos{Offset: v.body.Pos.Add(gmath.Vec{Y: -48})}
 	// score := effects.NewDamageScore(value, scorePos)
 	// v.scene.AddObject(score)
-	// v.state.hp = gmath.ClampMin(v.state.hp-value, 0)
 
-	// if v.state.hp == 0 {
-	// 	v.Destroy()
-	// }
+	if v.state.hp <= 0 {
+		return
+	}
+
+	v.state.hp = gmath.ClampMin(v.state.hp-weapon.Damage, 0)
+	if v.state.hp <= 0 {
+		v.Destroy()
+	}
 }
 
 func (v *vesselNode) Update(delta float64) {
-	// for _, collision := range v.scene.GetCollisions(&v.body) {
-	// 	switch obj := collision.Body.Object.(type) {
-	// 	case *simpleProjectile:
-	// 		obj.Destroy()
-	// 		v.OnDamage(obj.design.damage)
-	// 	case *rocketProjectile:
-	// 		obj.Destroy()
-	// 		v.OnDamage(obj.design.damage)
-	// 	case *AfterburnerFlame:
-	// 		obj.Destroy()
-	// 		v.OnDamage(15)
-	// 	}
-	// }
-
-	if v.state.energy < v.state.energyRegenThreshold {
-		v.state.energy = gmath.ClampMax(v.state.energy+v.state.design.EnergyRegen*delta, v.state.energyRegenThreshold)
+	for _, collision := range v.scene.GetCollisions(&v.body) {
+		switch obj := collision.Body.Object.(type) {
+		case *projectileNode:
+			obj.Destroy(true)
+			v.OnDamage(obj.weapon)
+		}
 	}
 
+	v.state.Tick(delta)
+
 	pilotOrders := v.pilotOrders
-	// autoOrders := v.systems.Tick(delta)
-	// state := &v.state
 	v.pilotOrders = vesselPilotOrders{}
 
 	if pilotOrders.forward {
 		v.sprite.FrameOffset.X = v.sprite.FrameWidth
 	} else {
 		v.sprite.FrameOffset.X = 0
+	}
+
+	if pilotOrders.activateWeapon {
+		if v.state.CanFire() {
+			v.state.Fire()
+			p := newProjectileNode(enemyCollisionMask(v.state.CollisionLayer), v.state.design.MainWeapon, v.body.Pos, v.body.Rotation)
+			v.scene.AddObject(p)
+			playSound(v.scene, v.state.weapon.design.FireSound)
+		}
 	}
 
 	// if state.specialWeapon != nil {

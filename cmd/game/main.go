@@ -32,6 +32,7 @@ func main() {
 		controls.ActionForward: {input.KeyUp, input.KeyW, input.KeyGamepadUp},
 		controls.ActionLeft:    {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
 		controls.ActionRight:   {input.KeyRight, input.KeyD, input.KeyGamepadRight},
+		controls.ActionFire:    {input.KeyMouseLeft},
 	}
 	state.Input = ctx.Input.NewHandler(0, keymap)
 

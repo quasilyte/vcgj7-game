@@ -9,4 +9,6 @@ const (
 	ActionLeft
 	ActionRight
 	ActionForward
+	ActionFire
+	ActionSpecial
 )
