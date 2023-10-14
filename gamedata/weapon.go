@@ -107,6 +107,34 @@ var Weapons = []*WeaponDesign{
 	},
 
 	{
+		Name:             "Scatter Gun",
+		FireSound:        assets.AudioScatterGun1,
+		Damage:           7,
+		Reload:           0.4,
+		EnergyCost:       9,
+		EnergyConversion: 1.2,
+		Range:            350,
+		ProjectileSpeed:  450,
+		ProjectileImage:  assets.ImageProjectileScatterGun,
+		ProjectileSize:   6,
+		Explosion:        assets.ImageScatterGunImpact,
+		// ExplosionSound:   assets.AudioIonCannonImpact,
+		Blockable: true,
+		BurstSize: 7,
+
+		FireOffsets: []gmath.Vec{
+			{Y: -9},
+			{Y: -6},
+			{Y: -3},
+			{},
+			{Y: +3},
+			{Y: +6},
+			{Y: +9},
+		},
+		ProjectileRotationDeltas: []gmath.Rad{-0.45, -0.3, -0.15, 0, +0.15, +0.3, +0.45},
+	},
+
+	{
 		Name:            "Missile Launcher",
 		FireSound:       assets.AudioMissile1,
 		Damage:          20,
