@@ -89,7 +89,9 @@ func (c *ChoiceController) selectChoice(i int) {
 }
 
 func (c *ChoiceController) onChoiceSelected(gsignal.Void) {
-	c.runner.AdvanceTime(c.selectedChoice.Time)
+	if c.selectedChoice.Time > 0 {
+		c.runner.AdvanceTime(c.selectedChoice.Time)
+	}
 	c.replaceChoices()
 	c.updateUI()
 }

@@ -18,7 +18,13 @@ type Runner struct {
 	jumpOptions []jumpOption
 	textLines   []string
 
+	eventInfo eventInfo
+
 	EventChoiceSelected gsignal.Event[gsignal.Void]
+}
+
+type eventInfo struct {
+	kind eventKind
 }
 
 type jumpOption struct {
@@ -45,10 +51,43 @@ func (r *Runner) Init(scene *ge.Scene) {
 	r.scene = scene
 }
 
+func (r *Runner) generateEventChoices(event eventInfo) string {
+	player := r.world.Player
+
+	switch event.kind {
+	case eventFuelScavenge:
+		fuelScavenged := r.scene.Rand().IntRange(3, 12)
+		r.choices = append(r.choices, Choice{
+			Text: "Done",
+			OnSelected: func() {
+				player.Fuel = gmath.ClampMax(player.Fuel+fuelScavenged, player.MaxFuel)
+				r.commitChoice(gamedata.ModeOrbiting)
+			},
+		})
+		if r.scene.Rand().Bool() {
+			return fmt.Sprintf("%d fuel units acquired.", fuelScavenged)
+		}
+		return fmt.Sprintf("Scavenged %d fuel units.", fuelScavenged)
+
+	default:
+		panic(fmt.Sprintf("unexpected event kind: %d", event.kind))
+	}
+}
+
 func (r *Runner) GenerateChoices() GeneratedChoices {
 	r.textLines = r.textLines[:0]
 	r.choices = r.choices[:0]
 	r.jumpOptions = r.jumpOptions[:0]
+
+	event := r.eventInfo
+	r.eventInfo = eventInfo{}
+	if event.kind != eventUnknown {
+		s := r.generateEventChoices(event)
+		return GeneratedChoices{
+			Choices: r.choices,
+			Text:    s,
+		}
+	}
 
 	player := r.world.Player
 
@@ -87,10 +126,9 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				Time: j.time,
 				Text: fmt.Sprintf("Jump to %s [%d fuel]", j.planet.Info.Name, j.fuelCost),
 				OnSelected: func() {
-					player.Mode = gamedata.ModeJustEntered
 					player.Planet = j.planet
 					player.Fuel -= j.fuelCost
-					r.commitChoice()
+					r.commitChoice(gamedata.ModeJustEntered)
 				},
 			})
 		}
@@ -103,10 +141,10 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				Time: 8,
 				Text: "Scavenge for fuel",
 				OnSelected: func() {
-					fuelFound := r.scene.Rand().IntRange(3, 15)
-					player.Fuel = gmath.ClampMax(player.Fuel+fuelFound, player.MaxFuel)
-					player.Mode = gamedata.ModeScavenging
-					r.commitChoice()
+					r.eventInfo = eventInfo{kind: eventFuelScavenge}
+					// fuelFound := r.scene.Rand().IntRange(3, 15)
+					// player.Fuel = gmath.ClampMax(player.Fuel+fuelFound, player.MaxFuel)
+					r.commitChoice(gamedata.ModeScavenging)
 				},
 			})
 		} else {
@@ -114,8 +152,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 				Time: 5,
 				Text: "Wait.",
 				OnSelected: func() {
-					player.Mode = gamedata.ModeOrbiting
-					r.commitChoice()
+					r.commitChoice(gamedata.ModeOrbiting)
 				},
 			})
 		}
@@ -127,7 +164,8 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 }
 
-func (r *Runner) commitChoice() {
+func (r *Runner) commitChoice(m gamedata.Mode) {
+	r.world.Player.Mode = m
 	r.EventChoiceSelected.Emit(gsignal.Void{})
 }
 
