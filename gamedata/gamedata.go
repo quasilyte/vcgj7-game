@@ -19,7 +19,27 @@ type World struct {
 	Planets []*Planet
 
 	GameTime int // In hours
+
+	NextUpgradeDelay   float64
+	UpgradeRerollDelay float64
+	UpgradeAvailable   UpgradeKind
 }
+
+type UpgradeKind int
+
+const (
+	UpgradeUnknown UpgradeKind = iota
+	UpgradeMaxFuel
+	UpgradeMaxCargo
+	UpgradeJumpSpeed
+	UpgradeJumpMaxDistance
+	_numUpgrades
+)
+
+const (
+	FirstUpgrade = UpgradeUnknown + 1
+	LastUpgrade  = _numUpgrades - 1
+)
 
 type Player struct {
 	Planet *Planet

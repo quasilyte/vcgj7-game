@@ -20,6 +20,7 @@ const (
 	eventMineralsHunt
 
 	eventBuyFuel
+	eventUpgradeLab
 	eventSellMinerals
 )
 
@@ -73,6 +74,62 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 	planet := player.Planet
 
 	switch event.kind {
+	case eventUpgradeLab:
+		var s string
+		price := 0
+		switch r.world.UpgradeAvailable {
+		case gamedata.UpgradeJumpMaxDistance:
+			s = fmt.Sprintf("A jump engine booster that increases its %s.", colorizeText("max jump distance", colorGreen))
+			price = 20
+		case gamedata.UpgradeMaxFuel:
+			s = fmt.Sprintf("A special fuel tank extender to increase its %s.", colorizeText("max capacity", colorGreen))
+			price = 45
+		case gamedata.UpgradeMaxCargo:
+			s = fmt.Sprintf("A better storage compactor, it will %s of your vessel.", colorizeText("increase max cargo", colorGreen))
+			price = 70
+		case gamedata.UpgradeJumpSpeed:
+			s = fmt.Sprintf("A jump engine cooling system that allows you to %s.", colorizeText("travel between the planets faster", colorGreen))
+			price = 15
+		}
+
+		if player.Credits >= price {
+			r.choices = append(r.choices, Choice{
+				Text: "Buy this upgrade",
+				OnSelected: func() {
+					r.world.UpgradeRerollDelay = 0
+					r.world.NextUpgradeDelay = r.scene.Rand().FloatRange(30, 45)
+					player.Credits -= price
+					switch r.world.UpgradeAvailable {
+					case gamedata.UpgradeJumpMaxDistance:
+						player.MaxJumpDist += float64(r.scene.Rand().IntRange(3, 6))
+					case gamedata.UpgradeMaxFuel:
+						player.MaxFuel += r.scene.Rand().IntRange(5, 15)
+					case gamedata.UpgradeMaxCargo:
+						player.MaxCargo += r.scene.Rand().IntRange(5, 20)
+					case gamedata.UpgradeJumpSpeed:
+						player.JumpSpeed += float64(r.scene.Rand().IntRange(15, 30))
+					}
+					r.commitChoice(gamedata.ModeDocked)
+				},
+			})
+		}
+
+		r.choices = append(r.choices, Choice{
+			Text: "Leave lab",
+			OnSelected: func() {
+				r.world.NextUpgradeDelay = r.scene.Rand().FloatRange(2, 5)
+				r.commitChoice(gamedata.ModeDocked)
+			},
+		})
+		lines := []string{
+			"You visited an experimental research lab. A person in white coat approaches you.",
+			"",
+			"After a quick discission, one particular upgrade catched your attention... " + s,
+			"",
+			fmt.Sprintf("It will cost you %d credits.", price),
+		}
+		return strings.Join(lines, "\n")
+
 	case eventBattle:
 		r.choices = append(r.choices, Choice{
 			Text: "Fight!",

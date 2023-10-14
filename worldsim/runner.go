@@ -151,6 +151,19 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+		if r.world.NextUpgradeDelay == 0 {
+			r.choices = append(r.choices, Choice{
+				Time: 1,
+				Text: "Visit upgrade lab",
+				OnSelected: func() {
+					r.eventInfo = eventInfo{kind: eventUpgradeLab}
+					r.commitChoice(gamedata.ModeDocked)
+				},
+			})
+		}
+	}
+
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked && !planet.AreasVisited.VisitedMineralsMarket {
 		if player.Cargo > 0 && r.scene.Rand().Chance(0.9) {
 			r.choices = append(r.choices, Choice{
@@ -267,14 +280,6 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 					OnSelected: func() {
 						r.eventInfo = eventInfo{kind: eventFuelScavenge}
 						r.commitChoice(gamedata.ModeScavenging)
-					},
-				})
-			} else {
-				r.choices = append(r.choices, Choice{
-					Time: 5,
-					Text: "Wait",
-					OnSelected: func() {
-						r.commitChoice(gamedata.ModeOrbiting)
 					},
 				})
 			}
