@@ -39,9 +39,31 @@ func genModeText(scene *ge.Scene, world *gamedata.World) string {
 		return genOrbitingModeText(scene, world)
 	case gamedata.ModeJustEntered:
 		return genJustEnteredModeText(scene, world)
+	case gamedata.ModeDocked:
+		return genDockedModeText(scene, world)
 	default:
 		return "?"
 	}
+}
+
+func genDockedModeText(scene *ge.Scene, world *gamedata.World) string {
+	picker := gmath.NewRandPicker[string](scene.Rand())
+
+	player := world.Player
+	planet := player.Planet
+
+	if planet.Info.GasGiant {
+		picker.AddOption("Exploring the station hallways.", 1.2)
+		picker.AddOption("Admiring the gas giant from the station windows.", 1.0)
+		picker.AddOption("Spent some time doing nothing on this station.", 0.7)
+	} else {
+		picker.AddOption("Spending some time on the streets.", 1.1)
+		picker.AddOption("Exploring the space decks.", 1.0)
+		picker.AddOption("Walking through the local market.", 0.9)
+		picker.AddOption(fmt.Sprintf("Spent some time doing nothing on %s.", planet.Info.Name), 0.7)
+	}
+
+	return picker.Pick()
 }
 
 func genJustEnteredModeText(scene *ge.Scene, world *gamedata.World) string {

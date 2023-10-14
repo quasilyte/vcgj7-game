@@ -69,6 +69,30 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		}
 		return fmt.Sprintf("Scavenged %d fuel units.", fuelScavenged)
 
+	case eventBuyFuel:
+		fuelPrice := 3
+		if r.scene.Rand().Chance(0.3) {
+			fuelPrice = 2
+		}
+		maxSpent := 90
+		if maxSpent > player.Credits {
+			maxSpent = player.Credits
+		}
+		bought := maxSpent / fuelPrice
+		if player.Fuel+bought > player.MaxFuel {
+			bought = player.MaxFuel - player.Fuel
+		}
+		spent := bought * fuelPrice
+		r.choices = append(r.choices, Choice{
+			Text: "Done",
+			OnSelected: func() {
+				player.Credits -= spent
+				player.Fuel += bought
+				r.commitChoice(gamedata.ModeDocked)
+			},
+		})
+		return fmt.Sprintf("Bought %d fuel units for %d credits.", bought, spent)
+
 	default:
 		panic(fmt.Sprintf("unexpected event kind: %d", event.kind))
 	}
@@ -90,10 +114,43 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 
 	player := r.world.Player
+	planet := r.world.Player.Planet
 
 	r.textLines = append(r.textLines, genModeText(r.scene, r.world))
 
 	canJump := true
+
+	if len(r.choices) < MaxChoices && planet.Faction == player.Faction {
+		switch player.Mode {
+		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
+			s := "Enter the planetary docks"
+			if planet.Info.GasGiant {
+				s = "Dock the station"
+			}
+			r.choices = append(r.choices, Choice{
+				Time: 1,
+				Text: s,
+				OnSelected: func() {
+					r.commitChoiceExtra(gamedata.ModeOrbiting, gamedata.ModeDocked)
+				},
+			})
+		}
+	}
+
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+		canJump = false
+		if player.Credits > 0 && player.Fuel < player.MaxFuel {
+			r.choices = append(r.choices, Choice{
+				Time: 2,
+				Text: "Buy fuel",
+				OnSelected: func() {
+					r.eventInfo = eventInfo{kind: eventBuyFuel}
+					r.commitChoice(gamedata.ModeDocked)
+				},
+			})
+		}
+	}
+
 	hasFuel := false
 	if canJump {
 		// Find all possible routes first.
@@ -134,27 +191,38 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+		r.choices = append(r.choices, Choice{
+			Time: 2,
+			Text: "Take off",
+			OnSelected: func() {
+				r.commitChoice(gamedata.ModeOrbiting)
+			},
+		})
+	}
+
 	if len(r.choices) < MaxChoices {
-		canScavenge := !hasFuel || (player.Fuel < 100 && r.scene.Rand().Chance(0.4))
-		if canScavenge {
-			r.choices = append(r.choices, Choice{
-				Time: 8,
-				Text: "Scavenge for fuel",
-				OnSelected: func() {
-					r.eventInfo = eventInfo{kind: eventFuelScavenge}
-					// fuelFound := r.scene.Rand().IntRange(3, 15)
-					// player.Fuel = gmath.ClampMax(player.Fuel+fuelFound, player.MaxFuel)
-					r.commitChoice(gamedata.ModeScavenging)
-				},
-			})
-		} else {
-			r.choices = append(r.choices, Choice{
-				Time: 5,
-				Text: "Wait.",
-				OnSelected: func() {
-					r.commitChoice(gamedata.ModeOrbiting)
-				},
-			})
+		switch r.world.Player.Mode {
+		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
+			canScavenge := !hasFuel || (player.Fuel < 100 && r.scene.Rand().Chance(0.4))
+			if canScavenge {
+				r.choices = append(r.choices, Choice{
+					Time: 8,
+					Text: "Scavenge for fuel",
+					OnSelected: func() {
+						r.eventInfo = eventInfo{kind: eventFuelScavenge}
+						r.commitChoice(gamedata.ModeScavenging)
+					},
+				})
+			} else {
+				r.choices = append(r.choices, Choice{
+					Time: 5,
+					Text: "Wait.",
+					OnSelected: func() {
+						r.commitChoice(gamedata.ModeOrbiting)
+					},
+				})
+			}
 		}
 	}
 

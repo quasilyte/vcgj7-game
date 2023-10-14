@@ -9,4 +9,5 @@ const (
 	ModeOrbiting
 	ModeScavenging
 	ModeJustEntered
+	ModeDocked
 )
