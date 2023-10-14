@@ -17,9 +17,9 @@ type vesselNode struct {
 	state vesselState
 
 	scene  *ge.Scene
-	sprite *ge.Sprite
+	sprite *scalableSprite
 
-	shield *ge.Sprite
+	shield *scalableSprite
 
 	config vesselNodeConfig
 
@@ -62,15 +62,13 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 	v.state.Pos = &v.body.Pos
 	v.state.Rotation = &v.body.Rotation
 
-	v.sprite = scene.NewSprite(v.state.design.Image)
-	v.sprite.Pos.Base = &v.body.Pos
-	v.sprite.Rotation = &v.body.Rotation
-	scene.AddGraphics(v.sprite)
+	v.sprite = newScalableSprite(v.state.design.Image, &v.body.Pos)
+	scene.AddObject(v.sprite)
+	v.sprite.s.Rotation = &v.body.Rotation
 
-	v.shield = scene.NewSprite(assets.ImageEnergyShield)
-	v.shield.Pos.Base = &v.body.Pos
-	v.shield.Rotation = &v.state.shieldRotation
-	scene.AddGraphics(v.shield)
+	v.shield = newScalableSprite(assets.ImageEnergyShield, &v.body.Pos)
+	scene.AddObject(v.shield)
+	v.shield.s.Rotation = &v.state.shieldRotation
 
 	v.state.shieldRotation = v.body.Rotation
 }
@@ -160,9 +158,9 @@ func (v *vesselNode) Update(delta float64) {
 	v.pilotOrders = vesselPilotOrders{}
 
 	if pilotOrders.forward {
-		v.sprite.FrameOffset.X = v.sprite.FrameWidth
+		v.sprite.s.FrameOffset.X = v.sprite.s.FrameWidth
 	} else {
-		v.sprite.FrameOffset.X = 0
+		v.sprite.s.FrameOffset.X = 0
 	}
 
 	if pilotOrders.activateWeapon {

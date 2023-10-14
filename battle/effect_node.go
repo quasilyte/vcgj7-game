@@ -47,7 +47,8 @@ func (e *effectNode) Init(scene *ge.Scene) {
 		sprite = e.anim.Sprite()
 	}
 	sprite.Rotation = &e.rotation
-	sprite.SetScale(e.scale, e.scale)
+	scale := e.scale * calcSpriteScaling(e.pos)
+	sprite.SetScale(scale, scale)
 	if !e.noFlip {
 		sprite.FlipHorizontal = scene.Rand().Bool()
 	}

@@ -21,7 +21,7 @@ type projectileNode struct {
 
 	body physics.Body
 
-	sprite *ge.Sprite
+	sprite *scalableSprite
 	scene  *ge.Scene
 }
 
@@ -43,10 +43,9 @@ func (p *projectileNode) Init(scene *ge.Scene) {
 	p.body.LayerMask = p.collisionLayer
 	scene.AddBody(&p.body)
 
-	p.sprite = scene.NewSprite(p.weapon.ProjectileImage)
-	p.sprite.Rotation = &p.body.Rotation
-	p.sprite.Pos.Base = &p.body.Pos
-	scene.AddGraphicsBelow(p.sprite, 1)
+	p.sprite = newScalableSprite(p.weapon.ProjectileImage, &p.body.Pos)
+	scene.AddObjectBelow(p.sprite, 1)
+	p.sprite.s.Rotation = &p.body.Rotation
 
 	p.velocity = gmath.RadToVec(p.body.Rotation).Mulf(p.weapon.ProjectileSpeed)
 }
