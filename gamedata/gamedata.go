@@ -30,6 +30,8 @@ type Player struct {
 	Credits    int
 	Fuel       int
 	MaxFuel    int
+	Cargo      int
+	MaxCargo   int
 }
 
 type Planet struct {

@@ -214,8 +214,9 @@ func (c *ChoiceController) updateUI() {
 			"",
 			fmt.Sprintf("Combat experience: %d", p.Experience),
 			fmt.Sprintf("Credits: %d", p.Credits),
-			fmt.Sprintf("Fuel: %d/%d", p.Fuel, p.MaxFuel),
 			fmt.Sprintf("Vessel structure: %d%%", gmath.Clamp(int(100*p.VesselHP), 0, 100)),
+			fmt.Sprintf("Fuel: %d/%d", p.Fuel, p.MaxFuel),
+			fmt.Sprintf("Cargo: %d/%d", p.Cargo, p.MaxCargo),
 		}
 		c.statusPanelText.Label = strings.Join(lines, "\n")
 	}

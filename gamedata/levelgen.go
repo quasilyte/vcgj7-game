@@ -31,6 +31,9 @@ func NewWorld() *World {
 		Credits: 150,
 		Fuel:    75,
 		MaxFuel: 100,
+
+		Cargo:    0,
+		MaxCargo: 40,
 	}
 
 	return w

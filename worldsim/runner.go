@@ -124,11 +124,13 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		switch player.Mode {
 		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
 			s := "Enter the planetary docks"
+			h := 3
 			if planet.Info.GasGiant {
 				s = "Dock the station"
+				h = 1
 			}
 			r.choices = append(r.choices, Choice{
-				Time: 1,
+				Time: h,
 				Text: s,
 				OnSelected: func() {
 					r.commitChoiceExtra(gamedata.ModeOrbiting, gamedata.ModeDocked)
@@ -193,7 +195,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
 		r.choices = append(r.choices, Choice{
-			Time: 2,
+			Time: 4,
 			Text: "Take off",
 			OnSelected: func() {
 				r.commitChoice(gamedata.ModeOrbiting)
