@@ -167,6 +167,11 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		if freeCargo < loaded {
 			loaded = freeCargo
 		}
+		foundShipwreck := r.scene.Rand().Chance(0.2)
+		fuelGained := 0
+		if foundShipwreck {
+			fuelGained = r.scene.Rand().IntRange(4, 8)
+		}
 		damaged := r.scene.Rand().Chance(0.4)
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
@@ -177,6 +182,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				if damaged {
 					player.VesselHP -= r.scene.Rand().FloatRange(0.1, 0.2)
 				}
+				player.Fuel = gmath.ClampMax(player.Fuel+fuelGained, player.MaxFuel)
 				player.LoadCargo(mineralsFound)
 				r.commitChoice(gamedata.ModeOrbiting)
 			},
@@ -187,9 +193,13 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		} else {
 			lines = append(lines, fmt.Sprintf("Collected %d minerals.", loaded))
 		}
+		if foundShipwreck {
+			lines = append(lines, "")
+			lines = append(lines, fmt.Sprintf("While flying near asteroids, you discovered a shipwreck site. You found recyclable objects worth %d fuel units.", fuelGained))
+		}
 		if damaged {
 			lines = append(lines, "")
-			lines = append(lines, "The vessel hull was damaged during the act.")
+			lines = append(lines, "Your vessel hull was damaged during the act.")
 		}
 		return strings.Join(lines, "\n")
 
