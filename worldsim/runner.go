@@ -242,7 +242,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	if len(r.choices) < MaxChoices {
 		switch r.world.Player.Mode {
 		case gamedata.ModeJustEntered, gamedata.ModeOrbiting:
-			canScavenge := player.Fuel < 100 && r.scene.Rand().Chance(0.4)
+			canScavenge := player.Fuel < 50 && r.scene.Rand().Chance(0.4)
 			if canScavenge {
 				r.choices = append(r.choices, Choice{
 					Time: 8,

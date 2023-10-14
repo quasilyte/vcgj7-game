@@ -197,6 +197,9 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		if r.scene.Rand().Chance(0.3) {
 			mineralsFound *= 2
 		}
+		if r.scene.Rand().Chance(0.06) {
+			mineralsFound = 0
+		}
 		loaded := mineralsFound
 		freeCargo := player.FreeCargoSpace()
 		if freeCargo < loaded {
@@ -211,9 +214,9 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
 			OnResolved: func() gamedata.Mode {
-				if r.scene.Rand().Chance(0.85) {
-					planet.MineralsDelay = r.scene.Rand().FloatRange(5, 50)
-					if r.scene.Rand().Chance(0.3) {
+				if r.scene.Rand().Chance(0.9) {
+					planet.MineralsDelay = r.scene.Rand().FloatRange(15, 55)
+					if r.scene.Rand().Chance(0.35) {
 						planet.MineralsDelay *= 2
 					}
 				}
@@ -226,11 +229,16 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			},
 		})
 		lines := make([]string, 0, 3)
-		if loaded < mineralsFound {
-			lines = append(lines, fmt.Sprintf("Found %d minerals, but could only collect %d.", mineralsFound, loaded))
+		if mineralsFound == 0 {
+			lines = append(lines, "No valuable minerals found.")
 		} else {
-			lines = append(lines, fmt.Sprintf("Collected %d minerals.", loaded))
+			if loaded < mineralsFound {
+				lines = append(lines, fmt.Sprintf("Found %d minerals, but could only collect %d.", mineralsFound, loaded))
+			} else {
+				lines = append(lines, fmt.Sprintf("Collected %d minerals.", loaded))
+			}
 		}
+
 		if foundShipwreck {
 			lines = append(lines, "")
 			lines = append(lines, fmt.Sprintf("While flying near asteroids, you discovered a shipwreck site. You found recyclable objects worth %d fuel units.", fuelGained))
