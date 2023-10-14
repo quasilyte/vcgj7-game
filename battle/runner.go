@@ -38,8 +38,8 @@ func (r *Runner) Init(scene *ge.Scene) {
 			MaxHP:         100,
 			MaxEnergy:     100,
 			EnergyRegen:   1,
-			MaxSpeed:      250,
-			Acceleration:  100,
+			MaxSpeed:      200,
+			Acceleration:  140,
 			RotationSpeed: 4,
 			MainWeapon:    gamedata.FindWeaponDesign("Ion Cannon"),
 		},
@@ -60,9 +60,10 @@ func (r *Runner) Init(scene *ge.Scene) {
 				MaxHP:         150,
 				MaxEnergy:     120,
 				EnergyRegen:   1.5,
-				MaxSpeed:      190,
-				Acceleration:  120,
+				MaxSpeed:      180,
+				Acceleration:  90,
 				RotationSpeed: 2.5,
+				MainWeapon:    gamedata.FindWeaponDesign("Pulse Laser"),
 			},
 		})
 		v2.body.LayerMask = collisionPlayer2
@@ -70,6 +71,12 @@ func (r *Runner) Init(scene *ge.Scene) {
 		v2.body.Rotation = -math.Pi
 		v2.state.CollisionLayer = v2.body.LayerMask
 		scene.AddObject(v2)
+
+		v2.state.enemy = v
+		v.state.enemy = v2
+
+		p := newComputerPilot(v2, botDummy, scene)
+		r.pilots = append(r.pilots, p)
 	}
 
 	hud := scene.NewSprite(assets.ImageBattleHUD)

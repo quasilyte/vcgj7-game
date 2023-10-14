@@ -24,7 +24,7 @@ func registerSoundResources(ctx *ge.Context) {
 func NumSamples(a resource.AudioID) int {
 	switch a {
 	case AudioPulseLaser1:
-		return 8
+		return 3
 	default:
 		return 1
 	}

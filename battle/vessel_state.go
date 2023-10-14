@@ -6,7 +6,7 @@ import (
 )
 
 type vesselState struct {
-	enemy          *vesselState
+	enemy          *vesselNode
 	CollisionLayer uint16
 
 	Pos      *gmath.Vec
@@ -65,6 +65,10 @@ func (state *vesselState) Fire() {
 		state.energy -= state.weapon.design.EnergyCost
 	}
 	state.weapon.reload = state.weapon.design.Reload
+}
+
+func (state *vesselState) HealthPercentage() float64 {
+	return state.hp / state.design.MaxHP
 }
 
 func (state *vesselState) EnergyPercentage() float64 {
