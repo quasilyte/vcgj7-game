@@ -98,6 +98,28 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
+		if player.VesselHP < 1.0 {
+			price := r.scene.Rand().FloatRange(0.3, 0.5)
+			repairAmount := 1.0 - player.VesselHP
+			fullPrice := int(math.Ceil((100 * repairAmount) * price))
+			if player.Credits > fullPrice {
+				// Every 5% is 1 hour.
+				// Repair of 100% is 20 hours.
+				repairTime := int(math.Ceil(player.VesselHP * 20))
+				r.choices = append(r.choices, Choice{
+					Time: repairTime,
+					Text: "Repair vessel",
+					OnSelected: func() {
+						player.Credits -= fullPrice
+						player.VesselHP = 1.0
+						r.commitChoice(gamedata.ModeDocked)
+					},
+				})
+			}
+		}
+	}
+
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
 		if player.Credits > 0 && player.Fuel < player.MaxFuel {
 			r.choices = append(r.choices, Choice{
 				Time: 2,

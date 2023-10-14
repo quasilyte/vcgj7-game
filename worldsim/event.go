@@ -57,7 +57,9 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				if r.scene.Rand().Chance(0.7) {
 					planet.MineralsDelay = r.scene.Rand().FloatRange(3, 14)
 				}
-				player.VesselHP -= r.scene.Rand().FloatRange(0.1, 0.2)
+				if damaged {
+					player.VesselHP -= r.scene.Rand().FloatRange(0.1, 0.2)
+				}
 				player.LoadCargo(mineralsFound)
 				r.commitChoice(gamedata.ModeOrbiting)
 			},
