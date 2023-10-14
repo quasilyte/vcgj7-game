@@ -15,7 +15,13 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUIButtonPressed:  {Path: "image/ebitenui/button-pressed.png"},
 		ImageUIPanelIdle:      {Path: "image/ebitenui/panel-idle.png"},
 
-		ImageSystemMap: {Path: "image/map.png"},
+		ImageSystemMap:   {Path: "image/map.png"},
+		ImageMapLocation: {Path: "image/map_location.png"},
+
+		ImageBattleHUD: {Path: "image/battle_hud.png"},
+
+		ImageVesselRaider:   {Path: "image/vessel/raider.png", FrameWidth: 48},
+		ImageVesselMarauder: {Path: "image/vessel/marauder.png", FrameWidth: 48},
 	}
 
 	for id, res := range imageResources {
@@ -34,4 +40,10 @@ const (
 	ImageUIPanelIdle
 
 	ImageSystemMap
+	ImageMapLocation
+
+	ImageBattleHUD
+
+	ImageVesselRaider
+	ImageVesselMarauder
 )

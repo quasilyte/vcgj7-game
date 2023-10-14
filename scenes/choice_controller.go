@@ -5,6 +5,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/eui"
 	"github.com/quasilyte/vcgj7-game/session"
@@ -13,6 +14,9 @@ import (
 type ChoiceController struct {
 	scene *ge.Scene
 	state *session.State
+
+	mapPosMarkerRotation gmath.Rad
+	mapPosMarker         *ge.Sprite
 
 	choiceButtons []*widget.Button
 }
@@ -24,6 +28,14 @@ func NewChoiceController(state *session.State) *ChoiceController {
 func (c *ChoiceController) Init(scene *ge.Scene) {
 	c.scene = scene
 	c.initUI()
+
+	{
+		posBase := gmath.Vec{X: 100, Y: 100}
+		c.mapPosMarker = scene.NewSprite(assets.ImageMapLocation)
+		c.mapPosMarker.Pos.Base = &posBase
+		c.mapPosMarker.Rotation = &c.mapPosMarkerRotation
+		scene.AddGraphics(c.mapPosMarker)
+	}
 }
 
 func (c *ChoiceController) initUI() {
@@ -96,4 +108,6 @@ func (c *ChoiceController) initUI() {
 	initUI(c.scene, root)
 }
 
-func (c *ChoiceController) Update(delta float64) {}
+func (c *ChoiceController) Update(delta float64) {
+	c.mapPosMarkerRotation += gmath.Rad(2 * delta)
+}

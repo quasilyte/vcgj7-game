@@ -9,6 +9,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/eui"
+	"github.com/quasilyte/vcgj7-game/gamedata"
 	"github.com/quasilyte/vcgj7-game/session"
 	"github.com/quasilyte/vcgj7-game/styles"
 )
@@ -39,7 +40,9 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "PLAY", func() {
-		scene.Context().ChangeScene(NewChoiceController(c.state))
+		c.state.World = gamedata.NewWorld()
+		// scene.Context().ChangeScene(NewChoiceController(c.state))
+		scene.Context().ChangeScene(NewBattleController(c.state))
 	}))
 
 	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "CREDITS", func() {

@@ -6,6 +6,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/input"
 	"github.com/quasilyte/vcgj7-game/assets"
+	"github.com/quasilyte/vcgj7-game/controls"
 	"github.com/quasilyte/vcgj7-game/eui"
 	"github.com/quasilyte/vcgj7-game/scenes"
 	"github.com/quasilyte/vcgj7-game/session"
@@ -27,7 +28,11 @@ func main() {
 		UIResources: eui.PrepareResources(ctx.Loader),
 	}
 
-	keymap := input.Keymap{}
+	keymap := input.Keymap{
+		controls.ActionForward: {input.KeyUp, input.KeyW, input.KeyGamepadUp},
+		controls.ActionLeft:    {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
+		controls.ActionRight:   {input.KeyRight, input.KeyD, input.KeyGamepadRight},
+	}
 	state.Input = ctx.Input.NewHandler(0, keymap)
 
 	if err := ge.RunGame(ctx, scenes.NewMainMenuController(state)); err != nil {
