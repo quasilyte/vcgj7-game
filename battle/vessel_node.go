@@ -4,6 +4,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/ge/physics"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
@@ -17,6 +18,8 @@ type vesselNode struct {
 
 	scene  *ge.Scene
 	sprite *ge.Sprite
+
+	shield *ge.Sprite
 
 	config vesselNodeConfig
 
@@ -56,11 +59,20 @@ func (v *vesselNode) Init(scene *ge.Scene) {
 
 	state.Init()
 	v.state.hp = v.state.design.MaxHP * v.config.HP
+	v.state.Pos = &v.body.Pos
+	v.state.Rotation = &v.body.Rotation
 
 	v.sprite = scene.NewSprite(v.state.design.Image)
 	v.sprite.Pos.Base = &v.body.Pos
 	v.sprite.Rotation = &v.body.Rotation
 	scene.AddGraphics(v.sprite)
+
+	v.shield = scene.NewSprite(assets.ImageEnergyShield)
+	v.shield.Pos.Base = &v.body.Pos
+	v.shield.Rotation = &v.state.shieldRotation
+	scene.AddGraphics(v.shield)
+
+	v.state.shieldRotation = v.body.Rotation
 }
 
 func (v *vesselNode) Dispose() {
@@ -99,7 +111,7 @@ func (v *vesselNode) ActivateWeaponOrder() {
 	v.pilotOrders.activateWeapon = true
 }
 
-func (v *vesselNode) OnDamage(weapon *gamedata.WeaponDesign) {
+func (v *vesselNode) OnDamage(weapon *gamedata.WeaponDesign, consumed bool) {
 	// scorePos := ge.Pos{Offset: v.body.Pos.Add(gmath.Vec{Y: -48})}
 	// score := effects.NewDamageScore(value, scorePos)
 	// v.scene.AddObject(score)
@@ -108,7 +120,11 @@ func (v *vesselNode) OnDamage(weapon *gamedata.WeaponDesign) {
 		return
 	}
 
-	v.state.hp = gmath.ClampMin(v.state.hp-weapon.Damage, 0)
+	damage := weapon.Damage
+	if consumed {
+		damage *= 0.25
+	}
+	v.state.hp = gmath.ClampMin(v.state.hp-damage, 0)
 	if v.state.hp <= 0 {
 		v.Destroy()
 	}
@@ -118,8 +134,21 @@ func (v *vesselNode) Update(delta float64) {
 	for _, collision := range v.scene.GetCollisions(&v.body) {
 		switch obj := collision.Body.Object.(type) {
 		case *projectileNode:
-			obj.Destroy(true)
-			v.OnDamage(obj.weapon)
+			consumed := false
+			projectileAngle := v.body.Pos.AngleToPoint(obj.body.Pos).Normalized()
+			projectileAngleDelta := v.state.shieldRotation.Normalized().AngleDelta(projectileAngle)
+			if projectileAngleDelta.Abs() < 1 {
+				consumed = true
+			}
+			obj.Destroy(!consumed)
+			if consumed {
+				energyGain := obj.weapon.EnergyCost * obj.weapon.EnergyConversion
+				v.state.energy = gmath.ClampMax(v.state.energy+energyGain, v.state.design.MaxEnergy)
+				playSound(v.scene, assets.AudioShieldAbsorb)
+				v.OnDamage(obj.weapon, true)
+			} else {
+				v.OnDamage(obj.weapon, false)
+			}
 		}
 	}
 

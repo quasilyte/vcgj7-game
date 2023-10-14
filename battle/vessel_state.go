@@ -12,6 +12,8 @@ type vesselState struct {
 	Pos      *gmath.Vec
 	Rotation *gmath.Rad
 
+	shieldRotation gmath.Rad
+
 	engineVelocity gmath.Vec
 	extraVelocity  gmath.Vec
 
@@ -45,6 +47,8 @@ func (state *vesselState) Tick(delta float64) {
 	if state.energy < state.energyRegenThreshold {
 		state.energy = gmath.ClampMax(state.energy+state.design.EnergyRegen*delta, state.energyRegenThreshold)
 	}
+
+	state.shieldRotation = state.shieldRotation.RotatedTowards(*state.Rotation, gmath.Rad(2*delta))
 }
 
 func (state *vesselState) CanFire() bool {

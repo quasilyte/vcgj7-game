@@ -13,6 +13,8 @@ func registerSoundResources(ctx *ge.Context) {
 		AudioPulseLaser1: {Path: "audio/pulse_laser1.wav"},
 		AudioPulseLaser2: {Path: "audio/pulse_laser2.wav"},
 		AudioPulseLaser3: {Path: "audio/pulse_laser3.wav"},
+
+		AudioShieldAbsorb: {Path: "audio/shield_absorb.wav"},
 	}
 
 	for id, res := range soundResources {
@@ -39,4 +41,6 @@ const (
 	AudioPulseLaser1
 	AudioPulseLaser2
 	AudioPulseLaser3
+
+	AudioShieldAbsorb
 )
