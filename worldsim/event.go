@@ -176,8 +176,11 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
 			OnSelected: func() {
-				if r.scene.Rand().Chance(0.7) {
-					planet.MineralsDelay = r.scene.Rand().FloatRange(3, 14)
+				if r.scene.Rand().Chance(0.85) {
+					planet.MineralsDelay = r.scene.Rand().FloatRange(5, 50)
+					if r.scene.Rand().Chance(0.3) {
+						planet.MineralsDelay *= 2
+					}
 				}
 				if damaged {
 					player.VesselHP -= r.scene.Rand().FloatRange(0.1, 0.2)
