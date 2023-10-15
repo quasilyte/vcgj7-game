@@ -8,6 +8,7 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/gsignal"
+	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
@@ -196,31 +197,31 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		})
 	}
 
-	// if len(r.choices) < MaxChoices && player.Mode != gamedata.ModeDocked {
-	// 	r.choices = append(r.choices, Choice{
-	// 		Time: 1,
-	// 		Text: "Combat test",
-	// 		Mode: gamedata.ModeCombat,
-	// 		OnResolved: func() gamedata.Mode {
-	// 			r.eventInfo = eventInfo{
-	// 				kind: eventBattle,
-	// 				enemy: &gamedata.VesselDesign{
-	// 					Faction:         0,
-	// 					Image:           assets.ImageVesselMarauder,
-	// 					MaxHP:           1,
-	// 					MaxEnergy:       120,
-	// 					EnergyRegen:     3.0,
-	// 					MaxSpeed:        180,
-	// 					Acceleration:    90,
-	// 					RotationSpeed:   2.5,
-	// 					MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
-	// 					SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
-	// 				},
-	// 			}
-	// 			return gamedata.ModeOrbiting
-	// 		},
-	// 	})
-	// }
+	if len(r.choices) < MaxChoices && player.Mode != gamedata.ModeDocked {
+		r.choices = append(r.choices, Choice{
+			Time: 1,
+			Text: "Combat test",
+			Mode: gamedata.ModeCombat,
+			OnResolved: func() gamedata.Mode {
+				r.eventInfo = eventInfo{
+					kind: eventBattle,
+					enemy: &gamedata.VesselDesign{
+						Faction:         0,
+						Image:           assets.ImageVesselMarauder,
+						MaxHP:           150,
+						MaxEnergy:       120,
+						EnergyRegen:     3.0,
+						MaxSpeed:        180,
+						Acceleration:    90,
+						RotationSpeed:   2.5,
+						MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
+						SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
+					},
+				}
+				return gamedata.ModeOrbiting
+			},
+		})
+	}
 
 	if len(r.choices) < MaxChoices && player.Cargo < player.MaxCargo && player.VesselHP > 0.3 {
 		switch r.world.Player.Mode {

@@ -34,7 +34,7 @@ func NewWorld(rand *gmath.Rand) *World {
 			MaxSpeed:        200,
 			Acceleration:    140,
 			RotationSpeed:   4,
-			MainWeapon:      FindWeaponDesign("Scatter Gun"),
+			MainWeapon:      FindWeaponDesign("Trident"),
 			SecondaryWeapon: FindWeaponDesign("Missile Launcher"),
 		},
 	}

@@ -135,6 +135,29 @@ var Weapons = []*WeaponDesign{
 	},
 
 	{
+		Name:             "Trident",
+		FireSound:        assets.AudioTrident1,
+		Damage:           12,
+		Reload:           0.5,
+		EnergyCost:       14,
+		EnergyConversion: 1.8,
+		Range:            350,
+		ProjectileSpeed:  350,
+		ProjectileImage:  assets.ImageProjectileTrident,
+		ProjectileSize:   8,
+		Explosion:        assets.ImageTridentImpact,
+		Blockable:        true,
+		BurstSize:        3,
+
+		FireOffsets: []gmath.Vec{
+			{Y: -25},
+			{},
+			{Y: +25},
+		},
+		ProjectileRotationDeltas: []gmath.Rad{+0.025, 0, -0.025},
+	},
+
+	{
 		Name:            "Missile Launcher",
 		FireSound:       assets.AudioMissile1,
 		Damage:          20,

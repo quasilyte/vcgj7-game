@@ -17,6 +17,8 @@ func registerSoundResources(ctx *ge.Context) {
 		AudioAssaultLaser1: {Path: "audio/assault_laser1.wav"},
 		AudioAssaultLaser2: {Path: "audio/assault_laser2.wav"},
 
+		AudioTrident1: {Path: "audio/trident1.wav"},
+
 		AudioScatterGun1: {Path: "audio/scatter_gun1.wav"},
 
 		AudioMissile1: {Path: "audio/missile1.wav"},
@@ -60,6 +62,8 @@ const (
 	AudioIonCannonImpact
 
 	AudioScatterGun1
+
+	AudioTrident1
 
 	AudioPulseLaser1
 	AudioPulseLaser2
