@@ -19,6 +19,7 @@ type WeaponDesign struct {
 	Reload float64
 
 	Homing float64
+	Drifts bool
 
 	Range           float64
 	ProjectileSpeed float64
@@ -215,6 +216,25 @@ var Weapons = []*WeaponDesign{
 	},
 
 	{
+		Name:            "Mini-rocket Pod",
+		Cost:            130,
+		FireSound:       assets.AudioMissile1,
+		Damage:          7,
+		Reload:          0.9,
+		Range:           650,
+		ProjectileSpeed: 300,
+		ProjectileImage: assets.ImageProjectileMiniRocket,
+		ProjectileSize:  8,
+		Explosion:       assets.ImageMissileImpact,
+		ExplosionSound:  assets.AudioExplosion1,
+		BurstSize:       1,
+		Drifts:          true,
+
+		FireOffsets:              []gmath.Vec{{}},
+		ProjectileRotationDeltas: []gmath.Rad{0},
+	},
+
+	{
 		Name:            "Missile Launcher",
 		Cost:            200,
 		FireSound:       assets.AudioMissile1,
@@ -267,7 +287,7 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:            "Torpedo Launcher",
-		Cost:            400,
+		Cost:            440,
 		FireSound:       assets.AudioMissile1,
 		Damage:          40,
 		Reload:          6.0,
@@ -286,7 +306,7 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:            "Firestorm",
-		Cost:            550,
+		Cost:            700,
 		FireSound:       assets.AudioMissile1,
 		Damage:          8,
 		Reload:          5.0,

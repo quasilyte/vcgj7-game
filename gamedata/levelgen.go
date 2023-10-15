@@ -32,15 +32,16 @@ func NewWorld(rand *gmath.Rand) *World {
 		MaxCargo: 40,
 
 		VesselDesign: &VesselDesign{
-			Faction:       FactionA,
-			Image:         assets.ImageVesselPlayer,
-			MaxHP:         120,
-			MaxEnergy:     90,
-			EnergyRegen:   1.5,
-			MaxSpeed:      150,
-			Acceleration:  90,
-			RotationSpeed: 2.5,
-			MainWeapon:    FindWeaponDesign("Photon Cannon"),
+			Faction:         FactionA,
+			Image:           assets.ImageVesselPlayer,
+			MaxHP:           120,
+			MaxEnergy:       90,
+			EnergyRegen:     1.5,
+			MaxSpeed:        150,
+			Acceleration:    90,
+			RotationSpeed:   2.5,
+			MainWeapon:      FindWeaponDesign("Photon Cannon"),
+			SecondaryWeapon: FindWeaponDesign("Mini-rocket Pod"),
 		},
 	}
 

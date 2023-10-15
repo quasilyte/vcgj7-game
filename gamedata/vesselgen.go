@@ -136,10 +136,10 @@ func assignChallenge0weapons(rand *gmath.Rand, design *VesselDesign) {
 		}
 	} else {
 		// A single secondary weapon.
-		if rand.Chance(0.6) {
-			design.SecondaryWeapon = FindWeaponDesign("Missile Launcher")
+		if rand.Chance(0.8) {
+			design.SecondaryWeapon = FindWeaponDesign("Mini-rocket Pod")
 		} else {
-			design.SecondaryWeapon = FindWeaponDesign("Homing Missile Launcher")
+			design.SecondaryWeapon = FindWeaponDesign("Missile Launcher")
 		}
 	}
 }
@@ -156,7 +156,10 @@ func assignChallenge1weapons(rand *gmath.Rand, design *VesselDesign) {
 		design.MainWeapon = FindWeaponDesign("Assault Laser")
 	}
 
-	if rand.Chance(0.6) {
+	roll = rand.Float()
+	if roll <= 0.4 {
+		design.SecondaryWeapon = FindWeaponDesign("Mini-rocket Pod")
+	} else if roll <= 0.8 {
 		design.SecondaryWeapon = FindWeaponDesign("Homing Missile Launcher")
 	} else {
 		design.SecondaryWeapon = FindWeaponDesign("Missile Launcher")

@@ -63,7 +63,13 @@ func (p *projectileNode) Update(delta float64) {
 		return
 	}
 
-	if p.weapon.Homing == 0 {
+	if p.weapon.Drifts {
+		if p.scene.Rand().Chance(0.5) {
+			p.body.Rotation += gmath.Rad(p.scene.Rand().FloatRange(-0.07, +0.07))
+			p.velocity = gmath.RadToVec(p.body.Rotation).Mulf(p.weapon.ProjectileSpeed)
+		}
+		p.body.Pos = p.body.Pos.Add(p.velocity.Mulf(delta))
+	} else if p.weapon.Homing == 0 {
 		p.body.Pos = p.body.Pos.Add(p.velocity.Mulf(delta))
 	} else {
 		accel := p.seek()
