@@ -27,6 +27,7 @@ func main() {
 
 	state := &session.State{
 		UIResources: eui.PrepareResources(ctx.Loader),
+		Settings:    getDefaultSettings(),
 	}
 
 	if err := ctx.LoadGameData("save", &state.Settings); err != nil {
