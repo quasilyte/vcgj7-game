@@ -7,6 +7,7 @@ import (
 
 	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
@@ -402,11 +403,17 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 	case eventBattle, eventBattleInterrupt:
 		lastDefender := planet.Faction == event.enemy.Faction && planet.VesselsByFaction[event.enemy.Faction] == 1
 		event.enemy.LastDefender = lastDefender
+		pirateAttack := event.enemy.Image == assets.ImageVesselPirate
 		r.choices = append(r.choices, Choice{
 			Text: "Fight!",
 			Mode: gamedata.ModeCombat,
 			OnResolved: func() gamedata.Mode {
-				planet.VesselsByFaction[event.enemy.Faction]--
+				if pirateAttack {
+					r.world.PirateSeq++
+				}
+				if event.enemy.Faction != gamedata.FactionNone {
+					planet.VesselsByFaction[event.enemy.Faction]--
+				}
 				if planet.Faction == event.enemy.Faction && planet.VesselsByFaction[event.enemy.Faction] == 0 {
 					planet.Faction = gamedata.FactionNone
 					r.world.PushEvent(fmt.Sprintf("%s lost control over %s", event.enemy.Faction.Name(), planet.Info.Name))
@@ -421,7 +428,20 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		if player.Mode == gamedata.ModeAttack {
 			lines = append(lines, "Enemy spotted!")
 		} else if event.kind == eventBattleInterrupt {
-			lines = append(lines, fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed)))
+			if pirateAttack {
+				lines = append(lines, cfmt("An <r>unidentified vessel</> opens fire at you."))
+			} else {
+				lines = append(lines, fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed)))
+			}
+			if player.Fuel >= 5 {
+				r.choices = append(r.choices, Choice{
+					Text: "Retreat [5 fuel]",
+					OnResolved: func() gamedata.Mode {
+						player.Fuel -= 5
+						return gamedata.ModeOrbiting
+					},
+				})
+			}
 		}
 		if r.world.Player.Battles < 5 {
 			lines = append(lines, "")

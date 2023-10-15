@@ -25,6 +25,9 @@ type World struct {
 
 	RecentEvents []WorldEvent
 
+	NextPirateDelay float64
+	PirateSeq       int
+
 	NextUpgradeDelay   float64
 	UpgradeRerollDelay float64
 	UpgradeAvailable   UpgradeKind

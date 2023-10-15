@@ -111,6 +111,11 @@ func (c *BattleController) Init(scene *ge.Scene) {
 				player.BattleRewards.Artifact = a
 			}
 
+			if c.enemy.Image == assets.ImageVesselPirate {
+				player.BattleRewards.Credits += scene.Rand().IntRange(40, 90)
+				player.BattleRewards.Cargo += scene.Rand().IntRange(10, 20)
+			}
+
 			player.BattleRewards.SystemLiberated = c.enemy.LastDefender
 
 			player.VesselHP = results.HP

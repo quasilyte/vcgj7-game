@@ -41,8 +41,6 @@ func NewWorld(rand *gmath.Rand) *World {
 			Acceleration:  90,
 			RotationSpeed: 2.5,
 			MainWeapon:    FindWeaponDesign("Photon Cannon"),
-			// MainWeapon:      FindWeaponDesign("Lance"),
-			// SecondaryWeapon: FindWeaponDesign("Firestorm"),
 		},
 	}
 
@@ -77,6 +75,8 @@ func NewWorld(rand *gmath.Rand) *World {
 
 	w.Player.Planet = planets[0]
 	w.Planets = planets
+
+	w.NextPirateDelay = rand.FloatRange(250, 500)
 
 	w.PushEvent("All three major factions declare war to each other")
 

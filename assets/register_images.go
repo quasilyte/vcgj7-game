@@ -56,6 +56,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageVesselBetaBig:    {Path: "image/vessel/beta_big.png", FrameWidth: 48},
 		ImageVesselGammaSmall: {Path: "image/vessel/gamma_small.png", FrameWidth: 48},
 		ImageVesselGammaBig:   {Path: "image/vessel/gamma_big.png", FrameWidth: 48},
+		ImageVesselPirate:     {Path: "image/vessel/pirate.png", FrameWidth: 48},
 	}
 
 	for id, res := range imageResources {
@@ -114,4 +115,5 @@ const (
 	ImageVesselBetaBig
 	ImageVesselGammaSmall
 	ImageVesselGammaBig
+	ImageVesselPirate
 )

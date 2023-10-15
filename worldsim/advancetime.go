@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/quasilyte/gmath"
+	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
@@ -52,8 +53,41 @@ func (r *Runner) AdvanceTime(hours int) bool {
 	return true
 }
 
+func (r *Runner) makePirate() *gamedata.VesselDesign {
+	pirate := &gamedata.VesselDesign{
+		Image:         assets.ImageVesselPirate,
+		MaxHP:         float64(r.scene.Rand().IntRange(120, 150) + (r.world.PirateSeq * 50)),
+		MaxEnergy:     float64(r.scene.Rand().IntRange(200, 300) + (r.world.PirateSeq * 30)),
+		EnergyRegen:   2.0,
+		MaxSpeed:      200,
+		Acceleration:  80,
+		Challenge:     2,
+		RotationSpeed: 0.5,
+	}
+	if r.scene.Rand().Chance(0.8) {
+		pirate.MainWeapon = gamedata.FindWeaponDesign("Scatter Gun")
+	} else {
+		pirate.MainWeapon = gamedata.FindWeaponDesign("Trident")
+	}
+	return pirate
+}
+
 func (r *Runner) processEncounters() bool {
 	player := r.world.Player
+
+	if r.world.NextPirateDelay == 0 && r.world.PirateSeq < 3 {
+		if player.VesselHP >= 0.8 && player.Battles >= 2 {
+			r.world.NextPirateDelay = r.scene.Rand().FloatRange(600, 1200)
+			r.eventInfo = eventInfo{
+				kind:  eventBattleInterrupt,
+				enemy: r.makePirate(),
+			}
+			return true
+		}
+
+		r.world.NextPirateDelay = r.scene.Rand().FloatRange(20, 40)
+	}
+
 	planet := player.Planet
 
 	encounterChance := 0.0
@@ -289,6 +323,7 @@ func (r *Runner) maybeRollQuest() {
 }
 
 func (r *Runner) updateWorld(delta float64) bool {
+	r.world.NextPirateDelay = gmath.ClampMin(r.world.NextPirateDelay-delta, 0)
 	r.world.QuestRerollDelay = gmath.ClampMin(r.world.QuestRerollDelay-delta, 0)
 	r.world.UpgradeRerollDelay = gmath.ClampMin(r.world.UpgradeRerollDelay-delta, 0)
 	r.world.NextUpgradeDelay = gmath.ClampMin(r.world.NextUpgradeDelay-delta, 0)
