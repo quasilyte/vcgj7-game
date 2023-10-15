@@ -25,8 +25,8 @@ func NewWorld(rand *gmath.Rand) *World {
 		ArmorLevel:        1,
 
 		Credits: 75,
-		Fuel:    75,
-		MaxFuel: 100,
+		Fuel:    100,
+		MaxFuel: 130,
 
 		Cargo:    0,
 		MaxCargo: 40,
@@ -40,7 +40,9 @@ func NewWorld(rand *gmath.Rand) *World {
 			MaxSpeed:      150,
 			Acceleration:  90,
 			RotationSpeed: 2.5,
-			MainWeapon:    FindWeaponDesign("Photon Cannon"),
+			// MainWeapon:    FindWeaponDesign("Photon Cannon"),
+			MainWeapon:      FindWeaponDesign("Lance"),
+			SecondaryWeapon: FindWeaponDesign("Homing Missile Launcher"),
 		},
 	}
 
@@ -73,6 +75,8 @@ func NewWorld(rand *gmath.Rand) *World {
 
 	w.Player.Planet = planets[0]
 	w.Planets = planets
+
+	w.PushEvent("All three major factions declare war to each other")
 
 	return w
 }

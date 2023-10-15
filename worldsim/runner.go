@@ -139,6 +139,18 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		canJump = false
 	}
 
+	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked && !planet.AreasVisited.VisitedNews {
+		r.choices = append(r.choices, Choice{
+			Time: 1,
+			Text: "Watch news",
+			OnResolved: func() gamedata.Mode {
+				planet.AreasVisited.VisitedNews = true
+				r.eventInfo = eventInfo{kind: eventNews}
+				return gamedata.ModeDocked
+			},
+		})
+	}
+
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
 		if player.VesselHP < 1.0 {
 			price := r.scene.Rand().FloatRange(0.3, 0.5)

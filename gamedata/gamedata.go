@@ -20,9 +20,30 @@ type World struct {
 
 	GameTime int // In hours
 
+	RecentEvents []WorldEvent
+
 	NextUpgradeDelay   float64
 	UpgradeRerollDelay float64
 	UpgradeAvailable   UpgradeKind
+}
+
+type WorldEvent struct {
+	Time int // In hours
+	Text string
+}
+
+func (w *World) PushEvent(s string) {
+	e := WorldEvent{
+		Text: s,
+		Time: w.GameTime,
+	}
+	const maxEvents = 6
+	if len(w.RecentEvents) >= maxEvents {
+		copy(w.RecentEvents, w.RecentEvents[1:])
+		w.RecentEvents[maxEvents-1] = e
+	} else {
+		w.RecentEvents = append(w.RecentEvents, e)
+	}
 }
 
 type UpgradeKind int
@@ -119,6 +140,7 @@ type Planet struct {
 
 type PlanetVisitStatus struct {
 	VisitedMineralsMarket bool
+	VisitedNews           bool
 }
 
 type PlanetInfo struct {

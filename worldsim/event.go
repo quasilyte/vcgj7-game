@@ -22,6 +22,7 @@ const (
 	eventMineralsHunt
 	eventScanArea
 
+	eventNews
 	eventBuyFuel
 	eventUpgradeLab
 	eventWeaponShop
@@ -103,6 +104,25 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			Text: "Done",
 			OnResolved: func() gamedata.Mode {
 				return gamedata.ModeOrbiting
+			},
+		})
+		return strings.Join(lines, "\n")
+
+	case eventNews:
+		lines := make([]string, 0, 8)
+		lines = append(lines, "The latest system-wide news:")
+		lines = append(lines, "")
+		for _, e := range r.world.RecentEvents {
+			day := (e.Time / 24) + 1
+			hours := e.Time % 24
+			dateString := fmt.Sprintf("Day %d, %02d:00", day, hours)
+			s := fmt.Sprintf("* [%s] %s", dateString, e.Text)
+			lines = append(lines, s)
+		}
+		r.choices = append(r.choices, Choice{
+			Text: "Done",
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeDocked
 			},
 		})
 		return strings.Join(lines, "\n")
@@ -304,6 +324,10 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			Mode: gamedata.ModeCombat,
 			OnResolved: func() gamedata.Mode {
 				planet.VesselsByFaction[event.enemy.Faction]--
+				if planet.Faction == event.enemy.Faction && planet.VesselsByFaction[event.enemy.Faction] == 0 {
+					planet.Faction = gamedata.FactionNone
+					r.world.PushEvent(fmt.Sprintf("%s lost control over %s", event.enemy.Faction.Name(), planet.Info.Name))
+				}
 				r.EventStartBattle.Emit(BattleInfo{
 					Enemy: event.enemy,
 				})
