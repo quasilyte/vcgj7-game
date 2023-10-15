@@ -81,13 +81,36 @@ func (r *Runner) updateWorld(delta float64) bool {
 		p.MineralsDelay = gmath.ClampMin(p.MineralsDelay-delta, 0)
 		p.WeaponsRerollDelay = gmath.ClampMin(p.WeaponsRerollDelay-delta, 0)
 		p.ShopSwapDelay = gmath.ClampMin(p.ShopSwapDelay-delta, 0)
+		p.ResourceGenDelay = gmath.ClampMin(p.ResourceGenDelay-delta, 0)
+
 		if p.WeaponsRerollDelay == 0 {
 			p.WeaponsRerollDelay = r.scene.Rand().FloatRange(28, 40)
 			r.rerollWeaponsSelection(p)
 		}
+
 		if p.ShopSwapDelay == 0 {
 			p.ShopSwapDelay = r.scene.Rand().FloatRange(10, 15)
 			p.ShopModeWeapons = r.scene.Rand().Bool()
+		}
+
+		if p.ResourceGenDelay == 0 {
+			p.ResourceGenDelay = r.scene.Rand().FloatRange(30, 50)
+			if p.Info.GasGiant {
+				p.ResourceGenDelay *= 2
+			}
+			if p.Faction != gamedata.FactionNone {
+				generated := r.scene.Rand().IntRange(1, 4)
+				switch p.Faction {
+				case gamedata.FactionB:
+					generated *= 2
+				case gamedata.FactionC:
+					generated *= 3
+				}
+				if p.Faction != r.world.Player.Faction && r.scene.Rand().Chance(0.3) {
+					generated += 5
+				}
+				p.MineralDeposit += generated
+			}
 		}
 
 		if p.Faction == gamedata.FactionNone {

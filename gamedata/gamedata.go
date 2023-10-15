@@ -122,6 +122,8 @@ type Planet struct {
 	VesselProduction     bool
 	VesselProductionTime float64
 
+	ResourceGenDelay float64
+
 	GarrisonLimit int
 
 	MineralsDelay  float64
