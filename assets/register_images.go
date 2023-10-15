@@ -34,6 +34,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageProjectileTrident:       {Path: "image/projectile/trident.png"},
 		ImageProjectileMissile:       {Path: "image/projectile/missile.png"},
 		ImageProjectileHomingMissile: {Path: "image/projectile/homing_missile.png"},
+		ImageProjectileTorpedo:       {Path: "image/projectile/torpedo.png"},
 
 		ImageIonCannonImpact:    {Path: "image/effect/ion_cannon_impact.png", FrameWidth: 10},
 		ImageAssaultLaserImpact: {Path: "image/effect/assault_laser_impact.png", FrameWidth: 14},
@@ -79,6 +80,7 @@ const (
 	ImageProjectileTrident
 	ImageProjectileMissile
 	ImageProjectileHomingMissile
+	ImageProjectileTorpedo
 
 	ImageIonCannonImpact
 	ImageAssaultLaserImpact

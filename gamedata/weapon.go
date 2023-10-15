@@ -13,6 +13,8 @@ type WeaponDesign struct {
 
 	FireSound resource.AudioID
 
+	Cost int
+
 	Damage float64
 	Reload float64
 
@@ -47,6 +49,7 @@ func FindWeaponDesign(name string) *WeaponDesign {
 var Weapons = []*WeaponDesign{
 	{
 		Name:             "Pulse Laser",
+		Cost:             210,
 		FireSound:        assets.AudioPulseLaser1,
 		Damage:           8,
 		Reload:           0.25,
@@ -65,6 +68,7 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:             "Ion Cannon",
+		Cost:             150,
 		FireSound:        assets.AudioIonCannon1,
 		Damage:           10,
 		Reload:           0.4,
@@ -85,6 +89,7 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:             "Assault Laser",
+		Cost:             440,
 		FireSound:        assets.AudioAssaultLaser1,
 		Damage:           8,
 		Reload:           0.2,
@@ -108,6 +113,7 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:             "Scatter Gun",
+		Cost:             520,
 		FireSound:        assets.AudioScatterGun1,
 		Damage:           7,
 		Reload:           0.4,
@@ -136,12 +142,13 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:             "Trident",
+		Cost:             650,
 		FireSound:        assets.AudioTrident1,
 		Damage:           12,
 		Reload:           0.5,
 		EnergyCost:       14,
 		EnergyConversion: 1.8,
-		Range:            350,
+		Range:            380,
 		ProjectileSpeed:  350,
 		ProjectileImage:  assets.ImageProjectileTrident,
 		ProjectileSize:   8,
@@ -159,6 +166,7 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:            "Missile Launcher",
+		Cost:            200,
 		FireSound:       assets.AudioMissile1,
 		Damage:          20,
 		Reload:          3.5,
@@ -184,9 +192,10 @@ var Weapons = []*WeaponDesign{
 
 	{
 		Name:            "Homing Missile Launcher",
+		Cost:            280,
 		FireSound:       assets.AudioMissile1,
 		Damage:          15,
-		Reload:          3.5,
+		Reload:          4.0,
 		Range:           600,
 		ProjectileSpeed: 230,
 		ProjectileImage: assets.ImageProjectileHomingMissile,
@@ -204,5 +213,24 @@ var Weapons = []*WeaponDesign{
 			-0.3,
 			+0.3,
 		},
+	},
+
+	{
+		Name:            "Torpedo Launcher",
+		Cost:            400,
+		FireSound:       assets.AudioMissile1,
+		Damage:          35,
+		Reload:          6.0,
+		Range:           1900,
+		ProjectileSpeed: 185,
+		ProjectileImage: assets.ImageProjectileTorpedo,
+		ProjectileSize:  10,
+		Explosion:       assets.ImageMissileImpact,
+		ExplosionSound:  assets.AudioExplosion1,
+		BurstSize:       1,
+		Homing:          120,
+
+		FireOffsets:              []gmath.Vec{{}},
+		ProjectileRotationDeltas: []gmath.Rad{0},
 	},
 }
