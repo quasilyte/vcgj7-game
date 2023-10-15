@@ -244,10 +244,11 @@ func (c *ChoiceController) updateUI() {
 	{
 		day := (c.state.World.GameTime / 24) + 1
 		hours := c.state.World.GameTime % 24
+		salary := gmath.ClampMax((c.state.World.Player.Experience/100)+2, 100)
 		lines := []string{
 			fmt.Sprintf("Day %d, %02d:00", day, hours),
 			"",
-			fmt.Sprintf("Combat experience: %d", p.Experience),
+			fmt.Sprintf("Combat experience: %d (salary is %d credits/day)", p.Experience, salary),
 			fmt.Sprintf("Credits: %d", p.Credits),
 			fmt.Sprintf("Vessel structure: %d%%", gmath.Clamp(int(100*p.VesselHP), 0, 100)),
 			fmt.Sprintf("Fuel: %d/%d", p.Fuel, p.MaxFuel),
