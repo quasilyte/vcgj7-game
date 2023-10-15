@@ -25,6 +25,8 @@ type ChoiceController struct {
 	mapPosMarkerBase     gmath.Vec
 	mapPosMarker         *ge.Sprite
 
+	planetSectorLabels []*ge.Sprite
+
 	statusPanelText *widget.Text
 	textPanelText   *widget.Text
 
@@ -52,6 +54,19 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 		c.mapPosMarker.Pos.Base = &c.mapPosMarkerBase
 		c.mapPosMarker.Rotation = &c.mapPosMarkerRotation
 		scene.AddGraphics(c.mapPosMarker)
+	}
+
+	{
+		c.planetSectorLabels = make([]*ge.Sprite, len(c.state.World.Planets))
+		mapBase := &gmath.Vec{X: 752, Y: 76}
+		for i, p := range c.state.World.Planets {
+			s := ge.NewSprite(scene.Context())
+			s.Pos.Base = mapBase
+			s.Visible = false
+			s.Pos.Offset = p.Info.MapOffset
+			c.planetSectorLabels[i] = s
+			scene.AddGraphics(s)
+		}
 	}
 
 	c.runner = worldsim.NewRunner(c.state.World)
@@ -237,6 +252,20 @@ func (c *ChoiceController) updateUI() {
 			fmt.Sprintf("Cargo: %d/%d", p.Cargo, p.MaxCargo),
 		}
 		c.statusPanelText.Label = strings.Join(lines, "\n")
+	}
+
+	for i, s := range c.planetSectorLabels {
+		p := c.state.World.Planets[i]
+		switch p.Faction {
+		case gamedata.FactionA:
+			s.SetImage(c.scene.Context().Loader.LoadImage(assets.ImageAlliedPlanet))
+			s.Visible = true
+		case gamedata.FactionB, gamedata.FactionC:
+			s.SetImage(c.scene.Context().Loader.LoadImage(assets.ImageHostilePlanet))
+			s.Visible = true
+		default:
+			s.Visible = false
+		}
 	}
 }
 

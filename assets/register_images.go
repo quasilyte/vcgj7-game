@@ -15,8 +15,10 @@ func registerImageResources(ctx *ge.Context) {
 		ImageUIButtonPressed:  {Path: "image/ebitenui/button-pressed.png"},
 		ImageUIPanelIdle:      {Path: "image/ebitenui/panel-idle.png"},
 
-		ImageSystemMap:   {Path: "image/map.png"},
-		ImageMapLocation: {Path: "image/map_location.png"},
+		ImageSystemMap:     {Path: "image/map.png"},
+		ImageMapLocation:   {Path: "image/map_location.png"},
+		ImageAlliedPlanet:  {Path: "image/allied_planet_sector.png"},
+		ImageHostilePlanet: {Path: "image/hostile_planet_sector.png"},
 
 		ImageMenuBg: {Path: "image/menu_bg.png"},
 
@@ -65,6 +67,8 @@ const (
 
 	ImageSystemMap
 	ImageMapLocation
+	ImageAlliedPlanet
+	ImageHostilePlanet
 
 	ImageBattleHUD
 	ImageBattleBarHP
