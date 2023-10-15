@@ -1,6 +1,8 @@
 package worldsim
 
 import (
+	"fmt"
+
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
@@ -69,6 +71,81 @@ func (r *Runner) processEncounters() bool {
 	return false
 }
 
+func (r *Runner) updateFaction(delta float64, state *gamedata.FactionState) {
+	if state.Tag == gamedata.FactionNone {
+		return
+	}
+
+	state.AttackDelay = gmath.ClampMin(state.AttackDelay-delta, 0)
+	state.CaptureDelay = gmath.ClampMin(state.CaptureDelay-delta, 0)
+
+	if state.AttackDelay == 0 {
+		if r.tryFactionAttack(state) {
+			state.AttackDelay = r.scene.Rand().FloatRange(50, 150)
+			return
+		}
+		state.AttackDelay = r.scene.Rand().FloatRange(15, 40)
+	}
+}
+
+func (r *Runner) tryFactionAttack(state *gamedata.FactionState) bool {
+	planet := randIterate(r.scene.Rand(), r.world.Planets, func(p *gamedata.Planet) bool {
+		return p.Faction == state.Tag && p.VesselsByFaction[state.Tag] > r.scene.Rand().IntRange(5, 15)
+	})
+	if planet == nil {
+		return false
+	}
+
+	largeSquad := false
+	attackVessels := r.scene.Rand().IntRange(3, 6)
+	if r.scene.Rand().Chance(0.4) && r.world.GameTime > 5*24 {
+		largeSquad = true
+		attackVessels *= 2
+	}
+	if attackVessels > planet.VesselsByFaction[state.Tag] {
+		attackVessels = planet.VesselsByFaction[state.Tag] - r.scene.Rand().IntRange(2, 4)
+	}
+
+	targetPlanet := randIterate(r.scene.Rand(), r.world.Planets, func(p *gamedata.Planet) bool {
+		if p.Faction == planet.Faction || p.Faction == gamedata.FactionNone {
+			return false
+		}
+		dist := p.Info.MapOffset.DistanceTo(planet.Info.MapOffset)
+		if dist > r.scene.Rand().FloatRange(50, 100) {
+			return false
+		}
+		return true
+	})
+	if targetPlanet == nil {
+		return false
+	}
+
+	if state.Tag != r.world.Player.Faction {
+		if largeSquad {
+			r.world.PushEvent(fmt.Sprintf("%s (controlled by %s) dispatched a large group of vessels", planet.Faction.Name(), planet.Info.Name))
+		}
+	} else {
+		r.world.PushEvent(fmt.Sprintf("Allies start an attack operation on %s", targetPlanet.Info.Name))
+	}
+
+	speed := r.scene.Rand().FloatRange(5, 9)
+	if largeSquad {
+		speed *= 0.5
+	}
+
+	squad := &gamedata.Squad{
+		NumVessels: attackVessels,
+		Faction:    state.Tag,
+		Speed:      speed,
+		Dist:       planet.Info.MapOffset.DistanceTo(targetPlanet.Info.MapOffset),
+		Dst:        targetPlanet,
+	}
+	r.world.Squads = append(r.world.Squads, squad)
+	planet.VesselsByFaction[state.Tag] -= attackVessels
+
+	return true
+}
+
 func (r *Runner) updateWorld(delta float64) bool {
 	r.world.UpgradeRerollDelay = gmath.ClampMin(r.world.UpgradeRerollDelay-delta, 0)
 	r.world.NextUpgradeDelay = gmath.ClampMin(r.world.NextUpgradeDelay-delta, 0)
@@ -76,6 +153,21 @@ func (r *Runner) updateWorld(delta float64) bool {
 		r.world.UpgradeRerollDelay = float64(r.scene.Rand().IntRange(5, 15))
 		r.world.UpgradeAvailable = gamedata.UpgradeKind(r.scene.Rand().IntRange(int(gamedata.FirstUpgrade), int(gamedata.LastUpgrade)))
 	}
+
+	for _, fs := range r.world.StateByFaction {
+		r.updateFaction(delta, fs)
+	}
+
+	squads := r.world.Squads[:0]
+	for _, squad := range r.world.Squads {
+		squad.Dist -= delta * squad.Speed
+		if squad.Dist <= 0 {
+			squad.Dst.VesselsByFaction[squad.Faction] += squad.NumVessels
+			continue
+		}
+		squads = append(squads, squad)
+	}
+	r.world.Squads = squads
 
 	for _, p := range r.world.Planets {
 		p.MineralsDelay = gmath.ClampMin(p.MineralsDelay-delta, 0)

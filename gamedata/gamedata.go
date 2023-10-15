@@ -25,6 +25,10 @@ type World struct {
 	NextUpgradeDelay   float64
 	UpgradeRerollDelay float64
 	UpgradeAvailable   UpgradeKind
+
+	StateByFaction [NumFactions]*FactionState
+
+	Squads []*Squad
 }
 
 type WorldEvent struct {
@@ -138,6 +142,21 @@ type Planet struct {
 	WeaponsAvailable   []string
 
 	AreasVisited PlanetVisitStatus
+}
+
+type FactionState struct {
+	Tag          Faction
+	AttackDelay  float64
+	CaptureDelay float64
+}
+
+type Squad struct {
+	NumVessels int
+	Faction    Faction
+
+	Speed float64
+	Dist  float64
+	Dst   *Planet
 }
 
 type PlanetVisitStatus struct {

@@ -15,7 +15,7 @@ func NewWorld(rand *gmath.Rand) *World {
 		Mode: ModeOrbiting,
 
 		MaxJumpDist: 60,
-		JumpSpeed:   10,
+		JumpSpeed:   8,
 		FuelUsage:   1.0,
 
 		SpeedLevel:        1,
@@ -58,6 +58,13 @@ func NewWorld(rand *gmath.Rand) *World {
 	planets[0].Faction = FactionA
 	planets[2].Faction = FactionB
 	planets[7].Faction = FactionC
+
+	for i := 0; i < int(NumFactions); i++ {
+		w.StateByFaction[Faction(i)] = &FactionState{
+			Tag:         Faction(i),
+			AttackDelay: rand.FloatRange(75, 100),
+		}
+	}
 
 	planets[1].VesselsByFaction[FactionB] = 2
 
