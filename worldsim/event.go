@@ -25,6 +25,7 @@ const (
 	eventBuyFuel
 	eventUpgradeLab
 	eventWeaponShop
+	eventWorkshop
 	eventSellMinerals
 )
 
@@ -106,6 +107,92 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		})
 		return strings.Join(lines, "\n")
 
+	case eventWorkshop:
+		lines := make([]string, 0, 8)
+		lines = append(lines, "You can improve your vessel combat stats here.")
+		lines = append(lines, "")
+		lines = append(lines, "Your vessel stats:")
+
+		armorUpgradeCost := 30 + (10 * (player.ArmorLevel - 1))
+		lines = append(lines, cfmt("* Armor (level <g>%d</>) - <y>%d</> credits to increase", player.ArmorLevel, armorUpgradeCost))
+		if player.Credits >= armorUpgradeCost {
+			r.choices = append(r.choices, Choice{
+				Text: "Increase armor level",
+				Time: 20,
+				OnResolved: func() gamedata.Mode {
+					player.VesselDesign.MaxHP += float64(r.scene.Rand().IntRange(10, 20))
+					player.Credits -= armorUpgradeCost
+					return gamedata.ModeDocked
+				},
+			})
+		}
+
+		energyUpgradeCost := 25 + (10 * (player.EnergyLevel - 1))
+		lines = append(lines, cfmt("* Energy capacity (level <g>%d</>) - <y>%d</> credits to increase", player.EnergyLevel, energyUpgradeCost))
+		if player.Credits >= energyUpgradeCost {
+			r.choices = append(r.choices, Choice{
+				Text: "Increase energy level",
+				Time: 15,
+				OnResolved: func() gamedata.Mode {
+					player.VesselDesign.MaxEnergy += float64(r.scene.Rand().IntRange(10, 20))
+					player.VesselDesign.EnergyRegen += r.scene.Rand().FloatRange(0.1, 0.2)
+					player.Credits -= energyUpgradeCost
+					return gamedata.ModeDocked
+				},
+			})
+		}
+
+		speedUpgradeCost := 15 + (5 * (player.SpeedLevel - 1))
+		lines = append(lines, cfmt("* Max speed (level <g>%d</>) - <y>%d</> credits to increase", player.SpeedLevel, speedUpgradeCost))
+		if player.Credits >= speedUpgradeCost {
+			r.choices = append(r.choices, Choice{
+				Text: "Increase max speed level",
+				Time: 10,
+				OnResolved: func() gamedata.Mode {
+					player.VesselDesign.MaxSpeed += float64(r.scene.Rand().IntRange(20, 35))
+					player.Credits -= speedUpgradeCost
+					return gamedata.ModeDocked
+				},
+			})
+		}
+
+		accelerationUpgradeCost := 15 + (5 * (player.AccelerationLevel - 1))
+		lines = append(lines, cfmt("* Acceleration (level <g>%d</>) - <y>%d</> credits to increase", player.AccelerationLevel, accelerationUpgradeCost))
+		if player.Credits >= accelerationUpgradeCost {
+			r.choices = append(r.choices, Choice{
+				Text: "Increase acceleration level",
+				Time: 5,
+				OnResolved: func() gamedata.Mode {
+					player.VesselDesign.Acceleration += float64(r.scene.Rand().IntRange(30, 40))
+					player.Credits -= accelerationUpgradeCost
+					return gamedata.ModeDocked
+				},
+			})
+		}
+
+		rotationUpgradeCost := 25 + (10 * (player.RotationLevel - 1))
+		lines = append(lines, cfmt("* Rotation speed (level <g>%d</>) - <y>%d</> credits to increase", player.RotationLevel, rotationUpgradeCost))
+		if player.Credits >= rotationUpgradeCost {
+			r.choices = append(r.choices, Choice{
+				Text: "Increase rotation speed level",
+				Time: 20,
+				OnResolved: func() gamedata.Mode {
+					player.VesselDesign.RotationSpeed += gmath.Rad(r.scene.Rand().FloatRange(0.25, 0.4))
+					player.Credits -= rotationUpgradeCost
+					return gamedata.ModeDocked
+				},
+			})
+		}
+
+		r.choices = append(r.choices, Choice{
+			Text: "Leave workshop",
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeDocked
+			},
+		})
+
+		return strings.Join(lines, "\n")
+
 	case eventWeaponShop:
 		formatWeapon := func(w *gamedata.WeaponDesign) string {
 			if w.Primary {
@@ -118,7 +205,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			lines = append(lines, "The weapon selection include:")
 			for _, weaponName := range planet.WeaponsAvailable {
 				w := gamedata.FindWeaponDesign(weaponName)
-				cost := fmt.Sprintf(" - %d credits", w.Cost)
+				cost := cfmt(" - <y>%d</> credits", w.Cost)
 				lines = append(lines, "* "+formatWeapon(w)+cost)
 				if player.Credits >= w.Cost && !player.HasWeapon(w) {
 					r.choices = append(r.choices, Choice{

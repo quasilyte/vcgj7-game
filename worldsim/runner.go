@@ -161,14 +161,25 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
-		r.choices = append(r.choices, Choice{
-			Time: 1,
-			Text: "Visit weapons shop",
-			OnResolved: func() gamedata.Mode {
-				r.eventInfo = eventInfo{kind: eventWeaponShop}
-				return gamedata.ModeDocked
-			},
-		})
+		if planet.ShopModeWeapons {
+			r.choices = append(r.choices, Choice{
+				Time: 1,
+				Text: "Visit weapons shop",
+				OnResolved: func() gamedata.Mode {
+					r.eventInfo = eventInfo{kind: eventWeaponShop}
+					return gamedata.ModeDocked
+				},
+			})
+		} else {
+			r.choices = append(r.choices, Choice{
+				Time: 2,
+				Text: "Visit workshop",
+				OnResolved: func() gamedata.Mode {
+					r.eventInfo = eventInfo{kind: eventWorkshop}
+					return gamedata.ModeDocked
+				},
+			})
+		}
 	}
 
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {

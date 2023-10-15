@@ -2,11 +2,28 @@ package worldsim
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
+
+var colorReplacer = strings.NewReplacer(
+	"</>", "[/color]",
+	"<g>", "[color=7AE168]",
+	"<p>", "[color=B392FF]",
+	"<r>", "[color=FF6363]",
+	"<y>", "[color=FFF163]",
+)
+
+func cfmt(format string, args ...any) string {
+	format = colorReplacer.Replace(format)
+	if len(args) == 0 {
+		return format
+	}
+	return fmt.Sprintf(format, args...)
+}
 
 type textColor int
 

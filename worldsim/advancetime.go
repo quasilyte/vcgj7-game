@@ -89,9 +89,14 @@ func (r *Runner) updateWorld(delta float64) bool {
 	for _, p := range r.world.Planets {
 		p.MineralsDelay = gmath.ClampMin(p.MineralsDelay-delta, 0)
 		p.WeaponsRerollDelay = gmath.ClampMin(p.WeaponsRerollDelay-delta, 0)
+		p.ShopSwapDelay = gmath.ClampMin(p.ShopSwapDelay-delta, 0)
 		if p.WeaponsRerollDelay == 0 {
 			p.WeaponsRerollDelay = r.scene.Rand().FloatRange(28, 40)
 			r.rerollWeaponsSelection(p)
+		}
+		if p.ShopSwapDelay == 0 {
+			p.ShopSwapDelay = r.scene.Rand().FloatRange(10, 15)
+			p.ShopModeWeapons = r.scene.Rand().Bool()
 		}
 	}
 	return false

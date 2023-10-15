@@ -18,6 +18,12 @@ func NewWorld(rand *gmath.Rand) *World {
 		JumpSpeed:   10,
 		FuelUsage:   1.0,
 
+		SpeedLevel:        1,
+		AccelerationLevel: 1,
+		RotationLevel:     1,
+		EnergyLevel:       1,
+		ArmorLevel:        1,
+
 		Credits: 75,
 		Fuel:    75,
 		MaxFuel: 100,

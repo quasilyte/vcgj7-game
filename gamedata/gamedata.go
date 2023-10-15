@@ -50,6 +50,12 @@ type Player struct {
 
 	Mode Mode
 
+	SpeedLevel        int
+	AccelerationLevel int
+	RotationLevel     int
+	EnergyLevel       int
+	ArmorLevel        int
+
 	VesselDesign *VesselDesign
 	VesselHP     float64 // percentage
 
@@ -94,6 +100,9 @@ type Planet struct {
 	MineralDeposit int
 
 	VesselsByFaction [NumFactions]int
+
+	ShopModeWeapons bool
+	ShopSwapDelay   float64
 
 	WeaponsRerollDelay float64
 	WeaponsAvailable   []string
