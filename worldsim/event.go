@@ -305,8 +305,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			OnResolved: func() gamedata.Mode {
 				planet.VesselsByFaction[event.enemy.Faction]--
 				r.EventStartBattle.Emit(BattleInfo{
-					Enemy:          event.enemy,
-					ChallengeLevel: 1,
+					Enemy: event.enemy,
 				})
 				return gamedata.ModeAfterCombat
 			},

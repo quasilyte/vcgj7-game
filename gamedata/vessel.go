@@ -18,6 +18,9 @@ type VesselDesign struct {
 	MaxSpeed     float64
 	Acceleration float64
 
+	Elite     bool
+	Challenge int
+
 	RotationSpeed gmath.Rad
 
 	MainWeapon      *WeaponDesign

@@ -63,6 +63,8 @@ type Player struct {
 	MaxJumpDist float64
 	FuelUsage   float64
 
+	Battles int
+
 	Experience int
 	Credits    int
 	Fuel       int

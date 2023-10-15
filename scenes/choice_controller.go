@@ -126,7 +126,7 @@ func (c *ChoiceController) selectChoice(i int) {
 }
 
 func (c *ChoiceController) onBattleStart(info worldsim.BattleInfo) {
-	c.scene.Context().ChangeScene(NewBattleController(c.state, info.ChallengeLevel, info.Enemy))
+	c.scene.Context().ChangeScene(NewBattleController(c.state, info.Enemy))
 }
 
 func (c *ChoiceController) initUI() {

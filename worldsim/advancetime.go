@@ -2,7 +2,6 @@ package worldsim
 
 import (
 	"github.com/quasilyte/gmath"
-	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
@@ -56,20 +55,10 @@ func (r *Runner) processEncounters() bool {
 		}
 		if len(r.encounterOptions) != 0 {
 			enemyFaction := gmath.RandElem(r.scene.Rand(), r.encounterOptions)
+			enemy := gamedata.CreateVesselDesign(r.scene.Rand(), r.world, enemyFaction)
 			r.eventInfo = eventInfo{
-				kind: eventBattleInterrupt,
-				enemy: &gamedata.VesselDesign{
-					Faction:         enemyFaction,
-					Image:           assets.ImageVesselBetaBig,
-					MaxHP:           150,
-					MaxEnergy:       120,
-					EnergyRegen:     3.0,
-					MaxSpeed:        180,
-					Acceleration:    90,
-					RotationSpeed:   2.5,
-					MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
-					SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
-				},
+				kind:  eventBattleInterrupt,
+				enemy: enemy,
 			}
 			return true
 		}

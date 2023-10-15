@@ -28,8 +28,7 @@ type Runner struct {
 }
 
 type BattleInfo struct {
-	ChallengeLevel int
-	Enemy          *gamedata.VesselDesign
+	Enemy *gamedata.VesselDesign
 }
 
 type eventInfo struct {

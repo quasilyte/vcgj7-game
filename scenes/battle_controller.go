@@ -15,10 +15,10 @@ type BattleController struct {
 	runner    *battle.Runner
 }
 
-func NewBattleController(state *session.State, challenge int, enemy *gamedata.VesselDesign) *BattleController {
+func NewBattleController(state *session.State, enemy *gamedata.VesselDesign) *BattleController {
 	return &BattleController{
 		state:     state,
-		challenge: challenge,
+		challenge: enemy.Challenge,
 		enemy:     enemy,
 	}
 }
@@ -87,6 +87,9 @@ func (c *BattleController) Init(scene *ge.Scene) {
 			}
 			if cargoChance > 0 && scene.Rand().Chance(cargoChance) {
 				player.BattleRewards.Cargo = scene.Rand().IntRange(minCargo, maxCargo)
+			}
+			if c.enemy.Elite {
+				player.BattleRewards.Experience *= 2
 			}
 
 			if player.BattleRewards.Cargo == 0 && player.BattleRewards.Credits == 0 {

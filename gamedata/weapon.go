@@ -49,6 +49,28 @@ func FindWeaponDesign(name string) *WeaponDesign {
 
 var Weapons = []*WeaponDesign{
 	{
+		Name:             "Photon Cannon",
+		Cost:             100,
+		FireSound:        assets.AudioPhotonCannon1,
+		Damage:           12,
+		Reload:           0.9,
+		EnergyCost:       6,
+		EnergyConversion: 3.0,
+		Range:            1600,
+		ProjectileSpeed:  550,
+		ProjectileImage:  assets.ImageProjectilePhotonCannon,
+		ProjectileSize:   10,
+		Explosion:        assets.ImagePhotonCannonImpact,
+		// ExplosionSound:   assets.AudioIonCannonImpact,
+		Blockable: true,
+		Primary:   true,
+		BurstSize: 1,
+
+		FireOffsets:              []gmath.Vec{{}},
+		ProjectileRotationDeltas: []gmath.Rad{0},
+	},
+
+	{
 		Name:             "Pulse Laser",
 		Cost:             210,
 		FireSound:        assets.AudioPulseLaser1,
