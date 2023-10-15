@@ -34,7 +34,7 @@ func NewWorld(rand *gmath.Rand) *World {
 		VesselDesign: &VesselDesign{
 			Faction:       FactionA,
 			Image:         assets.ImageVesselPlayer,
-			MaxHP:         100,
+			MaxHP:         120,
 			MaxEnergy:     90,
 			EnergyRegen:   1.5,
 			MaxSpeed:      150,

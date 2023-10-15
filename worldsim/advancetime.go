@@ -37,6 +37,8 @@ func (r *Runner) processEncounters() bool {
 
 	encounterChance := 0.0
 	switch r.world.Player.Mode {
+	case gamedata.ModeSneaking:
+		encounterChance = 0.01
 	case gamedata.ModeJustEntered:
 		encounterChance = 0.05
 	case gamedata.ModeOrbiting:

@@ -311,7 +311,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		r.choices = append(r.choices, Choice{
 			Time: 2,
 			Text: "Scout the area",
-			Mode: gamedata.ModeScavenging,
+			Mode: gamedata.ModeSneaking,
 			OnResolved: func() gamedata.Mode {
 				r.eventInfo = eventInfo{kind: eventScanArea}
 				return gamedata.ModeOrbiting

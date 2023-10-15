@@ -11,6 +11,7 @@ const (
 	ModeAfterCombat
 	ModeScavenging
 	ModeAttack
+	ModeSneaking
 	ModeJustEntered
 	ModeDocked
 )

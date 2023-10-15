@@ -140,6 +140,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Text: "Increase armor level",
 				Time: 20,
 				OnResolved: func() gamedata.Mode {
+					player.ArmorLevel++
 					player.VesselDesign.MaxHP += float64(r.scene.Rand().IntRange(10, 20))
 					player.Credits -= armorUpgradeCost
 					return gamedata.ModeDocked
@@ -154,6 +155,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Text: "Increase energy level",
 				Time: 15,
 				OnResolved: func() gamedata.Mode {
+					player.EnergyLevel++
 					player.VesselDesign.MaxEnergy += float64(r.scene.Rand().IntRange(10, 20))
 					player.VesselDesign.EnergyRegen += r.scene.Rand().FloatRange(0.1, 0.2)
 					player.Credits -= energyUpgradeCost
@@ -169,6 +171,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Text: "Increase max speed level",
 				Time: 10,
 				OnResolved: func() gamedata.Mode {
+					player.SpeedLevel++
 					player.VesselDesign.MaxSpeed += float64(r.scene.Rand().IntRange(20, 35))
 					player.Credits -= speedUpgradeCost
 					return gamedata.ModeDocked
@@ -183,6 +186,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Text: "Increase acceleration level",
 				Time: 5,
 				OnResolved: func() gamedata.Mode {
+					player.AccelerationLevel++
 					player.VesselDesign.Acceleration += float64(r.scene.Rand().IntRange(30, 40))
 					player.Credits -= accelerationUpgradeCost
 					return gamedata.ModeDocked
@@ -197,6 +201,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Text: "Increase rotation speed level",
 				Time: 20,
 				OnResolved: func() gamedata.Mode {
+					player.RotationLevel++
 					player.VesselDesign.RotationSpeed += gmath.Rad(r.scene.Rand().FloatRange(0.25, 0.4))
 					player.Credits -= rotationUpgradeCost
 					return gamedata.ModeDocked
@@ -312,7 +317,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		lines := []string{
 			"You visited an experimental research lab. A person in white coat approaches you.",
 			"",
-			"After a quick discission, one particular upgrade catched your attention... " + s,
+			"After a quick discussion, one particular upgrade catched your attention... " + s,
 			"",
 			fmt.Sprintf("It will cost you %d credits.", price),
 		}
