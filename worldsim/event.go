@@ -155,7 +155,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		return strings.Join(lines, "\n")
 
 	case eventScanArea:
-		lines := make([]string, 0, 6)
+		lines := make([]string, 0, MaxChoices)
 		lines = append(lines, "Scanning area...")
 		foundAnyone := false
 		for i, num := range planet.VesselsByFaction {

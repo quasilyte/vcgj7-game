@@ -63,7 +63,7 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 	{
 		c.planetSectorTitles = make([]*ge.Label, len(c.state.World.Planets))
 		c.planetSectorLabels = make([]*ge.Sprite, len(c.state.World.Planets))
-		mapBase := &gmath.Vec{X: 752, Y: 76}
+		mapBase := &gmath.Vec{X: 752, Y: 76 - 19}
 		for i, p := range c.state.World.Planets {
 			s := ge.NewSprite(scene.Context())
 			s.Pos.Base = mapBase
@@ -207,7 +207,7 @@ func (c *ChoiceController) initUI() {
 			widget.GridLayoutOpts.Spacing(8, 8))))
 	lowerGrid.AddChild(optionsList)
 
-	c.choiceButtons = make([]*choiceButton, 6)
+	c.choiceButtons = make([]*choiceButton, worldsim.MaxChoices)
 	for i := range c.choiceButtons {
 		id := i
 		b := eui.NewButtonWithConfig(c.state.UIResources, eui.ButtonConfig{
@@ -257,7 +257,7 @@ func (c *ChoiceController) handleInput() {
 }
 
 func (c *ChoiceController) updateUI() {
-	c.mapPosMarkerBase = (gmath.Vec{X: 752, Y: 75}).Add(c.state.World.Player.Planet.Info.MapOffset)
+	c.mapPosMarkerBase = (gmath.Vec{X: 752, Y: 75 - 19}).Add(c.state.World.Player.Planet.Info.MapOffset)
 
 	p := c.state.World.Player
 	{

@@ -19,4 +19,5 @@ const (
 	ActionChoice4
 	ActionChoice5
 	ActionChoice6
+	ActionChoice7
 )

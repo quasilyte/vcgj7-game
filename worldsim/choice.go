@@ -11,4 +11,4 @@ type Choice struct {
 	OnResolved func() gamedata.Mode
 }
 
-const MaxChoices = 6
+const MaxChoices = 7

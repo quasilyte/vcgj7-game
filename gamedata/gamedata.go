@@ -59,7 +59,7 @@ func (w *World) PushEvent(s string) {
 		Text: s,
 		Time: w.GameTime,
 	}
-	const maxEvents = 6
+	const maxEvents = 5
 	if len(w.RecentEvents) >= maxEvents {
 		copy(w.RecentEvents, w.RecentEvents[1:])
 		w.RecentEvents[maxEvents-1] = e
