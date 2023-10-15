@@ -45,11 +45,15 @@ func CreateVesselDesign(rand *gmath.Rand, world *World, faction Faction) *Vessel
 		}
 	}
 
+	if world.Player.Battles > 20 {
+		design.MaxHP += gmath.ClampMax(float64((world.Player.Battles-20)*2), 50)
+	}
+
 	switch faction {
 	default:
 		panic("unexpected faction")
 	case FactionB: // Beta
-		design.MaxHP = float64(rand.IntRange(70, 110)) + float64(challenge*25)
+		design.MaxHP = float64(rand.IntRange(60, 90)) + float64(challenge*35)
 		design.MaxSpeed = float64(rand.IntRange(180, 240))
 		design.Acceleration = float64(rand.IntRange(40, 50))
 		design.RotationSpeed = gmath.Rad(rand.FloatRange(1.4, 2.0))

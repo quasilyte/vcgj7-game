@@ -53,7 +53,7 @@ var Weapons = []*WeaponDesign{
 		Name:             "Photon Cannon",
 		Cost:             100,
 		FireSound:        assets.AudioPhotonCannon1,
-		Damage:           12,
+		Damage:           13,
 		Reload:           0.9,
 		EnergyCost:       6,
 		EnergyConversion: 3.0,

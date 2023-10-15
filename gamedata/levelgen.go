@@ -24,24 +24,24 @@ func NewWorld(rand *gmath.Rand) *World {
 		EnergyLevel:       1,
 		ArmorLevel:        1,
 
-		Credits: 75,
-		Fuel:    100,
+		Credits: rand.IntRange(110, 120),
+		Fuel:    rand.IntRange(110, 120),
 		MaxFuel: 130,
 
 		Cargo:    0,
 		MaxCargo: 40,
 
 		VesselDesign: &VesselDesign{
-			Faction:         FactionA,
-			Image:           assets.ImageVesselPlayer,
-			MaxHP:           120,
-			MaxEnergy:       90,
-			EnergyRegen:     1.5,
-			MaxSpeed:        150,
-			Acceleration:    75,
-			RotationSpeed:   2.0,
-			MainWeapon:      FindWeaponDesign("Photon Cannon"),
-			SecondaryWeapon: FindWeaponDesign("Mini-rocket Pod"),
+			Faction:       FactionA,
+			Image:         assets.ImageVesselPlayer,
+			MaxHP:         120,
+			MaxEnergy:     90,
+			EnergyRegen:   1.5,
+			MaxSpeed:      150,
+			Acceleration:  75,
+			RotationSpeed: 2.4,
+			MainWeapon:    FindWeaponDesign("Photon Cannon"),
+			// SecondaryWeapon: FindWeaponDesign("Mini-rocket Pod"),
 		},
 	}
 

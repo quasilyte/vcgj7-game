@@ -155,7 +155,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		return strings.Join(lines, "\n")
 
 	case eventScanArea:
-		lines := make([]string, 0, MaxChoices)
+		lines := make([]string, 0, 6)
 		lines = append(lines, "Scanning area...")
 		foundAnyone := false
 		for i, num := range planet.VesselsByFaction {
@@ -430,17 +430,17 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		} else if event.kind == eventBattleInterrupt {
 			if pirateAttack {
 				lines = append(lines, cfmt("An <r>unidentified vessel</> opens fire at you."))
+				if player.Fuel >= 5 {
+					r.choices = append(r.choices, Choice{
+						Text: "Retreat [5 fuel]",
+						OnResolved: func() gamedata.Mode {
+							player.Fuel -= 5
+							return gamedata.ModeOrbiting
+						},
+					})
+				}
 			} else {
 				lines = append(lines, fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed)))
-			}
-			if player.Fuel >= 5 {
-				r.choices = append(r.choices, Choice{
-					Text: "Retreat [5 fuel]",
-					OnResolved: func() gamedata.Mode {
-						player.Fuel -= 5
-						return gamedata.ModeOrbiting
-					},
-				})
 			}
 		}
 		if r.world.Player.Battles < 5 {
@@ -538,19 +538,19 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		s := "The minerals are in demand here."
 		switch {
 		case planet.MineralDeposit < 50:
-			mineralsDemand = 1.4
+			mineralsDemand = 1.8
 			s = "The minerals are in high demand here."
 		case planet.MineralDeposit > 100:
-			mineralsDemand = 1.1
+			mineralsDemand = 1.5
 			s = "The minerals have normal price here."
 		case planet.MineralDeposit > 200:
-			mineralsDemand = 0.9
+			mineralsDemand = 1.0
 			s = "The minerals have are not in demand here."
 		case planet.MineralDeposit > 300:
-			mineralsDemand = 0.4
+			mineralsDemand = 0.5
 			s = "The minerals have low price here."
 		case planet.MineralDeposit > 500:
-			mineralsDemand = 0.1
+			mineralsDemand = 0.2
 			s = "The minerals have very low price here."
 		}
 		price := r.scene.Rand().FloatRange(0.8, 1.6)

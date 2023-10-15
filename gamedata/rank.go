@@ -1,7 +1,7 @@
 package gamedata
 
 func GetSalary(exp int) int {
-	return (GetRank(exp) * 3) + 2
+	return (GetRank(exp) * 3) + 4
 }
 
 func GetRank(exp int) int {
