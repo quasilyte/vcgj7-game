@@ -189,8 +189,10 @@ func assignChallenge3weapons(rand *gmath.Rand, design *VesselDesign) {
 		design.MainWeapon = FindWeaponDesign("Assault Laser")
 	} else if roll <= 0.5 {
 		design.MainWeapon = FindWeaponDesign("Scatter Gun")
-	} else {
+	} else if roll < 0.9 {
 		design.MainWeapon = FindWeaponDesign("Trident")
+	} else {
+		design.MainWeapon = FindWeaponDesign("Lance")
 	}
 
 	roll = rand.Float()

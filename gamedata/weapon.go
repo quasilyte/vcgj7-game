@@ -171,7 +171,7 @@ var Weapons = []*WeaponDesign{
 		Name:             "Trident",
 		Cost:             650,
 		FireSound:        assets.AudioTrident1,
-		Damage:           12,
+		Damage:           14,
 		Reload:           0.5,
 		EnergyCost:       14,
 		EnergyConversion: 1.8,
@@ -190,6 +190,28 @@ var Weapons = []*WeaponDesign{
 			{Y: +25},
 		},
 		ProjectileRotationDeltas: []gmath.Rad{+0.025, 0, -0.025},
+	},
+
+	{
+		Name:             "Lance",
+		Cost:             900,
+		FireSound:        assets.AudioLance1,
+		Damage:           25,
+		Reload:           0.7,
+		EnergyCost:       12,
+		EnergyConversion: 2.5,
+		Range:            1800,
+		ProjectileSpeed:  600,
+		ProjectileImage:  assets.ImageProjectileLance,
+		ProjectileSize:   10,
+		Explosion:        assets.ImageLanceImpact,
+		// ExplosionSound:   assets.AudioIonCannonImpact,
+		Blockable: true,
+		Primary:   true,
+		BurstSize: 1,
+
+		FireOffsets:              []gmath.Vec{{}},
+		ProjectileRotationDeltas: []gmath.Rad{0},
 	},
 
 	{

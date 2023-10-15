@@ -35,6 +35,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageProjectileAssaultLaser:  {Path: "image/projectile/assault_laser.png"},
 		ImageProjectileScatterGun:    {Path: "image/projectile/scatter_gun.png"},
 		ImageProjectileTrident:       {Path: "image/projectile/trident.png"},
+		ImageProjectileLance:         {Path: "image/projectile/lance.png"},
 		ImageProjectileMissile:       {Path: "image/projectile/missile.png"},
 		ImageProjectileHomingMissile: {Path: "image/projectile/homing_missile.png"},
 		ImageProjectileTorpedo:       {Path: "image/projectile/torpedo.png"},
@@ -44,6 +45,7 @@ func registerImageResources(ctx *ge.Context) {
 		ImageAssaultLaserImpact: {Path: "image/effect/assault_laser_impact.png", FrameWidth: 14},
 		ImageScatterGunImpact:   {Path: "image/effect/scatter_gun_impact.png", FrameWidth: 11},
 		ImageTridentImpact:      {Path: "image/effect/trident_impact.png", FrameWidth: 11},
+		ImageLanceImpact:        {Path: "image/effect/lance_impact.png", FrameWidth: 32},
 		ImageMissileImpact:      {Path: "image/effect/missile_impact.png", FrameWidth: 24},
 
 		ImageVesselPlayer:     {Path: "image/vessel/player.png", FrameWidth: 48},
@@ -88,6 +90,7 @@ const (
 	ImageProjectileAssaultLaser
 	ImageProjectileScatterGun
 	ImageProjectileTrident
+	ImageProjectileLance
 	ImageProjectileMissile
 	ImageProjectileHomingMissile
 	ImageProjectileTorpedo
@@ -95,8 +98,9 @@ const (
 	ImagePhotonCannonImpact
 	ImageIonCannonImpact
 	ImageAssaultLaserImpact
-	ImageTridentImpact
 	ImageScatterGunImpact
+	ImageTridentImpact
+	ImageLanceImpact
 	ImageMissileImpact
 
 	ImageVesselPlayer
