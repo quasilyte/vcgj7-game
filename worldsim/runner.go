@@ -351,6 +351,9 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 			}
 			dist := player.Planet.Info.MapOffset.DistanceTo(p.Info.MapOffset)
 			fuelNeeded := gmath.ClampMin(int(dist*player.FuelUsage), 1)
+			if player.HasArtifact("Jumper") {
+				fuelNeeded = gmath.ClampMin(fuelNeeded-10, 1)
+			}
 			if player.Fuel < fuelNeeded {
 				continue
 			}

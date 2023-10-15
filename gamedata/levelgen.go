@@ -89,6 +89,8 @@ func NewWorld(rand *gmath.Rand) *World {
 		"Scantide",
 		// More rewards in some situations.
 		"Lucky Charm",
+		// Makes jumps cost less fuel.
+		"Jumper",
 	}
 
 	return w

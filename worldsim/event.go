@@ -93,6 +93,8 @@ func (r *Runner) afterBattleChoices() string {
 			desc = "Acquired Scantide artifact (makes scanning faster)."
 		case "Lucky Charm":
 			desc = "Acquired Lucky Charm artifact."
+		case "Jumper":
+			desc = "Acquired Jumper artifact (makes jumps cost less fuel)."
 		}
 		lines = append(lines, desc)
 	}
