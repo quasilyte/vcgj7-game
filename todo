@@ -3,9 +3,10 @@ MVP TODO:
 * capturing new planets
 * victory condition
 * some way to spend exp
-* vessels should explode after being defeated
 
 TODO:
+* missing weapon sound impacts
+* special weapon ready sound cue
 * "watch news" action to browse the game logs
 * tooltips that show the time costs
 * highlight numbers in text
