@@ -204,7 +204,7 @@ var Planets = []*PlanetInfo{
 		Name:      "Planet VII",
 		RealName:  "Uranus",
 		GasGiant:  true,
-		MapOffset: gmath.Vec{X: 34, Y: 19},
+		MapOffset: gmath.Vec{X: 37, Y: 16},
 	},
 
 	{

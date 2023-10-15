@@ -26,6 +26,7 @@ type ChoiceController struct {
 	mapPosMarker         *ge.Sprite
 
 	planetSectorLabels []*ge.Sprite
+	planetSectorTitles []*ge.Label
 
 	statusPanelText *widget.Text
 	textPanelText   *widget.Text
@@ -60,6 +61,7 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 	}
 
 	{
+		c.planetSectorTitles = make([]*ge.Label, len(c.state.World.Planets))
 		c.planetSectorLabels = make([]*ge.Sprite, len(c.state.World.Planets))
 		mapBase := &gmath.Vec{X: 752, Y: 76}
 		for i, p := range c.state.World.Planets {
@@ -69,6 +71,16 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 			s.Pos.Offset = p.Info.MapOffset
 			c.planetSectorLabels[i] = s
 			scene.AddGraphics(s)
+
+			l := ge.NewLabel(assets.BitmapFont1)
+			l.AlignHorizontal = ge.AlignHorizontalCenter
+			l.AlignVertical = ge.AlignVerticalCenter
+			l.Text = strings.TrimPrefix(p.Info.Name, "Planet ")
+			l.Width = 48
+			l.Height = 20
+			l.Pos.Base = mapBase
+			l.Pos.Offset = p.Info.MapOffset.Add(gmath.Vec{X: -23, Y: 12})
+			scene.AddGraphics(l)
 		}
 	}
 
