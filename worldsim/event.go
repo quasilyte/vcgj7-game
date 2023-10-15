@@ -156,7 +156,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Time: 20,
 				OnResolved: func() gamedata.Mode {
 					player.ArmorLevel++
-					player.VesselDesign.MaxHP += float64(r.scene.Rand().IntRange(10, 20))
+					player.VesselDesign.MaxHP += float64(r.scene.Rand().IntRange(10, 20) + (2 * player.ArmorLevel))
 					player.Credits -= armorUpgradeCost
 					return gamedata.ModeDocked
 				},
@@ -171,7 +171,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Time: 15,
 				OnResolved: func() gamedata.Mode {
 					player.EnergyLevel++
-					player.VesselDesign.MaxEnergy += float64(r.scene.Rand().IntRange(10, 20))
+					player.VesselDesign.MaxEnergy += float64(r.scene.Rand().IntRange(10, 20) + (2 * player.EnergyLevel))
 					player.VesselDesign.EnergyRegen += r.scene.Rand().FloatRange(0.1, 0.2)
 					player.Credits -= energyUpgradeCost
 					return gamedata.ModeDocked
