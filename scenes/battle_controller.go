@@ -104,7 +104,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 				}
 			}
 
-			if len(c.state.World.Artifacts) > 0 && c.enemy.Elite && scene.Rand().Chance(0.9) {
+			if len(c.state.World.Artifacts) > 0 && c.enemy.Elite {
 				i := gmath.RandIndex(scene.Rand(), c.state.World.Artifacts)
 				a := c.state.World.Artifacts[i]
 				xslices.RemoveAt(c.state.World.Artifacts, i)

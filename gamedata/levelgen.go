@@ -59,6 +59,7 @@ func NewWorld(rand *gmath.Rand) *World {
 	planets[7].Faction = FactionC
 
 	planets[1].VesselsByFaction[FactionB] = 2
+	planets[6].VesselsByFaction[FactionA] = 1
 
 	for _, p := range planets {
 		if p.Faction == FactionNone {

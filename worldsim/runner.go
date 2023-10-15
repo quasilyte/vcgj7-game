@@ -219,7 +219,24 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 
 	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked {
-		if planet.ShopModeWeapons {
+		numPlayerBases := 0
+		for _, p := range r.world.Planets {
+			if p.Faction == player.Faction {
+				numPlayerBases++
+			}
+		}
+		canUpgradeHull := !player.ImprovedHull && player.Battles > 4 &&
+			player.Experience >= 20 && numPlayerBases >= 2
+		if canUpgradeHull && r.scene.Rand().Chance(0.3) {
+			r.choices = append(r.choices, Choice{
+				Time: 2,
+				Text: "Visit shipyard",
+				OnResolved: func() gamedata.Mode {
+					r.eventInfo = eventInfo{kind: eventShipyard}
+					return gamedata.ModeDocked
+				},
+			})
+		} else if planet.ShopModeWeapons {
 			r.choices = append(r.choices, Choice{
 				Time: 1,
 				Text: "Visit weapons shop",

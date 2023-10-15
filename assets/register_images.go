@@ -52,12 +52,13 @@ func registerImageResources(ctx *ge.Context) {
 
 		ImageBigExplosion: {Path: "image/effect/big_explosion.png", FrameWidth: 32},
 
-		ImageVesselPlayer:     {Path: "image/vessel/player.png", FrameWidth: 48},
-		ImageVesselBetaSmall:  {Path: "image/vessel/beta_small.png", FrameWidth: 48},
-		ImageVesselBetaBig:    {Path: "image/vessel/beta_big.png", FrameWidth: 48},
-		ImageVesselGammaSmall: {Path: "image/vessel/gamma_small.png", FrameWidth: 48},
-		ImageVesselGammaBig:   {Path: "image/vessel/gamma_big.png", FrameWidth: 48},
-		ImageVesselPirate:     {Path: "image/vessel/pirate.png", FrameWidth: 48},
+		ImageVesselPlayer:      {Path: "image/vessel/player.png", FrameWidth: 48},
+		ImageVesselPlayerElite: {Path: "image/vessel/player_elite.png", FrameWidth: 48},
+		ImageVesselBetaSmall:   {Path: "image/vessel/beta_small.png", FrameWidth: 48},
+		ImageVesselBetaBig:     {Path: "image/vessel/beta_big.png", FrameWidth: 48},
+		ImageVesselGammaSmall:  {Path: "image/vessel/gamma_small.png", FrameWidth: 48},
+		ImageVesselGammaBig:    {Path: "image/vessel/gamma_big.png", FrameWidth: 48},
+		ImageVesselPirate:      {Path: "image/vessel/pirate.png", FrameWidth: 48},
 	}
 
 	for id, res := range imageResources {
@@ -113,6 +114,7 @@ const (
 	ImageBigExplosion
 
 	ImageVesselPlayer
+	ImageVesselPlayerElite
 	ImageVesselBetaSmall
 	ImageVesselBetaBig
 	ImageVesselGammaSmall

@@ -94,6 +94,8 @@ type Player struct {
 
 	BattleRewards BattleRewards
 
+	ImprovedHull bool
+
 	Mode Mode
 
 	SpeedLevel        int

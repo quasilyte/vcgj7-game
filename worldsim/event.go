@@ -29,6 +29,7 @@ const (
 	eventBuyFuel
 	eventUpgradeLab
 	eventWeaponShop
+	eventShipyard
 	eventWorkshop
 	eventSellMinerals
 )
@@ -198,6 +199,40 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		}
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeDocked
+			},
+		})
+		return strings.Join(lines, "\n")
+
+	case eventShipyard:
+		lines := make([]string, 0, 8)
+		lines = append(lines, "A new, improved vessel is available for the veterans.")
+		lines = append(lines, "")
+		lines = append(lines, "In comparison with your current vessel:")
+		lines = append(lines, cfmt("<g>+50</> health"))
+		lines = append(lines, cfmt("<g>+20</> max energy"))
+		lines = append(lines, cfmt("<g>+20</> cargo space"))
+		lines = append(lines, cfmt("<r>-15%</> rotation speed"))
+		lines = append(lines, "")
+		lines = append(lines, cfmt("It costs <y>350</> credits"))
+		if player.Credits >= 350 {
+			r.choices = append(r.choices, Choice{
+				Text: "Buy new vessel",
+				OnResolved: func() gamedata.Mode {
+					player.ImprovedHull = true
+					player.MaxCargo += 20
+					player.VesselDesign.Image = assets.ImageVesselPlayerElite
+					player.VesselDesign.MaxEnergy += 20
+					player.VesselDesign.MaxHP += 50
+					player.VesselDesign.RotationSpeed -= 0.8
+					player.Credits -= 350
+					return gamedata.ModeDocked
+				},
+			})
+		}
+		r.choices = append(r.choices, Choice{
+			Text: "Leave shipyard",
 			OnResolved: func() gamedata.Mode {
 				return gamedata.ModeDocked
 			},
