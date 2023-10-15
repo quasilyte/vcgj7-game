@@ -44,8 +44,11 @@ func registerImageResources(ctx *ge.Context) {
 		ImageTridentImpact:      {Path: "image/effect/trident_impact.png", FrameWidth: 11},
 		ImageMissileImpact:      {Path: "image/effect/missile_impact.png", FrameWidth: 24},
 
-		ImageVesselRaider:   {Path: "image/vessel/raider.png", FrameWidth: 48},
-		ImageVesselMarauder: {Path: "image/vessel/marauder.png", FrameWidth: 48},
+		ImageVesselPlayer:     {Path: "image/vessel/player.png", FrameWidth: 48},
+		ImageVesselBetaSmall:  {Path: "image/vessel/beta_small.png", FrameWidth: 48},
+		ImageVesselBetaBig:    {Path: "image/vessel/beta_big.png", FrameWidth: 48},
+		ImageVesselGammaSmall: {Path: "image/vessel/gamma_small.png", FrameWidth: 48},
+		ImageVesselGammaBig:   {Path: "image/vessel/gamma_big.png", FrameWidth: 48},
 	}
 
 	for id, res := range imageResources {
@@ -92,6 +95,9 @@ const (
 	ImageScatterGunImpact
 	ImageMissileImpact
 
-	ImageVesselRaider
-	ImageVesselMarauder
+	ImageVesselPlayer
+	ImageVesselBetaSmall
+	ImageVesselBetaBig
+	ImageVesselGammaSmall
+	ImageVesselGammaBig
 )

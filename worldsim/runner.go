@@ -229,7 +229,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 					kind: eventBattle,
 					enemy: &gamedata.VesselDesign{
 						Faction:         0,
-						Image:           assets.ImageVesselMarauder,
+						Image:           assets.ImageVesselBetaSmall,
 						MaxHP:           150,
 						MaxEnergy:       120,
 						EnergyRegen:     3.0,

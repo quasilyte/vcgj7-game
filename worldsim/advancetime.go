@@ -60,7 +60,7 @@ func (r *Runner) processEncounters() bool {
 				kind: eventBattleInterrupt,
 				enemy: &gamedata.VesselDesign{
 					Faction:         enemyFaction,
-					Image:           assets.ImageVesselMarauder,
+					Image:           assets.ImageVesselBetaBig,
 					MaxHP:           150,
 					MaxEnergy:       120,
 					EnergyRegen:     3.0,
