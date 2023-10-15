@@ -217,7 +217,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				Time: 20,
 				OnResolved: func() gamedata.Mode {
 					player.ArmorLevel++
-					player.VesselDesign.MaxHP += float64(r.scene.Rand().IntRange(10, 20) + (2 * player.ArmorLevel))
+					player.VesselDesign.MaxHP += float64(r.scene.Rand().IntRange(10, 20) + (3 * player.ArmorLevel))
 					player.Credits -= armorUpgradeCost
 					return gamedata.ModeDocked
 				},
