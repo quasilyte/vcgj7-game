@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/quasilyte/ge"
@@ -28,6 +29,12 @@ func main() {
 		UIResources: eui.PrepareResources(ctx.Loader),
 	}
 
+	if err := ctx.LoadGameData("save", &state.Settings); err != nil {
+		fmt.Printf("can't load game data: %v", err)
+		state.Settings = getDefaultSettings()
+		ctx.SaveGameData("save", state.Settings)
+	}
+
 	keymap := input.Keymap{
 		controls.ActionForward:     {input.KeyUp, input.KeyW, input.KeyGamepadUp},
 		controls.ActionLeft:        {input.KeyLeft, input.KeyA, input.KeyGamepadLeft},
@@ -40,10 +47,19 @@ func main() {
 		controls.ActionChoice4:     {input.Key4},
 		controls.ActionChoice5:     {input.Key5},
 		controls.ActionChoice6:     {input.Key6},
+		controls.ActionChoice7:     {input.Key7},
+		controls.ActionBack:        {input.KeyEscape},
 	}
 	state.Input = ctx.Input.NewHandler(0, keymap)
 
 	if err := ge.RunGame(ctx, scenes.NewMainMenuController(state)); err != nil {
 		panic(err)
+	}
+}
+
+func getDefaultSettings() session.Settings {
+	return session.Settings{
+		SoundLevel: 3,
+		MusicLevel: 2,
 	}
 }

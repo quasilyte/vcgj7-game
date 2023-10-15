@@ -9,11 +9,14 @@ import (
 
 func registerImageResources(ctx *ge.Context) {
 	imageResources := map[resource.ImageID]resource.ImageInfo{
-		ImageUIButtonDisabled: {Path: "image/ebitenui/button-disabled.png"},
-		ImageUIButtonIdle:     {Path: "image/ebitenui/button-idle.png"},
-		ImageUIButtonHover:    {Path: "image/ebitenui/button-hover.png"},
-		ImageUIButtonPressed:  {Path: "image/ebitenui/button-pressed.png"},
-		ImageUIPanelIdle:      {Path: "image/ebitenui/panel-idle.png"},
+		ImageUIButtonDisabled:      {Path: "image/ebitenui/button-disabled.png"},
+		ImageUIButtonIdle:          {Path: "image/ebitenui/button-idle.png"},
+		ImageUIButtonHover:         {Path: "image/ebitenui/button-hover.png"},
+		ImageUIButtonPressed:       {Path: "image/ebitenui/button-pressed.png"},
+		ImageUISelectButtonIdle:    {Path: "image/ebitenui/select-button-idle.png"},
+		ImageUISelectButtonHover:   {Path: "image/ebitenui/select-button-hover.png"},
+		ImageUISelectButtonPressed: {Path: "image/ebitenui/select-button-pressed.png"},
+		ImageUIPanelIdle:           {Path: "image/ebitenui/panel-idle.png"},
 
 		ImageSystemMap:     {Path: "image/map.png"},
 		ImageMapLocation:   {Path: "image/map_location.png"},
@@ -74,6 +77,9 @@ const (
 	ImageUIButtonIdle
 	ImageUIButtonHover
 	ImageUIButtonPressed
+	ImageUISelectButtonIdle
+	ImageUISelectButtonHover
+	ImageUISelectButtonPressed
 	ImageUIPanelIdle
 
 	ImageMenuBg

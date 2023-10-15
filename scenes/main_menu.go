@@ -23,6 +23,9 @@ func NewMainMenuController(state *session.State) *MainMenuController {
 }
 
 func (c *MainMenuController) Init(scene *ge.Scene) {
+	scene.Audio().SetGroupVolume(assets.SoundGroupEffect, assets.VolumeMultiplier(c.state.Settings.SoundLevel))
+	scene.Audio().SetGroupVolume(assets.SoundGroupMusic, assets.VolumeMultiplier(c.state.Settings.MusicLevel))
+
 	scene.Audio().PauseCurrentMusic()
 
 	root := widget.NewContainer(
@@ -46,9 +49,15 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 		scene.Context().ChangeScene(NewChoiceController(c.state))
 	}))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "CREDITS", func() {
-		// TODO
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "SETTINGS", func() {
+		scene.Context().ChangeScene(NewSettingsController(c.state))
 	}))
+
+	b := eui.NewButton(c.state.UIResources, "CREDITS", func() {
+		// TODO
+	})
+	b.GetWidget().Disabled = true
+	rowContainer.AddChild(b)
 
 	if runtime.GOARCH != "wasm" {
 		rowContainer.AddChild(eui.NewButton(c.state.UIResources, "EXIT", func() {

@@ -46,9 +46,9 @@ func PrepareResources(loader *resource.Loader) *Resources {
 		idle := nineSliceImage(loader.LoadImage(assets.ImageUIButtonIdle).Data, 12, 30)
 		hover := nineSliceImage(loader.LoadImage(assets.ImageUIButtonHover).Data, 12, 30)
 		pressed := nineSliceImage(loader.LoadImage(assets.ImageUIButtonPressed).Data, 12, 30)
-		// selectedIdle := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonIdle).Data, 12, 0)
-		// selectedHover := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonHover).Data, 12, 0)
-		// selectedPressed := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonPressed).Data, 12, 0)
+		selectedIdle := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonIdle).Data, 12, 30)
+		selectedHover := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonHover).Data, 12, 30)
+		selectedPressed := nineSliceImage(loader.LoadImage(assets.ImageUISelectButtonPressed).Data, 12, 30)
 		buttonPadding := widget.Insets{
 			Left:   24,
 			Right:  24,
@@ -74,16 +74,16 @@ func PrepareResources(loader *resource.Loader) *Resources {
 			},
 			FontFace: normalFont,
 		}
-		// result.buttonSelected = &buttonResource{
-		// 	Image: &widget.ButtonImage{
-		// 		Idle:    selectedIdle,
-		// 		Hover:   selectedHover,
-		// 		Pressed: selectedPressed,
-		// 	},
-		// 	Padding:    buttonPadding,
-		// 	TextColors: buttonColors,
-		// 	FontFace:   normalFont,
-		// }
+		result.buttonSelected = &buttonResource{
+			Image: &widget.ButtonImage{
+				Idle:    selectedIdle,
+				Hover:   selectedHover,
+				Pressed: selectedPressed,
+			},
+			Padding:    buttonPadding,
+			TextColors: buttonColors,
+			FontFace:   normalFont,
+		}
 	}
 
 	{
