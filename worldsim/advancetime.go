@@ -11,6 +11,10 @@ import (
 func (r *Runner) AdvanceTime(hours int) bool {
 	for i := 0; i < hours; i++ {
 		r.world.GameTime++
+		if r.world.GameTime%24 == 0 {
+			salary := gmath.ClampMax(r.world.Player.Experience/100, 100)
+			r.world.Player.Credits += salary
+		}
 		// One in-game hour is simulated during 1 second in delta time terms.
 		if r.processEncounters() {
 			return false
@@ -19,6 +23,9 @@ func (r *Runner) AdvanceTime(hours int) bool {
 			if r.updateWorld(0.2) {
 				return false
 			}
+		}
+		for _, p := range r.world.Planets {
+			r.processPlanetBattles(p)
 		}
 	}
 	return true
@@ -72,17 +79,48 @@ func (r *Runner) processEncounters() bool {
 	return false
 }
 
+func (r *Runner) processPlanetBattles(p *gamedata.Planet) {
+	r.planetFactions = r.planetFactions[:0]
+	for i, num := range p.VesselsByFaction {
+		if num == 0 {
+			continue
+		}
+		f := gamedata.Faction(i)
+		r.planetFactions = append(r.planetFactions, f)
+	}
+	if len(r.planetFactions) < 2 {
+		return
+	}
+	battleChance := 0.45
+	if !r.scene.Rand().Chance(battleChance) {
+		return
+	}
+	gmath.Shuffle(r.scene.Rand(), r.planetFactions)
+	faction1 := r.planetFactions[0]
+	faction2 := r.planetFactions[1]
+	loser := faction1
+	if r.scene.Rand().Bool() {
+		loser = faction2
+	}
+	p.VesselsByFaction[loser]--
+}
+
 func (r *Runner) processPlanetActions(p *gamedata.Planet) {
 	if p.AttackDelay == 0 {
-		if p.VesselsByFaction[p.Faction] < 10 && r.scene.Rand().Chance(0.8) {
-			p.AttackDelay = r.scene.Rand().FloatRange(20, 250)
+		numVessels := p.VesselsByFaction[p.Faction]
+		if numVessels < 10 && r.scene.Rand().Chance(0.8) {
+			p.AttackDelay = r.scene.Rand().FloatRange(60, 100)
+			return
+		}
+		if numVessels < 20 && r.scene.Rand().Chance(0.5) {
+			p.AttackDelay = r.scene.Rand().FloatRange(20, 150)
 			return
 		}
 		if r.tryFactionAttack(p) {
-			p.AttackDelay = r.scene.Rand().FloatRange(70, 400)
+			p.AttackDelay = r.scene.Rand().FloatRange(70, 300)
 			return
 		}
-		p.AttackDelay = r.scene.Rand().FloatRange(30, 100)
+		p.AttackDelay = r.scene.Rand().FloatRange(20, 40)
 		return
 	}
 }

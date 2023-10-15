@@ -19,6 +19,7 @@ type Runner struct {
 	textLines   []string
 
 	encounterOptions []gamedata.Faction
+	planetFactions   []gamedata.Faction
 
 	eventInfo eventInfo
 

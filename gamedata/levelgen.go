@@ -68,7 +68,7 @@ func NewWorld(rand *gmath.Rand) *World {
 		p.MineralDeposit = rand.IntRange(5, 200)
 		p.AttackDelay = rand.FloatRange(75, 100)
 		p.CaptureDelay = rand.FloatRange(160, 200)
-		numVessels := rand.IntRange(10, 20)
+		numVessels := rand.IntRange(4, 8)
 		if p.Faction != w.Player.Faction {
 			numVessels += 10
 		}

@@ -268,16 +268,16 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		switch r.world.UpgradeAvailable {
 		case gamedata.UpgradeJumpMaxDistance:
 			s = fmt.Sprintf("A jump engine booster that increases its %s.", colorizeText("max jump distance", colorGreen))
-			price = 20
+			price = 30
 		case gamedata.UpgradeMaxFuel:
 			s = fmt.Sprintf("A special fuel tank extender to increase its %s.", colorizeText("max capacity", colorGreen))
-			price = 45
+			price = 60
 		case gamedata.UpgradeMaxCargo:
 			s = fmt.Sprintf("A better storage compactor, it will %s of your vessel.", colorizeText("increase max cargo", colorGreen))
 			price = 70
 		case gamedata.UpgradeJumpSpeed:
 			s = fmt.Sprintf("A jump engine cooling system that allows you to %s.", colorizeText("travel between the planets faster", colorGreen))
-			price = 15
+			price = 25
 		}
 
 		if player.Credits >= price {
@@ -453,28 +453,25 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		return fmt.Sprintf("%s\n\nSell %d minerals for %d credits?", s, player.Cargo, totalCost)
 
 	case eventBuyFuel:
-		fuelPrice := 3
-		if r.scene.Rand().Chance(0.3) {
-			fuelPrice = 2
-		}
-		maxSpent := 90
-		if maxSpent > player.Credits {
-			maxSpent = player.Credits
+		fuelPrice := 0.5
+		maxSpent := 90.0
+		if maxSpent > float64(player.Credits) {
+			maxSpent = float64(player.Credits)
 		}
 		bought := maxSpent / fuelPrice
-		if player.Fuel+bought > player.MaxFuel {
-			bought = player.MaxFuel - player.Fuel
+		if float64(player.Fuel)+bought > float64(player.MaxFuel) {
+			bought = float64(player.MaxFuel - player.Fuel)
 		}
 		spent := bought * fuelPrice
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
 			OnResolved: func() gamedata.Mode {
-				player.Credits -= spent
-				player.Fuel += bought
+				player.Credits -= int(math.Ceil(spent))
+				player.Fuel += int(math.Ceil(bought))
 				return gamedata.ModeDocked
 			},
 		})
-		return fmt.Sprintf("Bought %d fuel units for %d credits.", bought, spent)
+		return fmt.Sprintf("Bought %d fuel units for %d credits.", int(math.Ceil(bought)), int(math.Ceil(spent)))
 
 	default:
 		panic(fmt.Sprintf("unexpected event kind: %d", event.kind))
