@@ -309,7 +309,8 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 
 	if len(r.choices) < MaxChoices && isIdleMode {
 		r.choices = append(r.choices, Choice{
-			Time: 2,
+			// Time: 2,
+			Time: 100,
 			Text: "Scout the area",
 			Mode: gamedata.ModeScavenging,
 			OnResolved: func() gamedata.Mode {

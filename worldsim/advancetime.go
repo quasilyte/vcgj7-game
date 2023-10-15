@@ -99,10 +99,26 @@ func (r *Runner) processPlanetBattles(p *gamedata.Planet) {
 	faction1 := r.planetFactions[0]
 	faction2 := r.planetFactions[1]
 	loser := faction1
+	winner := faction2
 	if r.scene.Rand().Bool() {
-		loser = faction2
+		loser, winner = winner, loser
 	}
 	p.VesselsByFaction[loser]--
+
+	if p.Faction == loser && p.VesselsByFaction[loser] == 0 {
+		if p.Faction == r.world.Player.Faction {
+			r.world.PushEvent(fmt.Sprintf("We lost control over %s", p.Info.Name))
+		} else {
+			if winner == r.world.Player.Faction {
+				r.world.PushEvent(fmt.Sprintf("%s is liberated from the enemy forces", p.Info.Name))
+			} else {
+				r.world.PushEvent(fmt.Sprintf("%s lost %s to %s", winner.Name(), p.Info.Name, loser.Name()))
+			}
+		}
+		p.Faction = gamedata.FactionNone
+		p.VesselProduction = false
+		p.VesselProductionTime = 0
+	}
 }
 
 func (r *Runner) processPlanetActions(p *gamedata.Planet) {
