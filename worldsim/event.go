@@ -74,31 +74,31 @@ func (r *Runner) afterBattleChoices() string {
 
 	lines = append(lines, "You are victorious!")
 	lines = append(lines, "")
-	lines = append(lines, fmt.Sprintf("Earned %d combat experience.", reward.Experience))
+	lines = append(lines, cfmt("Earned <y>%d</> combat experience.", reward.Experience))
 	if reward.Credits != 0 {
-		lines = append(lines, fmt.Sprintf("Found %d credits equivalent.", reward.Credits))
+		lines = append(lines, cfmt("Found <y>%d</> credits equivalent.", reward.Credits))
 	}
 	if reward.Cargo != 0 {
-		lines = append(lines, fmt.Sprintf("Scavenged %d resource units.", reward.Cargo))
+		lines = append(lines, cfmt("Scavenged <y>%d</> resource units.", reward.Cargo))
 	}
 	if reward.Fuel != 0 {
-		lines = append(lines, fmt.Sprintf("Recovered %d fuel units.", reward.Fuel))
+		lines = append(lines, cfmt("Recovered <y>%d</> fuel units.", reward.Fuel))
 	}
 	if reward.Artifact != "" {
 		desc := ""
 		switch reward.Artifact {
 		case "Fuel Generator":
-			desc = "Acquired Fuel Generator artifact."
+			desc = "Acquired <g>Fuel Generator</> artifact."
 		case "Repair Bots":
-			desc = "Acquired Repair Bots artifact."
+			desc = "Acquired <g>Repair Bots</> artifact."
 		case "Scantide":
-			desc = "Acquired Scantide artifact (makes scanning faster)."
+			desc = "Acquired <g>Scantide artifact</> (makes scanning faster)."
 		case "Lucky Charm":
-			desc = "Acquired Lucky Charm artifact."
+			desc = "Acquired <g>Lucky Charm</> artifact."
 		case "Jumper":
-			desc = "Acquired Jumper artifact (makes jumps cost less fuel)."
+			desc = "Acquired <g>Jumper</> artifact (makes jumps cost less fuel)."
 		}
-		lines = append(lines, desc)
+		lines = append(lines, cfmt(desc))
 	}
 
 	if reward.SystemLiberated {
@@ -165,7 +165,11 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			}
 			foundAnyone = true
 			f := gamedata.Faction(i)
-			lines = append(lines, fmt.Sprintf("%s vessels: %d", f.Name(), num))
+			if f == player.Faction {
+				lines = append(lines, cfmt("<g>%s</> vessels: <y>%d</>", f.Name(), num))
+			} else {
+				lines = append(lines, cfmt("<r>%s</> vessels: <y>%d</>", f.Name(), num))
+			}
 		}
 		if !foundAnyone {
 			lines = append(lines, "")
@@ -186,7 +190,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		for _, e := range r.world.RecentEvents {
 			day := (e.Time / 24) + 1
 			hours := e.Time % 24
-			dateString := fmt.Sprintf("Day %d, %02d:00", day, hours)
+			dateString := cfmt("Day %d, %02d:00", day, hours)
 			s := fmt.Sprintf("* [%s] %s", dateString, e.Text)
 			lines = append(lines, s)
 		}
@@ -292,9 +296,9 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 	case eventWeaponShop:
 		formatWeapon := func(w *gamedata.WeaponDesign) string {
 			if w.Primary {
-				return fmt.Sprintf("%s (primary)", w.Name)
+				return cfmt("%s (<g>primary</>)", w.Name)
 			}
-			return fmt.Sprintf("%s (secondary)", w.Name)
+			return cfmt("%s (<p>secondary</>)", w.Name)
 		}
 		lines := make([]string, 0, 6)
 		if len(planet.WeaponsAvailable) > 0 {
@@ -390,7 +394,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			"",
 			"After a quick discussion, one particular upgrade catched your attention... " + s,
 			"",
-			fmt.Sprintf("It will cost you %d credits.", price),
+			cfmt("It will cost you <y>%d</> credits.", price),
 		}
 		return strings.Join(lines, "\n")
 
@@ -430,9 +434,9 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			},
 		})
 		if r.scene.Rand().Bool() {
-			return fmt.Sprintf("%d fuel units acquired.", fuelScavenged)
+			return cfmt("<y>%d</> fuel units acquired.", fuelScavenged)
 		}
-		return fmt.Sprintf("Scavenged %d fuel units.", fuelScavenged)
+		return cfmt("Scavenged <y>%d</> fuel units.", fuelScavenged)
 
 	case eventMineralsHunt:
 		mineralsFound := r.scene.Rand().IntRange(20, 40)
@@ -480,15 +484,15 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			lines = append(lines, "No valuable minerals found.")
 		} else {
 			if loaded < mineralsFound {
-				lines = append(lines, fmt.Sprintf("Found %d minerals, but could only collect %d.", mineralsFound, loaded))
+				lines = append(lines, cfmt("Found <y>%d</y> minerals, but could only collect <y>%d</y>.", mineralsFound, loaded))
 			} else {
-				lines = append(lines, fmt.Sprintf("Collected %d minerals.", loaded))
+				lines = append(lines, cfmt("Collected <y>%d</y> minerals.", loaded))
 			}
 		}
 
 		if foundShipwreck {
 			lines = append(lines, "")
-			lines = append(lines, fmt.Sprintf("While flying near asteroids, you discovered a shipwreck site. You found recyclable objects worth %d fuel units.", fuelGained))
+			lines = append(lines, cfmt("While flying near asteroids, you discovered a shipwreck site. You found recyclable objects worth <y>%d</y> fuel units.", fuelGained))
 		}
 		if damaged {
 			lines = append(lines, "")
@@ -502,7 +506,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		switch {
 		case planet.MineralDeposit < 50:
 			mineralsDemand = 1.4
-			s = fmt.Sprintf("The minerals are in %s demand here.", colorizeText("high", colorYellow))
+			s = "The minerals are in high demand here."
 		case planet.MineralDeposit > 100:
 			mineralsDemand = 1.1
 			s = "The minerals have normal price here."
@@ -533,7 +537,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				return gamedata.ModeDocked
 			},
 		})
-		return fmt.Sprintf("%s\n\nSell %d minerals for %d credits?", s, player.Cargo, totalCost)
+		return cfmt("%s\n\nSell <y>%d</> minerals for <y>%d</> credits?", s, player.Cargo, totalCost)
 
 	case eventBuyFuel:
 		fuelPrice := 0.5
@@ -554,7 +558,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				return gamedata.ModeDocked
 			},
 		})
-		return fmt.Sprintf("Bought %d fuel units for %d credits.", int(math.Ceil(bought)), int(math.Ceil(spent)))
+		return cfmt("Bought <y>%d</> fuel units for <y>%d</> credits.", int(math.Ceil(bought)), int(math.Ceil(spent)))
 
 	default:
 		panic(fmt.Sprintf("unexpected event kind: %d", event.kind))
