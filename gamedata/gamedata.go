@@ -133,7 +133,8 @@ type Planet struct {
 	MineralsDelay  float64
 	MineralDeposit int
 
-	VesselsByFaction [NumFactions]int
+	VesselsByFaction   [NumFactions]int
+	InfluenceByFaction [NumFactions]float64
 
 	ShopModeWeapons bool
 	ShopSwapDelay   float64

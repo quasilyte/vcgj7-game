@@ -2,6 +2,7 @@ package worldsim
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/gamedata"
@@ -174,6 +175,39 @@ func (r *Runner) updateWorld(delta float64) bool {
 		p.WeaponsRerollDelay = gmath.ClampMin(p.WeaponsRerollDelay-delta, 0)
 		p.ShopSwapDelay = gmath.ClampMin(p.ShopSwapDelay-delta, 0)
 		p.ResourceGenDelay = gmath.ClampMin(p.ResourceGenDelay-delta, 0)
+
+		if p.Faction == gamedata.FactionNone {
+			for i := range p.InfluenceByFaction {
+				p.InfluenceByFaction[i] = gmath.ClampMin(p.InfluenceByFaction[i]-delta, 0)
+			}
+			faction := gamedata.FactionNone
+			numFactions := 0
+			for i, num := range p.VesselsByFaction {
+				if num == 0 {
+					continue
+				}
+				numFactions++
+				faction = gamedata.Faction(i)
+			}
+			if numFactions == 1 {
+				numVessels := p.VesselsByFaction[faction]
+				v := math.Log(float64(numVessels)) + 1.0
+				p.InfluenceByFaction[faction] += v * delta
+				// 1 vessels (v=1.000) capture in 30.000 days
+				// 2 vessels (v=1.693) capture in 17.718 days
+				// 3 vessels (v=2.099) capture in 14.295 days
+				// 4 vessels (v=2.386) capture in 12.572 days
+				// 5 vessels (v=2.609) capture in 11.497 days
+				// 10 vessels (v=3.303) capture in 9.084 days
+				// 20 vessels (v=3.996) capture in 7.508 days
+				// 50 vessels (v=4.912) capture in 6.107 days
+				if p.InfluenceByFaction[faction] > 30.0 {
+					p.InfluenceByFaction = [4]float64{}
+					p.Faction = faction
+					r.world.PushEvent(fmt.Sprintf("%s established control over %s", faction.Name(), p.Info.Name))
+				}
+			}
+		}
 
 		if p.WeaponsRerollDelay == 0 {
 			p.WeaponsRerollDelay = r.scene.Rand().FloatRange(28, 40)
