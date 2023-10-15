@@ -1,7 +1,6 @@
 package scenes
 
 import (
-	"fmt"
 	"os"
 	"runtime"
 
@@ -9,20 +8,22 @@ import (
 	"github.com/quasilyte/ge"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/eui"
-	"github.com/quasilyte/vcgj7-game/gamedata"
 	"github.com/quasilyte/vcgj7-game/session"
 	"github.com/quasilyte/vcgj7-game/styles"
 )
 
-type MainMenuController struct {
+type VictoryController struct {
+	scene *ge.Scene
 	state *session.State
 }
 
-func NewMainMenuController(state *session.State) *MainMenuController {
-	return &MainMenuController{state: state}
+func NewVictoryController(state *session.State) *VictoryController {
+	return &VictoryController{state: state}
 }
 
-func (c *MainMenuController) Init(scene *ge.Scene) {
+func (c *VictoryController) Init(scene *ge.Scene) {
+	c.scene = scene
+
 	scene.Audio().PauseCurrentMusic()
 
 	root := widget.NewContainer(
@@ -35,19 +36,13 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 	root.AddChild(rowContainer)
 
 	bigFont := assets.BitmapFont3
-	tinyFont := assets.BitmapFont1
 
-	rowContainer.AddChild(eui.NewCenteredLabel("Pixelspace Rangers", bigFont))
+	rowContainer.AddChild(eui.NewCenteredLabel("Victory!", bigFont))
 
 	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
 
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "PLAY", func() {
-		c.state.World = gamedata.NewWorld(scene.Rand())
-		scene.Context().ChangeScene(NewChoiceController(c.state))
-	}))
-
-	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "CREDITS", func() {
-		// TODO
+	rowContainer.AddChild(eui.NewButton(c.state.UIResources, "BACK TO MENU", func() {
+		scene.Context().ChangeScene(NewMainMenuController(c.state))
 	}))
 
 	if runtime.GOARCH != "wasm" {
@@ -56,10 +51,7 @@ func (c *MainMenuController) Init(scene *ge.Scene) {
 		}))
 	}
 
-	rowContainer.AddChild(eui.NewSeparator(nil, styles.TransparentColor))
-	rowContainer.AddChild(eui.NewCenteredLabel(fmt.Sprintf("#vas3kclubjam build %d", currentBuild), tinyFont))
-
 	initUI(scene, root)
 }
 
-func (c *MainMenuController) Update(delta float64) {}
+func (c *VictoryController) Update(delta float64) {}

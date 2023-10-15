@@ -94,7 +94,11 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 }
 
 func (c *ChoiceController) onGameOver(victory bool) {
-	c.scene.Context().ChangeScene(NewMainMenuController(c.state))
+	if !victory {
+		c.scene.Context().ChangeScene(NewMainMenuController(c.state))
+	} else {
+		c.scene.Context().ChangeScene(NewVictoryController(c.state))
+	}
 }
 
 func (c *ChoiceController) replaceChoices() {

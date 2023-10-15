@@ -9,6 +9,22 @@ import (
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
 
+func (r *Runner) checkVictory() {
+	others := false
+	for _, p := range r.world.Planets {
+		if p.Faction == gamedata.FactionNone {
+			continue
+		}
+		if p.Faction != r.world.Player.Faction {
+			others = true
+			break
+		}
+	}
+	if !others {
+		r.EventGameOver.Emit(true)
+	}
+}
+
 func (r *Runner) AdvanceTime(hours int) bool {
 	player := r.world.Player
 
@@ -20,6 +36,7 @@ func (r *Runner) AdvanceTime(hours int) bool {
 
 	for i := 0; i < hours; i++ {
 		r.world.GameTime++
+		r.checkVictory()
 
 		if r.world.GameTime%24 == 0 {
 			salary := gamedata.GetSalary(player.Experience) + player.ExtraSalary
