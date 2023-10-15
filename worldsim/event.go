@@ -54,6 +54,9 @@ func (r *Runner) afterBattleChoices() string {
 			player.Credits += reward.Credits
 			player.LoadCargo(reward.Cargo)
 			player.Fuel = gmath.ClampMax(player.Fuel+reward.Fuel, player.MaxFuel)
+			if reward.Artifact != "" {
+				player.Artifacts = append(player.Artifacts, reward.Artifact)
+			}
 			if reward.SystemLiberated {
 				if player.ExtraSalary < 20 {
 					player.ExtraSalary += 3
@@ -79,6 +82,21 @@ func (r *Runner) afterBattleChoices() string {
 	if reward.Fuel != 0 {
 		lines = append(lines, fmt.Sprintf("Recovered %d fuel units.", reward.Fuel))
 	}
+	if reward.Artifact != "" {
+		desc := ""
+		switch reward.Artifact {
+		case "Fuel Generator":
+			desc = "Acquired Fuel Generator artifact."
+		case "Repair Bots":
+			desc = "Acquired Repair Bots artifact."
+		case "Scantide":
+			desc = "Acquired Scantide artifact (makes scanning faster)."
+		case "Lucky Charm":
+			desc = "Acquired Lucky Charm artifact."
+		}
+		lines = append(lines, desc)
+	}
+
 	if reward.SystemLiberated {
 		lines = append(lines, "")
 		if player.ExtraSalary < 20 {
@@ -383,9 +401,14 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		if r.scene.Rand().Chance(0.3) {
 			mineralsFound *= 2
 		}
-		if r.scene.Rand().Chance(0.06) {
-			mineralsFound = 0
+		if !player.HasArtifact("Lucky Charm") {
+			if r.scene.Rand().Chance(0.06) {
+				mineralsFound = 0
+			}
+		} else {
+			mineralsFound += r.scene.Rand().IntRange(4, 14)
 		}
+
 		loaded := mineralsFound
 		freeCargo := player.FreeCargoSpace()
 		if freeCargo < loaded {

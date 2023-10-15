@@ -2,6 +2,8 @@ package scenes
 
 import (
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/ge/xslices"
+	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/battle"
 	"github.com/quasilyte/vcgj7-game/gamedata"
@@ -100,6 +102,13 @@ func (c *BattleController) Init(scene *ge.Scene) {
 				if player.Fuel < 70 && scene.Rand().Chance(0.6) {
 					player.BattleRewards.Fuel = scene.Rand().IntRange(2, 10)
 				}
+			}
+
+			if len(c.state.World.Artifacts) > 0 && c.enemy.Elite && scene.Rand().Chance(0.9) {
+				i := gmath.RandIndex(scene.Rand(), c.state.World.Artifacts)
+				a := c.state.World.Artifacts[i]
+				xslices.RemoveAt(c.state.World.Artifacts, i)
+				player.BattleRewards.Artifact = a
 			}
 
 			player.BattleRewards.SystemLiberated = c.enemy.LastDefender

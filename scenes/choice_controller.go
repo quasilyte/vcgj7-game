@@ -212,7 +212,10 @@ func (c *ChoiceController) initUI() {
 	statusPanel := eui.NewPanelWithPadding(c.state.UIResources, 196*2+8, 100, widget.NewInsetsSimple(16))
 	lowerGrid.AddChild(statusPanel)
 
-	c.statusPanelText = widget.NewText(widget.TextOpts.Text("", assets.BitmapFont1, styles.ButtonTextColor))
+	c.statusPanelText = widget.NewText(
+		widget.TextOpts.Text("", assets.BitmapFont1, styles.ButtonTextColor),
+		widget.TextOpts.MaxWidth(360),
+	)
 	statusPanel.AddChild(c.statusPanelText)
 
 	initUI(c.scene, root)
@@ -253,6 +256,12 @@ func (c *ChoiceController) updateUI() {
 			fmt.Sprintf("Vessel structure: %d%%", gmath.Clamp(int(100*p.VesselHP), 0, 100)),
 			fmt.Sprintf("Fuel: %d/%d", p.Fuel, p.MaxFuel),
 			fmt.Sprintf("Cargo: %d/%d", p.Cargo, p.MaxCargo),
+		}
+		lines = append(lines, "")
+		if len(p.Artifacts) != 0 {
+			lines = append(lines, fmt.Sprintf("Artifacts: %s", strings.Join(p.Artifacts, ", ")))
+		} else {
+			lines = append(lines, "Artifacts: <none>")
 		}
 		c.statusPanelText.Label = strings.Join(lines, "\n")
 	}

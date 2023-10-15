@@ -80,5 +80,16 @@ func NewWorld(rand *gmath.Rand) *World {
 
 	w.PushEvent("All three major factions declare war to each other")
 
+	w.Artifacts = []string{
+		// Passively generates fuel over time.
+		"Fuel Generator",
+		// Repairs vessel hull over time.
+		"Repair Bots",
+		// Faster scanning time.
+		"Scantide",
+		// More rewards in some situations.
+		"Lucky Charm",
+	}
+
 	return w
 }

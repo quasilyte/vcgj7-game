@@ -328,8 +328,12 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 	}
 
 	if len(r.choices) < MaxChoices && isIdleMode {
+		h := 3
+		if player.HasArtifact("Scantide") {
+			h = 1
+		}
 		r.choices = append(r.choices, Choice{
-			Time: 2,
+			Time: h,
 			Text: "Scout the area",
 			Mode: gamedata.ModeSneaking,
 			OnResolved: func() gamedata.Mode {

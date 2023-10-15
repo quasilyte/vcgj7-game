@@ -1,6 +1,7 @@
 package gamedata
 
 import (
+	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
 )
 
@@ -8,6 +9,7 @@ type BattleRewards struct {
 	Victory bool
 
 	SystemLiberated bool
+	Artifact        string
 	Experience      int
 	Cargo           int
 	Credits         int
@@ -28,6 +30,8 @@ type World struct {
 	UpgradeAvailable   UpgradeKind
 
 	Squads []*Squad
+
+	Artifacts []string
 }
 
 type WorldEvent struct {
@@ -68,6 +72,8 @@ const (
 type Player struct {
 	Planet *Planet
 
+	Artifacts []string
+
 	Faction     Faction
 	ExtraSalary int
 
@@ -96,6 +102,10 @@ type Player struct {
 	MaxFuel    int
 	Cargo      int
 	MaxCargo   int
+}
+
+func (p *Player) HasArtifact(name string) bool {
+	return xslices.Contains(p.Artifacts, name)
 }
 
 func (p *Player) HasWeapon(w *WeaponDesign) bool {

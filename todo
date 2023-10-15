@@ -1,7 +1,7 @@
 MVP TODO:
 * victory condition
 * more details in the flavor text (extra random events?)
-* leave action should always be available
+* "leave" action should always be available
 * more combat rewards
 * delivery quests between planets
 * special location to harvest more minerals
@@ -14,8 +14,3 @@ TODO:
 * highlight numbers in text
 * planet map tooltips
 * pirates faction
-* artifacts
-
-artifact ideas:
-* double scan speed
-* fuel regen over time

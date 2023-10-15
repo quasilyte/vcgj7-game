@@ -9,12 +9,33 @@ import (
 )
 
 func (r *Runner) AdvanceTime(hours int) bool {
+	player := r.world.Player
+
+	canRegen := false
+	switch player.Mode {
+	case gamedata.ModeJustEntered, gamedata.ModeOrbiting, gamedata.ModeScavenging, gamedata.ModeSneaking:
+		canRegen = true
+	}
+
 	for i := 0; i < hours; i++ {
 		r.world.GameTime++
+
 		if r.world.GameTime%24 == 0 {
-			salary := gamedata.GetSalary(r.world.Player.Experience) + r.world.Player.ExtraSalary
-			r.world.Player.Credits += salary
+			salary := gamedata.GetSalary(player.Experience) + player.ExtraSalary
+			player.Credits += salary
 		}
+
+		if player.HasArtifact("Fuel Generator") && canRegen {
+			if r.scene.Rand().Chance(0.6) {
+				player.Fuel = gmath.ClampMax(player.Fuel+1, player.MaxFuel)
+			}
+		}
+		if player.HasArtifact("Repair Bots") && canRegen {
+			if r.scene.Rand().Chance(0.8) {
+				player.VesselHP = gmath.ClampMax(player.VesselHP+0.02, 1.0)
+			}
+		}
+
 		// One in-game hour is simulated during 1 second in delta time terms.
 		if r.processEncounters() {
 			return false
