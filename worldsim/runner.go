@@ -307,6 +307,26 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
+	if len(r.choices) < MaxChoices && isIdleMode && planet.Faction == player.Faction {
+		numFactions := 0
+		for _, num := range player.Planet.VesselsByFaction {
+			if num == 0 {
+				continue
+			}
+			numFactions++
+		}
+		if numFactions >= 2 {
+			r.choices = append(r.choices, Choice{
+				Time: 1,
+				Text: "Repell the attack",
+				Mode: gamedata.ModeAttack,
+				OnResolved: func() gamedata.Mode {
+					return gamedata.ModeOrbiting
+				},
+			})
+		}
+	}
+
 	if len(r.choices) < MaxChoices && isIdleMode {
 		r.choices = append(r.choices, Choice{
 			Time: 2,
