@@ -144,7 +144,7 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 
 	quest := r.world.CurrentQuest
 	questOption := false
-	if quest != nil {
+	if quest != nil && player.Mode == gamedata.ModeDocked {
 		if !quest.Active && planet == quest.Giver {
 			// Can start quest.
 			questOption = true
