@@ -12,8 +12,8 @@ const (
 
 func registerSoundResources(ctx *ge.Context) {
 	soundResources := map[resource.AudioID]resource.AudioInfo{
-		AudioMusicGlobal: {Path: "audio/music/global.ogg", Group: SoundGroupMusic},
-		AudioMusicCombat: {Path: "audio/music/combat.ogg", Group: SoundGroupMusic},
+		AudioMusicGlobal: {Path: "audio/music/global.ogg", Group: SoundGroupMusic, Volume: -0.2},
+		AudioMusicCombat: {Path: "audio/music/combat.ogg", Group: SoundGroupMusic, Volume: -0.2},
 
 		AudioIonCannon1:      {Path: "audio/ion_cannon1.wav"},
 		AudioIonCannonImpact: {Path: "audio/ion_cannon_impact.wav"},

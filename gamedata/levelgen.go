@@ -70,7 +70,7 @@ func NewWorld(rand *gmath.Rand) *World {
 		p.CaptureDelay = rand.FloatRange(160, 200)
 		numVessels := rand.IntRange(4, 8)
 		if p.Faction != w.Player.Faction {
-			numVessels += 10
+			numVessels += 12
 		}
 		p.VesselsByFaction[p.Faction] = numVessels
 	}

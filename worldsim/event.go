@@ -124,6 +124,7 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		r.choices = append(r.choices, Choice{
 			Text: "Done",
 			OnResolved: func() gamedata.Mode {
+				r.world.QuestRerollDelay = float64(r.scene.Rand().IntRange(60, 90))
 				player.Credits += q.CreditsReward
 				player.Experience += q.ExpReward
 				return gamedata.ModeDocked
@@ -416,13 +417,25 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 				return gamedata.ModeAfterCombat
 			},
 		})
-		if event.kind == eventBattleInterrupt {
-			if player.Mode == gamedata.ModeAttack {
-				return "Enemy spotted!"
-			}
-			return fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed))
+		lines := make([]string, 0, 4)
+		if player.Mode == gamedata.ModeAttack {
+			lines = append(lines, "Enemy spotted!")
+		} else if event.kind == eventBattleInterrupt {
+			lines = append(lines, fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed)))
 		}
-		return "This is a battle test."
+		if r.world.Player.Battles < 5 {
+			lines = append(lines, "")
+			lines = append(lines, cfmt("--- <p>Tutorial</> ---"))
+			lines = append(lines, cfmt("Your shield blocks <y>75%</> primary weapon damage and <p>consumes energy</>."))
+			lines = append(lines, "Blocking is the most efficient way to recover energy mid-battle.")
+			lines = append(lines, "")
+			lines = append(lines, "Controls:")
+			lines = append(lines, "* Style 1: WASD for movement, mouse buttons to fire.")
+			lines = append(lines, "* Style 2: WASD for movement, [O] and [P] to fire.")
+			lines = append(lines, "* Style 3: arrows for movement, [Z] and [X] to fire.")
+
+		}
+		return strings.Join(lines, "\n")
 
 	case eventFuelScavenge:
 		fuelScavenged := r.scene.Rand().IntRange(3, 12)
@@ -484,15 +497,15 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			lines = append(lines, "No valuable minerals found.")
 		} else {
 			if loaded < mineralsFound {
-				lines = append(lines, cfmt("Found <y>%d</y> minerals, but could only collect <y>%d</y>.", mineralsFound, loaded))
+				lines = append(lines, cfmt("Found <y>%d</> minerals, but could only collect <y>%d</>.", mineralsFound, loaded))
 			} else {
-				lines = append(lines, cfmt("Collected <y>%d</y> minerals.", loaded))
+				lines = append(lines, cfmt("Collected <y>%d</> minerals.", loaded))
 			}
 		}
 
 		if foundShipwreck {
 			lines = append(lines, "")
-			lines = append(lines, cfmt("While flying near asteroids, you discovered a shipwreck site. You found recyclable objects worth <y>%d</y> fuel units.", fuelGained))
+			lines = append(lines, cfmt("While flying near asteroids, you discovered a shipwreck site. You found recyclable objects worth <y>%d</> fuel units.", fuelGained))
 		}
 		if damaged {
 			lines = append(lines, "")

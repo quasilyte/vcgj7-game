@@ -307,7 +307,7 @@ func (r *Runner) updateWorld(delta float64) bool {
 	}
 
 	if r.world.QuestRerollDelay == 0 {
-		r.world.QuestRerollDelay = float64(r.scene.Rand().IntRange(40, 90))
+		r.world.QuestRerollDelay = float64(r.scene.Rand().IntRange(60, 130))
 		if r.world.CurrentQuest != nil && !r.world.CurrentQuest.Active {
 			r.world.CurrentQuest = nil
 		}
@@ -394,7 +394,7 @@ func (r *Runner) updateWorld(delta float64) bool {
 					generated *= 3
 				}
 				if p.Faction != r.world.Player.Faction && r.scene.Rand().Chance(0.3) {
-					generated += 5
+					generated += 10
 				}
 				p.MineralDeposit += generated
 			}
