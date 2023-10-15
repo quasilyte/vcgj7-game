@@ -48,6 +48,8 @@ func registerImageResources(ctx *ge.Context) {
 		ImageLanceImpact:        {Path: "image/effect/lance_impact.png", FrameWidth: 32},
 		ImageMissileImpact:      {Path: "image/effect/missile_impact.png", FrameWidth: 24},
 
+		ImageBigExplosion: {Path: "image/effect/big_explosion.png", FrameWidth: 32},
+
 		ImageVesselPlayer:     {Path: "image/vessel/player.png", FrameWidth: 48},
 		ImageVesselBetaSmall:  {Path: "image/vessel/beta_small.png", FrameWidth: 48},
 		ImageVesselBetaBig:    {Path: "image/vessel/beta_big.png", FrameWidth: 48},
@@ -102,6 +104,8 @@ const (
 	ImageTridentImpact
 	ImageLanceImpact
 	ImageMissileImpact
+
+	ImageBigExplosion
 
 	ImageVesselPlayer
 	ImageVesselBetaSmall

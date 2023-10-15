@@ -83,8 +83,10 @@ func (v *vesselNode) Dispose() {
 }
 
 func (v *vesselNode) Destroy() {
-	// e := effects.NewExplosion(v.body.Pos)
-	// v.scene.AddObject(e)
+	e := newEffectNode(v.body.Pos, normalEffectLayer, assets.ImageBigExplosion)
+	v.scene.AddObject(e)
+	e.anim.SetSecondsPerFrame(0.055)
+	playSound(v.scene, assets.AudioBigExplosion1)
 
 	v.EventDestroyed.Emit(gsignal.Void{})
 	v.Dispose()

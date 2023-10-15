@@ -34,8 +34,9 @@ func registerSoundResources(ctx *ge.Context) {
 		AudioExplosion1: {Path: "audio/explosion1.wav"},
 		AudioExplosion2: {Path: "audio/explosion2.wav"},
 		AudioExplosion3: {Path: "audio/explosion3.wav"},
-		AudioExplosion4: {Path: "audio/explosion4.wav"},
-		AudioExplosion5: {Path: "audio/explosion5.wav"},
+
+		AudioBigExplosion1: {Path: "audio/big_explosion1.wav"},
+		AudioBigExplosion2: {Path: "audio/big_explosion2.wav"},
 
 		AudioShieldAbsorb: {Path: "audio/shield_absorb.wav"},
 	}
@@ -57,7 +58,9 @@ func NumSamples(a resource.AudioID) int {
 	case AudioAssaultLaser1:
 		return 2
 	case AudioExplosion1:
-		return 5
+		return 3
+	case AudioBigExplosion1:
+		return 2
 	default:
 		return 1
 	}
@@ -93,8 +96,9 @@ const (
 	AudioExplosion1
 	AudioExplosion2
 	AudioExplosion3
-	AudioExplosion4
-	AudioExplosion5
+
+	AudioBigExplosion1
+	AudioBigExplosion2
 
 	AudioShieldAbsorb
 )

@@ -235,8 +235,8 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 						MaxSpeed:        180,
 						Acceleration:    90,
 						RotationSpeed:   2.5,
-						MainWeapon:      gamedata.FindWeaponDesign("Pulse Laser"),
-						SecondaryWeapon: gamedata.FindWeaponDesign("Homing Missile Launcher"),
+						MainWeapon:      gamedata.FindWeaponDesign("Lance"),
+						SecondaryWeapon: gamedata.FindWeaponDesign("Torpedo Launcher"),
 					},
 				}
 				return gamedata.ModeOrbiting
