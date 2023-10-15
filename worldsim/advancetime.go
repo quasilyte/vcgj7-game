@@ -93,7 +93,7 @@ func (r *Runner) processEncounters() bool {
 	player := r.world.Player
 
 	if r.world.NextPirateDelay == 0 && r.world.PirateSeq < 3 {
-		if player.VesselHP >= 0.8 && player.Battles >= 2 {
+		if player.VesselHP >= 0.8 && player.Battles >= 4 {
 			r.world.NextPirateDelay = r.scene.Rand().FloatRange(600, 1200)
 			r.eventInfo = eventInfo{
 				kind:  eventBattleInterrupt,
