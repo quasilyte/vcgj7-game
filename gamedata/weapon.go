@@ -35,6 +35,7 @@ type WeaponDesign struct {
 	EnergyCost       float64
 	EnergyConversion float64
 	Blockable        bool
+	Primary          bool
 }
 
 func FindWeaponDesign(name string) *WeaponDesign {
@@ -60,6 +61,7 @@ var Weapons = []*WeaponDesign{
 		ProjectileImage:  assets.ImageProjectilePulseLaser,
 		ProjectileSize:   6,
 		Blockable:        true,
+		Primary:          true,
 		BurstSize:        1,
 
 		FireOffsets:              []gmath.Vec{{}},
@@ -81,6 +83,7 @@ var Weapons = []*WeaponDesign{
 		Explosion:        assets.ImageIonCannonImpact,
 		ExplosionSound:   assets.AudioIonCannonImpact,
 		Blockable:        true,
+		Primary:          true,
 		BurstSize:        1,
 
 		FireOffsets:              []gmath.Vec{{}},
@@ -102,6 +105,7 @@ var Weapons = []*WeaponDesign{
 		Explosion:        assets.ImageAssaultLaserImpact,
 		// ExplosionSound:   assets.AudioIonCannonImpact,
 		Blockable: true,
+		Primary:   true,
 		BurstSize: 2,
 
 		FireOffsets: []gmath.Vec{
@@ -126,6 +130,7 @@ var Weapons = []*WeaponDesign{
 		Explosion:        assets.ImageScatterGunImpact,
 		// ExplosionSound:   assets.AudioIonCannonImpact,
 		Blockable: true,
+		Primary:   true,
 		BurstSize: 7,
 
 		FireOffsets: []gmath.Vec{
@@ -153,6 +158,7 @@ var Weapons = []*WeaponDesign{
 		ProjectileImage:  assets.ImageProjectileTrident,
 		ProjectileSize:   8,
 		Explosion:        assets.ImageTridentImpact,
+		Primary:          true,
 		Blockable:        true,
 		BurstSize:        3,
 

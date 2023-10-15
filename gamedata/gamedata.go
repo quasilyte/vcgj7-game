@@ -65,6 +65,13 @@ type Player struct {
 	MaxCargo   int
 }
 
+func (p *Player) HasWeapon(w *WeaponDesign) bool {
+	if w.Primary {
+		return p.VesselDesign.MainWeapon == w
+	}
+	return p.VesselDesign.SecondaryWeapon == w
+}
+
 func (p *Player) FreeCargoSpace() int {
 	return p.MaxCargo - p.Cargo
 }
@@ -87,6 +94,9 @@ type Planet struct {
 	MineralDeposit int
 
 	VesselsByFaction [NumFactions]int
+
+	WeaponsRerollDelay float64
+	WeaponsAvailable   []string
 
 	AreasVisited PlanetVisitStatus
 }

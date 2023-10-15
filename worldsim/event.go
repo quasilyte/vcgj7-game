@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/quasilyte/ge/xslices"
 	"github.com/quasilyte/gmath"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 )
@@ -23,6 +24,7 @@ const (
 
 	eventBuyFuel
 	eventUpgradeLab
+	eventWeaponShop
 	eventSellMinerals
 )
 
@@ -100,6 +102,55 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			Text: "Done",
 			OnResolved: func() gamedata.Mode {
 				return gamedata.ModeOrbiting
+			},
+		})
+		return strings.Join(lines, "\n")
+
+	case eventWeaponShop:
+		formatWeapon := func(w *gamedata.WeaponDesign) string {
+			if w.Primary {
+				return fmt.Sprintf("%s (primary)", w.Name)
+			}
+			return fmt.Sprintf("%s (secondary)", w.Name)
+		}
+		lines := make([]string, 0, 6)
+		if len(planet.WeaponsAvailable) > 0 {
+			lines = append(lines, "The weapon selection include:")
+			for _, weaponName := range planet.WeaponsAvailable {
+				w := gamedata.FindWeaponDesign(weaponName)
+				cost := fmt.Sprintf(" - %d credits", w.Cost)
+				lines = append(lines, "* "+formatWeapon(w)+cost)
+				if player.Credits >= w.Cost && !player.HasWeapon(w) {
+					r.choices = append(r.choices, Choice{
+						Text: "Buy " + w.Name,
+						OnResolved: func() gamedata.Mode {
+							planet.WeaponsAvailable = xslices.Remove(planet.WeaponsAvailable, weaponName)
+							player.Credits -= w.Cost
+							if w.Primary {
+								player.VesselDesign.MainWeapon = w
+							} else {
+								player.VesselDesign.SecondaryWeapon = w
+							}
+							return gamedata.ModeDocked
+						},
+					})
+				}
+			}
+		} else {
+			lines = append(lines, "This weapon shop is empty at the moment. Come again later.")
+		}
+		lines = append(lines, "")
+		lines = append(lines, "Your current weapons:")
+		if player.VesselDesign.MainWeapon != nil {
+			lines = append(lines, "* "+formatWeapon(player.VesselDesign.MainWeapon))
+		}
+		if player.VesselDesign.SecondaryWeapon != nil {
+			lines = append(lines, "* "+formatWeapon(player.VesselDesign.SecondaryWeapon))
+		}
+		r.choices = append(r.choices, Choice{
+			Text: "Leave weapon shop",
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeDocked
 			},
 		})
 		return strings.Join(lines, "\n")
