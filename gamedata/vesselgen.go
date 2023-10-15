@@ -150,7 +150,7 @@ func assignChallenge1weapons(rand *gmath.Rand, design *VesselDesign) {
 		design.MainWeapon = FindWeaponDesign("Ion Cannon")
 	} else if roll <= 0.7 {
 		design.MainWeapon = FindWeaponDesign("Pulse Laser")
-	} else if roll < 0.85 {
+	} else if roll <= 0.85 {
 		design.MainWeapon = FindWeaponDesign("Scatter Gun")
 	} else {
 		design.MainWeapon = FindWeaponDesign("Assault Laser")
@@ -174,12 +174,14 @@ func assignChallenge2weapons(rand *gmath.Rand, design *VesselDesign) {
 	}
 
 	roll = rand.Float()
-	if roll < 0.4 {
+	if roll <= 0.4 {
 		design.SecondaryWeapon = FindWeaponDesign("Homing Missile Launcher")
-	} else if roll < 0.6 {
+	} else if roll <= 0.6 {
 		design.SecondaryWeapon = FindWeaponDesign("Missile Launcher")
-	} else {
+	} else if roll <= 0.95 {
 		design.SecondaryWeapon = FindWeaponDesign("Torpedo Launcher")
+	} else {
+		design.SecondaryWeapon = FindWeaponDesign("Firestorm")
 	}
 }
 
@@ -189,16 +191,18 @@ func assignChallenge3weapons(rand *gmath.Rand, design *VesselDesign) {
 		design.MainWeapon = FindWeaponDesign("Assault Laser")
 	} else if roll <= 0.5 {
 		design.MainWeapon = FindWeaponDesign("Scatter Gun")
-	} else if roll < 0.9 {
+	} else if roll <= 0.9 {
 		design.MainWeapon = FindWeaponDesign("Trident")
 	} else {
 		design.MainWeapon = FindWeaponDesign("Lance")
 	}
 
 	roll = rand.Float()
-	if roll < 0.3 {
-		design.SecondaryWeapon = FindWeaponDesign("Homing Missile Launcher")
-	} else {
+	if roll <= 0.4 {
 		design.SecondaryWeapon = FindWeaponDesign("Torpedo Launcher")
+	} else if roll <= 0.7 {
+		design.SecondaryWeapon = FindWeaponDesign("Firestorm")
+	} else {
+		design.SecondaryWeapon = FindWeaponDesign("Homing Missile Launcher")
 	}
 }

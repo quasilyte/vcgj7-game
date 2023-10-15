@@ -283,4 +283,43 @@ var Weapons = []*WeaponDesign{
 		FireOffsets:              []gmath.Vec{{}},
 		ProjectileRotationDeltas: []gmath.Rad{0},
 	},
+
+	{
+		Name:            "Firestorm",
+		Cost:            550,
+		FireSound:       assets.AudioMissile1,
+		Damage:          8,
+		Reload:          5.0,
+		Range:           800,
+		ProjectileSpeed: 200,
+		ProjectileImage: assets.ImageProjectileFirestorm,
+		ProjectileSize:  10,
+		Explosion:       assets.ImageMissileImpact,
+		ExplosionSound:  assets.AudioExplosion1,
+		BurstSize:       8,
+		Homing:          80,
+
+		FireOffsets: []gmath.Vec{
+			{Y: -17},
+			{Y: -14},
+			{Y: -11},
+			{Y: -8},
+
+			{Y: +8},
+			{Y: +11},
+			{Y: +14},
+			{Y: +17},
+		},
+		ProjectileRotationDeltas: []gmath.Rad{
+			-0.4,
+			-0.35,
+			-0.3,
+			-0.25,
+
+			+0.25,
+			+0.3,
+			+0.35,
+			+0.4,
+		},
+	},
 }
