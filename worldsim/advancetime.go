@@ -12,7 +12,7 @@ func (r *Runner) AdvanceTime(hours int) bool {
 	for i := 0; i < hours; i++ {
 		r.world.GameTime++
 		if r.world.GameTime%24 == 0 {
-			salary := gamedata.GetSalary(r.world.Player.Experience)
+			salary := gamedata.GetSalary(r.world.Player.Experience) + r.world.Player.ExtraSalary
 			r.world.Player.Credits += salary
 		}
 		// One in-game hour is simulated during 1 second in delta time terms.

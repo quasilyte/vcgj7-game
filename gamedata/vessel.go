@@ -18,8 +18,9 @@ type VesselDesign struct {
 	MaxSpeed     float64
 	Acceleration float64
 
-	Elite     bool
-	Challenge int
+	Elite        bool
+	LastDefender bool
+	Challenge    int
 
 	RotationSpeed gmath.Rad
 

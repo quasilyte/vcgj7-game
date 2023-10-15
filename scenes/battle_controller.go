@@ -102,6 +102,8 @@ func (c *BattleController) Init(scene *ge.Scene) {
 				}
 			}
 
+			player.BattleRewards.SystemLiberated = c.enemy.LastDefender
+
 			player.VesselHP = results.HP
 			player.Mode = gamedata.ModeAfterCombat
 			player.Battles++

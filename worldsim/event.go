@@ -54,6 +54,13 @@ func (r *Runner) afterBattleChoices() string {
 			player.Credits += reward.Credits
 			player.LoadCargo(reward.Cargo)
 			player.Fuel = gmath.ClampMax(player.Fuel+reward.Fuel, player.MaxFuel)
+			if reward.SystemLiberated {
+				if player.ExtraSalary < 20 {
+					player.ExtraSalary += 3
+				} else {
+					player.Credits += 30
+				}
+			}
 			return gamedata.ModeOrbiting
 		},
 	})
@@ -71,6 +78,14 @@ func (r *Runner) afterBattleChoices() string {
 	}
 	if reward.Fuel != 0 {
 		lines = append(lines, fmt.Sprintf("Recovered %d fuel units.", reward.Fuel))
+	}
+	if reward.SystemLiberated {
+		lines = append(lines, "")
+		if player.ExtraSalary < 20 {
+			lines = append(lines, cfmt("System liberation bonus: <y>+3</> salary."))
+		} else {
+			lines = append(lines, cfmt("System liberation bonus: <y>30</> credits."))
+		}
 	}
 
 	return strings.Join(lines, "\n")
@@ -324,6 +339,8 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 		return strings.Join(lines, "\n")
 
 	case eventBattle, eventBattleInterrupt:
+		lastDefender := planet.Faction == event.enemy.Faction && planet.VesselsByFaction[event.enemy.Faction] == 1
+		event.enemy.LastDefender = lastDefender
 		r.choices = append(r.choices, Choice{
 			Text: "Fight!",
 			Mode: gamedata.ModeCombat,

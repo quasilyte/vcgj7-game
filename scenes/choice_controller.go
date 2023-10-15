@@ -244,7 +244,7 @@ func (c *ChoiceController) updateUI() {
 	{
 		day := (c.state.World.GameTime / 24) + 1
 		hours := c.state.World.GameTime % 24
-		salary := gamedata.GetSalary(c.state.World.Player.Experience)
+		salary := gamedata.GetSalary(p.Experience) + p.ExtraSalary
 		lines := []string{
 			fmt.Sprintf("Day %d, %02d:00", day, hours),
 			"",

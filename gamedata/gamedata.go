@@ -7,10 +7,11 @@ import (
 type BattleRewards struct {
 	Victory bool
 
-	Experience int
-	Cargo      int
-	Credits    int
-	Fuel       int
+	SystemLiberated bool
+	Experience      int
+	Cargo           int
+	Credits         int
+	Fuel            int
 }
 
 type World struct {
@@ -67,7 +68,8 @@ const (
 type Player struct {
 	Planet *Planet
 
-	Faction Faction
+	Faction     Faction
+	ExtraSalary int
 
 	BattleRewards BattleRewards
 
