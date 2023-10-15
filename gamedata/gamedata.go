@@ -26,8 +26,6 @@ type World struct {
 	UpgradeRerollDelay float64
 	UpgradeAvailable   UpgradeKind
 
-	StateByFaction [NumFactions]*FactionState
-
 	Squads []*Squad
 }
 
@@ -136,6 +134,10 @@ type Planet struct {
 	VesselsByFaction   [NumFactions]int
 	InfluenceByFaction [NumFactions]float64
 
+	// If not neutral.
+	AttackDelay  float64
+	CaptureDelay float64
+
 	ShopModeWeapons bool
 	ShopSwapDelay   float64
 
@@ -143,12 +145,6 @@ type Planet struct {
 	WeaponsAvailable   []string
 
 	AreasVisited PlanetVisitStatus
-}
-
-type FactionState struct {
-	Tag          Faction
-	AttackDelay  float64
-	CaptureDelay float64
 }
 
 type Squad struct {

@@ -59,13 +59,6 @@ func NewWorld(rand *gmath.Rand) *World {
 	planets[2].Faction = FactionB
 	planets[7].Faction = FactionC
 
-	for i := 0; i < int(NumFactions); i++ {
-		w.StateByFaction[Faction(i)] = &FactionState{
-			Tag:         Faction(i),
-			AttackDelay: rand.FloatRange(75, 100),
-		}
-	}
-
 	planets[1].VesselsByFaction[FactionB] = 2
 
 	for _, p := range planets {
@@ -73,6 +66,8 @@ func NewWorld(rand *gmath.Rand) *World {
 			continue
 		}
 		p.MineralDeposit = rand.IntRange(5, 200)
+		p.AttackDelay = rand.FloatRange(75, 100)
+		p.CaptureDelay = rand.FloatRange(160, 200)
 		numVessels := rand.IntRange(10, 20)
 		if p.Faction != w.Player.Faction {
 			numVessels += 10

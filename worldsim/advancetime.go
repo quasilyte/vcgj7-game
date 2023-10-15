@@ -72,28 +72,23 @@ func (r *Runner) processEncounters() bool {
 	return false
 }
 
-func (r *Runner) updateFaction(delta float64, state *gamedata.FactionState) {
-	if state.Tag == gamedata.FactionNone {
-		return
-	}
-
-	state.AttackDelay = gmath.ClampMin(state.AttackDelay-delta, 0)
-	state.CaptureDelay = gmath.ClampMin(state.CaptureDelay-delta, 0)
-
-	if state.AttackDelay == 0 {
-		if r.tryFactionAttack(state) {
-			state.AttackDelay = r.scene.Rand().FloatRange(50, 150)
+func (r *Runner) processPlanetActions(p *gamedata.Planet) {
+	if p.AttackDelay == 0 {
+		if p.VesselsByFaction[p.Faction] < 10 && r.scene.Rand().Chance(0.8) {
+			p.AttackDelay = r.scene.Rand().FloatRange(20, 250)
 			return
 		}
-		state.AttackDelay = r.scene.Rand().FloatRange(15, 40)
+		if r.tryFactionAttack(p) {
+			p.AttackDelay = r.scene.Rand().FloatRange(70, 400)
+			return
+		}
+		p.AttackDelay = r.scene.Rand().FloatRange(30, 100)
+		return
 	}
 }
 
-func (r *Runner) tryFactionAttack(state *gamedata.FactionState) bool {
-	planet := randIterate(r.scene.Rand(), r.world.Planets, func(p *gamedata.Planet) bool {
-		return p.Faction == state.Tag && p.VesselsByFaction[state.Tag] > r.scene.Rand().IntRange(5, 15)
-	})
-	if planet == nil {
+func (r *Runner) tryFactionAttack(planet *gamedata.Planet) bool {
+	if planet.VesselsByFaction[planet.Faction] <= r.scene.Rand().IntRange(5, 15) {
 		return false
 	}
 
@@ -103,8 +98,8 @@ func (r *Runner) tryFactionAttack(state *gamedata.FactionState) bool {
 		largeSquad = true
 		attackVessels *= 2
 	}
-	if attackVessels > planet.VesselsByFaction[state.Tag] {
-		attackVessels = planet.VesselsByFaction[state.Tag] - r.scene.Rand().IntRange(2, 4)
+	if attackVessels > planet.VesselsByFaction[planet.Faction] {
+		attackVessels = planet.VesselsByFaction[planet.Faction] - r.scene.Rand().IntRange(2, 4)
 	}
 
 	targetPlanet := randIterate(r.scene.Rand(), r.world.Planets, func(p *gamedata.Planet) bool {
@@ -121,7 +116,7 @@ func (r *Runner) tryFactionAttack(state *gamedata.FactionState) bool {
 		return false
 	}
 
-	if state.Tag != r.world.Player.Faction {
+	if planet.Faction != r.world.Player.Faction {
 		if largeSquad {
 			r.world.PushEvent(fmt.Sprintf("%s (controlled by %s) dispatched a large group of vessels", planet.Faction.Name(), planet.Info.Name))
 		}
@@ -136,14 +131,13 @@ func (r *Runner) tryFactionAttack(state *gamedata.FactionState) bool {
 
 	squad := &gamedata.Squad{
 		NumVessels: attackVessels,
-		Faction:    state.Tag,
+		Faction:    planet.Faction,
 		Speed:      speed,
 		Dist:       planet.Info.MapOffset.DistanceTo(targetPlanet.Info.MapOffset),
 		Dst:        targetPlanet,
 	}
 	r.world.Squads = append(r.world.Squads, squad)
-	planet.VesselsByFaction[state.Tag] -= attackVessels
-
+	planet.VesselsByFaction[planet.Faction] -= attackVessels
 	return true
 }
 
@@ -153,10 +147,6 @@ func (r *Runner) updateWorld(delta float64) bool {
 	if r.world.UpgradeRerollDelay == 0 {
 		r.world.UpgradeRerollDelay = float64(r.scene.Rand().IntRange(5, 15))
 		r.world.UpgradeAvailable = gamedata.UpgradeKind(r.scene.Rand().IntRange(int(gamedata.FirstUpgrade), int(gamedata.LastUpgrade)))
-	}
-
-	for _, fs := range r.world.StateByFaction {
-		r.updateFaction(delta, fs)
 	}
 
 	squads := r.world.Squads[:0]
@@ -175,6 +165,8 @@ func (r *Runner) updateWorld(delta float64) bool {
 		p.WeaponsRerollDelay = gmath.ClampMin(p.WeaponsRerollDelay-delta, 0)
 		p.ShopSwapDelay = gmath.ClampMin(p.ShopSwapDelay-delta, 0)
 		p.ResourceGenDelay = gmath.ClampMin(p.ResourceGenDelay-delta, 0)
+		p.AttackDelay = gmath.ClampMin(p.AttackDelay-delta, 0)
+		p.CaptureDelay = gmath.ClampMin(p.CaptureDelay-delta, 0)
 
 		if p.Faction == gamedata.FactionNone {
 			for i := range p.InfluenceByFaction {
@@ -204,6 +196,8 @@ func (r *Runner) updateWorld(delta float64) bool {
 				if p.InfluenceByFaction[faction] > 30.0 {
 					p.InfluenceByFaction = [4]float64{}
 					p.Faction = faction
+					p.AttackDelay = r.scene.Rand().FloatRange(100, 500)
+					p.CaptureDelay = r.scene.Rand().FloatRange(400, 600)
 					r.world.PushEvent(fmt.Sprintf("%s established control over %s", faction.Name(), p.Info.Name))
 				}
 			}
@@ -242,6 +236,8 @@ func (r *Runner) updateWorld(delta float64) bool {
 		if p.Faction == gamedata.FactionNone {
 			continue
 		}
+
+		r.processPlanetActions(p)
 
 		if p.VesselProduction {
 			p.VesselProductionTime = gmath.ClampMin(p.VesselProductionTime-delta, 0)
