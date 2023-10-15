@@ -90,7 +90,7 @@ func chooseBattleChallenge(rand *gmath.Rand, world *World) int {
 		}
 		return 0
 	}
-	if world.Player.Battles < 10 {
+	if world.Player.Battles < 9 {
 		if rand.Chance(0.6) {
 			return 2
 		}
@@ -99,7 +99,7 @@ func chooseBattleChallenge(rand *gmath.Rand, world *World) int {
 		}
 		return 0
 	}
-	if world.Player.Battles < 20 {
+	if world.Player.Battles < 15 {
 		if rand.Chance(0.4) {
 			return 3
 		}

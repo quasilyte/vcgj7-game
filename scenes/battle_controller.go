@@ -104,6 +104,7 @@ func (c *BattleController) Init(scene *ge.Scene) {
 
 			player.VesselHP = results.HP
 			player.Mode = gamedata.ModeAfterCombat
+			player.Battles++
 			scene.Context().ChangeScene(NewChoiceController(c.state))
 		})
 	})
