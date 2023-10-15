@@ -47,7 +47,8 @@ func NewWorld(rand *gmath.Rand) *World {
 	planets := make([]*Planet, len(Planets))
 	for i := range planets {
 		p := &Planet{
-			Info: Planets[i],
+			Info:          Planets[i],
+			GarrisonLimit: rand.IntRange(25, 40),
 		}
 		planets[i] = p
 	}

@@ -96,6 +96,11 @@ type Planet struct {
 
 	Info *PlanetInfo
 
+	VesselProduction     bool
+	VesselProductionTime float64
+
+	GarrisonLimit int
+
 	MineralsDelay  float64
 	MineralDeposit int
 

@@ -98,6 +98,25 @@ func (r *Runner) updateWorld(delta float64) bool {
 			p.ShopSwapDelay = r.scene.Rand().FloatRange(10, 15)
 			p.ShopModeWeapons = r.scene.Rand().Bool()
 		}
+
+		if p.Faction == gamedata.FactionNone {
+			continue
+		}
+
+		if p.VesselProduction {
+			p.VesselProductionTime = gmath.ClampMin(p.VesselProductionTime-delta, 0)
+			if p.VesselProductionTime == 0 {
+				p.VesselsByFaction[p.Faction]++
+				p.VesselProduction = false
+			}
+		} else {
+			if p.MineralDeposit >= 50 && p.VesselsByFaction[p.Faction] < p.GarrisonLimit {
+				cost := r.scene.Rand().IntRange(20, 50)
+				p.MineralDeposit -= cost
+				p.VesselProductionTime = float64(r.scene.Rand().IntRange(40, 100))
+				p.VesselProduction = true
+			}
+		}
 	}
 	return false
 }
