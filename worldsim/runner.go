@@ -21,6 +21,8 @@ type Runner struct {
 	encounterOptions []gamedata.Faction
 	planetFactions   []gamedata.Faction
 
+	alliedPlanets []*gamedata.Planet
+
 	eventInfo eventInfo
 
 	EventStartBattle gsignal.Event[BattleInfo]
@@ -140,7 +142,36 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		canJump = false
 	}
 
-	if len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked && !planet.AreasVisited.VisitedNews {
+	quest := r.world.CurrentQuest
+	questOption := false
+	if quest != nil {
+		if !quest.Active && planet == quest.Giver {
+			// Can start quest.
+			questOption = true
+			r.choices = append(r.choices, Choice{
+				Time: 1,
+				Text: "Take a boring delivery quest",
+				OnResolved: func() gamedata.Mode {
+					r.eventInfo = eventInfo{kind: eventTakeQuest}
+					return gamedata.ModeDocked
+				},
+			})
+		}
+		if quest.Active && planet == quest.Receiver {
+			// Can finish quest.
+			questOption = true
+			r.choices = append(r.choices, Choice{
+				Time: 1,
+				Text: "Complete the delivery quest and take reward",
+				OnResolved: func() gamedata.Mode {
+					r.eventInfo = eventInfo{kind: eventCompleteQuest}
+					return gamedata.ModeDocked
+				},
+			})
+		}
+	}
+
+	if !questOption && len(r.choices) < MaxChoices && player.Mode == gamedata.ModeDocked && !planet.AreasVisited.VisitedNews {
 		r.choices = append(r.choices, Choice{
 			Time: 1,
 			Text: "Watch news",

@@ -266,12 +266,54 @@ func (r *Runner) tryFactionCapture(planet *gamedata.Planet) bool {
 	return true
 }
 
+func (r *Runner) maybeRollQuest() {
+	r.alliedPlanets = r.alliedPlanets[:0]
+	for _, p := range r.world.Planets {
+		if p.Faction != r.world.Player.Faction {
+			continue
+		}
+		r.alliedPlanets = append(r.alliedPlanets, p)
+	}
+	if len(r.alliedPlanets) < 2 {
+		return
+	}
+	gmath.Shuffle(r.scene.Rand(), r.alliedPlanets)
+	r.world.CurrentQuest = &gamedata.Quest{
+		Active:        false,
+		Giver:         r.alliedPlanets[0],
+		Receiver:      r.alliedPlanets[1],
+		CreditsReward: r.scene.Rand().IntRange(20, 200),
+		ExpReward:     r.scene.Rand().IntRange(10, 60),
+	}
+	fmt.Println("quest rolled", r.alliedPlanets[0].Info.Name, "=>", r.alliedPlanets[1].Info.Name)
+}
+
 func (r *Runner) updateWorld(delta float64) bool {
+	r.world.QuestRerollDelay = gmath.ClampMin(r.world.QuestRerollDelay-delta, 0)
 	r.world.UpgradeRerollDelay = gmath.ClampMin(r.world.UpgradeRerollDelay-delta, 0)
 	r.world.NextUpgradeDelay = gmath.ClampMin(r.world.NextUpgradeDelay-delta, 0)
 	if r.world.UpgradeRerollDelay == 0 {
 		r.world.UpgradeRerollDelay = float64(r.scene.Rand().IntRange(5, 15))
 		r.world.UpgradeAvailable = gamedata.UpgradeKind(r.scene.Rand().IntRange(int(gamedata.FirstUpgrade), int(gamedata.LastUpgrade)))
+	}
+
+	if r.world.CurrentQuest != nil && r.world.CurrentQuest.Active {
+		q := r.world.CurrentQuest
+		p := r.world.Player
+		if q.Giver.Faction != p.Faction || q.Receiver.Faction != p.Faction {
+			// Quest failed.
+			r.world.CurrentQuest = nil
+		}
+	}
+
+	if r.world.QuestRerollDelay == 0 {
+		r.world.QuestRerollDelay = float64(r.scene.Rand().IntRange(40, 90))
+		if r.world.CurrentQuest != nil && !r.world.CurrentQuest.Active {
+			r.world.CurrentQuest = nil
+		}
+		if r.world.CurrentQuest == nil {
+			r.maybeRollQuest()
+		}
 	}
 
 	squads := r.world.Squads[:0]

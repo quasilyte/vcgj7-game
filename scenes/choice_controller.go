@@ -258,6 +258,10 @@ func (c *ChoiceController) updateUI() {
 			fmt.Sprintf("Cargo: %d/%d", p.Cargo, p.MaxCargo),
 		}
 		lines = append(lines, "")
+		q := c.state.World.CurrentQuest
+		if q != nil && q.Active {
+			lines = append(lines, fmt.Sprintf("Delivery quest destination: %s", q.Receiver.Info.Name))
+		}
 		if len(p.Artifacts) != 0 {
 			lines = append(lines, fmt.Sprintf("Artifacts: %s", strings.Join(p.Artifacts, ", ")))
 		} else {

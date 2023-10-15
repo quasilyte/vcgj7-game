@@ -22,6 +22,8 @@ const (
 	eventMineralsHunt
 	eventScanArea
 
+	eventTakeQuest
+	eventCompleteQuest
 	eventNews
 	eventBuyFuel
 	eventUpgradeLab
@@ -116,6 +118,40 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 	planet := player.Planet
 
 	switch event.kind {
+	case eventCompleteQuest:
+		q := r.world.CurrentQuest
+		r.world.CurrentQuest = nil
+		r.choices = append(r.choices, Choice{
+			Text: "Done",
+			OnResolved: func() gamedata.Mode {
+				player.Credits += q.CreditsReward
+				player.Experience += q.ExpReward
+				return gamedata.ModeDocked
+			},
+		})
+		return cfmt("Quest completed!\n\nReceived <y>%d</> credits and <y>%d</> experience points.", q.CreditsReward, q.ExpReward)
+
+	case eventTakeQuest:
+		q := r.world.CurrentQuest
+		lines := make([]string, 0, 8)
+		lines = append(lines, cfmt("This quest requires you to deliver this very important object to <p>%s</>.", q.Receiver.Info.Name))
+		lines = append(lines, "")
+		lines = append(lines, cfmt("Reward: <y>%d</> credits and <y>%d</> experience points.", q.CreditsReward, q.ExpReward))
+		r.choices = append(r.choices, Choice{
+			Text: "Accept quest",
+			OnResolved: func() gamedata.Mode {
+				q.Active = true
+				return gamedata.ModeDocked
+			},
+		})
+		r.choices = append(r.choices, Choice{
+			Text: "Decline quest",
+			OnResolved: func() gamedata.Mode {
+				return gamedata.ModeDocked
+			},
+		})
+		return strings.Join(lines, "\n")
+
 	case eventScanArea:
 		lines := make([]string, 0, 6)
 		lines = append(lines, "Scanning area...")

@@ -29,9 +29,21 @@ type World struct {
 	UpgradeRerollDelay float64
 	UpgradeAvailable   UpgradeKind
 
+	QuestRerollDelay float64
+	CurrentQuest     *Quest
+
 	Squads []*Squad
 
 	Artifacts []string
+}
+
+type Quest struct {
+	Active   bool
+	Giver    *Planet
+	Receiver *Planet
+
+	CreditsReward int
+	ExpReward     int
 }
 
 type WorldEvent struct {
