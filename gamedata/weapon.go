@@ -200,7 +200,7 @@ var Weapons = []*WeaponDesign{
 		Reload:           0.7,
 		EnergyCost:       12,
 		EnergyConversion: 2.5,
-		Range:            1800,
+		Range:            2600,
 		ProjectileSpeed:  600,
 		ProjectileImage:  assets.ImageProjectileLance,
 		ProjectileSize:   10,
