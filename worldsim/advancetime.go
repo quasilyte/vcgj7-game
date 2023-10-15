@@ -139,6 +139,20 @@ func (r *Runner) processPlanetActions(p *gamedata.Planet) {
 		p.AttackDelay = r.scene.Rand().FloatRange(20, 40)
 		return
 	}
+
+	if p.CaptureDelay == 0 {
+		numVessels := p.VesselsByFaction[p.Faction]
+		if numVessels < 10 && r.scene.Rand().Chance(0.9) {
+			p.CaptureDelay = r.scene.Rand().FloatRange(60, 100)
+			return
+		}
+		if r.tryFactionCapture(p) {
+			p.CaptureDelay = r.scene.Rand().FloatRange(150, 400)
+			return
+		}
+		p.CaptureDelay = r.scene.Rand().FloatRange(40, 80)
+		return
+	}
 }
 
 func (r *Runner) tryFactionAttack(planet *gamedata.Planet) bool {
@@ -183,6 +197,40 @@ func (r *Runner) tryFactionAttack(planet *gamedata.Planet) bool {
 		speed *= 0.5
 	}
 
+	squad := &gamedata.Squad{
+		NumVessels: attackVessels,
+		Faction:    planet.Faction,
+		Speed:      speed,
+		Dist:       planet.Info.MapOffset.DistanceTo(targetPlanet.Info.MapOffset),
+		Dst:        targetPlanet,
+	}
+	r.world.Squads = append(r.world.Squads, squad)
+	planet.VesselsByFaction[planet.Faction] -= attackVessels
+	return true
+}
+
+func (r *Runner) tryFactionCapture(planet *gamedata.Planet) bool {
+	if planet.VesselsByFaction[planet.Faction] <= r.scene.Rand().IntRange(5, 10) {
+		return false
+	}
+
+	attackVessels := r.scene.Rand().IntRange(1, 3)
+
+	targetPlanet := randIterate(r.scene.Rand(), r.world.Planets, func(p *gamedata.Planet) bool {
+		if p.Faction != gamedata.FactionNone {
+			return false
+		}
+		dist := p.Info.MapOffset.DistanceTo(planet.Info.MapOffset)
+		if dist > r.scene.Rand().FloatRange(70, 110) {
+			return false
+		}
+		return true
+	})
+	if targetPlanet == nil {
+		return false
+	}
+
+	speed := r.scene.Rand().FloatRange(6, 11)
 	squad := &gamedata.Squad{
 		NumVessels: attackVessels,
 		Faction:    planet.Faction,
