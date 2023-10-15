@@ -23,6 +23,8 @@ func NewMainMenuController(state *session.State) *MainMenuController {
 }
 
 func (c *MainMenuController) Init(scene *ge.Scene) {
+	scene.Audio().PauseCurrentMusic()
+
 	root := widget.NewContainer(
 		widget.ContainerOpts.WidgetOpts(widget.WidgetOpts.LayoutData(widget.AnchorLayoutData{
 			StretchHorizontal: true,

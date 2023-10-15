@@ -49,6 +49,9 @@ func (c *ChoiceController) Init(scene *ge.Scene) {
 	c.scene = scene
 	c.initUI()
 
+	scene.Audio().PauseCurrentMusic()
+	scene.Audio().PlayMusic(assets.AudioMusicGlobal)
+
 	{
 		c.mapPosMarker = scene.NewSprite(assets.ImageMapLocation)
 		c.mapPosMarker.Pos.Base = &c.mapPosMarkerBase

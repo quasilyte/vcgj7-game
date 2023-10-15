@@ -2,6 +2,7 @@ package scenes
 
 import (
 	"github.com/quasilyte/ge"
+	"github.com/quasilyte/vcgj7-game/assets"
 	"github.com/quasilyte/vcgj7-game/battle"
 	"github.com/quasilyte/vcgj7-game/gamedata"
 	"github.com/quasilyte/vcgj7-game/session"
@@ -24,6 +25,9 @@ func NewBattleController(state *session.State, enemy *gamedata.VesselDesign) *Ba
 }
 
 func (c *BattleController) Init(scene *ge.Scene) {
+	scene.Audio().PauseCurrentMusic()
+	scene.Audio().PlayMusic(assets.AudioMusicCombat)
+
 	c.runner = battle.NewRunner(battle.RunnerConfig{
 		Input:  c.state.Input,
 		Enemy:  c.enemy,

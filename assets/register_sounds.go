@@ -5,8 +5,16 @@ import (
 	"github.com/quasilyte/ge"
 )
 
+const (
+	SoundGroupEffect uint = iota
+	SoundGroupMusic
+)
+
 func registerSoundResources(ctx *ge.Context) {
 	soundResources := map[resource.AudioID]resource.AudioInfo{
+		AudioMusicGlobal: {Path: "audio/music/global.ogg", Group: SoundGroupMusic},
+		AudioMusicCombat: {Path: "audio/music/combat.ogg", Group: SoundGroupMusic},
+
 		AudioIonCannon1:      {Path: "audio/ion_cannon1.wav"},
 		AudioIonCannonImpact: {Path: "audio/ion_cannon_impact.wav"},
 
@@ -68,6 +76,9 @@ func NumSamples(a resource.AudioID) int {
 
 const (
 	AudioNone resource.AudioID = iota
+
+	AudioMusicGlobal
+	AudioMusicCombat
 
 	AudioIonCannon1
 	AudioIonCannonImpact
