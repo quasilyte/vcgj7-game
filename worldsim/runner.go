@@ -119,6 +119,22 @@ func (r *Runner) GenerateChoices() GeneratedChoices {
 		}
 	}
 
+	if len(r.choices) < MaxChoices && isIdleMode {
+		switch planet.Faction {
+		case gamedata.FactionB, gamedata.FactionC:
+			s := "Attack enemy garrison"
+			h := 1
+			r.choices = append(r.choices, Choice{
+				Time: h,
+				Text: s,
+				Mode: gamedata.ModeAttack,
+				OnResolved: func() gamedata.Mode {
+					return gamedata.ModeOrbiting
+				},
+			})
+		}
+	}
+
 	if player.Mode == gamedata.ModeDocked {
 		canJump = false
 	}

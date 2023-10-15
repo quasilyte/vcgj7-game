@@ -33,6 +33,8 @@ func (r *Runner) processEncounters() bool {
 		encounterChance = 0.1
 	case gamedata.ModeScavenging:
 		encounterChance = 0.2
+	case gamedata.ModeAttack:
+		encounterChance = 1.0
 	}
 	switch {
 	case planet.Faction == player.Faction:

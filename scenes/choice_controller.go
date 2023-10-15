@@ -112,7 +112,6 @@ func (c *ChoiceController) selectChoice(i int) {
 
 	if c.selectedChoice.Time > 0 {
 		if !c.runner.AdvanceTime(c.selectedChoice.Time) {
-			c.state.World.Player.Mode = gamedata.ModeOrbiting
 			c.replaceChoices()
 			c.updateUI()
 			return

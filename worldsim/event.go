@@ -311,6 +311,9 @@ func (r *Runner) generateEventChoices(event eventInfo) string {
 			},
 		})
 		if event.kind == eventBattleInterrupt {
+			if player.Mode == gamedata.ModeAttack {
+				return "Enemy spotted!"
+			}
 			return fmt.Sprintf("Your actions were interrupted by a %s. Prepare for battle.", colorizeText("hostile vessel", colorRed))
 		}
 		return "This is a battle test."
