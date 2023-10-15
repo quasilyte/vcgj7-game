@@ -1,3 +1,9 @@
+MVP TODO:
+* groups are travelling around the map
+* capturing new planets
+* planet economy (produces vessels, consumes resources)
+* victory condition
+
 TODO:
 * "watch news" action to browse the game logs
 * tooltips that show the time costs
